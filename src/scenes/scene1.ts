@@ -1,9 +1,20 @@
 export class Scene1 extends Phaser.Scene {
 
-  private platforms? : Phaser.Physics.Arcade.StaticGroup
-  private player? : Phaser.Physics.Arcade.Sprite
-  private cursors? : Phaser.Types.Input.Keyboard.CursorKeys
+  private platforms?: Phaser.Physics.Arcade.StaticGroup // "?" means it could be undefined.
+  private gold?: Phaser.Physics.Arcade.Group
+  private player?: Phaser.Physics.Arcade.Sprite
+  private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
+  private score: number = 0
+  private scoreText?: Phaser.GameObjects.Text
 
+  private handleCollectGold(player: Phaser.GameObjects.GameObject, gold: Phaser.GameObjects.GameObject) {
+    const g = gold as Phaser.Physics.Arcade.Image // Casting.
+    g.disableBody(true, true) // Hide the gold you collided with.
+    this.score += 10
+    this.scoreText?.setText(`score: ${this.score}`)
+    // [todo] Add sound fx.
+  }
+  
   constructor() {
     super('Scene1')
   }
@@ -11,7 +22,7 @@ export class Scene1 extends Phaser.Scene {
   preload() {
     this.load.image('background', 'images/sky.png')
     this.load.image('ground',     'images/platform.png')
-    this.load.image('star',       'images/star.png')
+    this.load.image('gold',       'images/gold.png')
     this.load.image('bomb',       'images/bomb.png')
     this.load.spritesheet(
       'dude', // Spritesheets contain frames for animations.
@@ -21,7 +32,6 @@ export class Scene1 extends Phaser.Scene {
   }
 
   create() {
-
     this.add.image(400, 300, 'background')
     
     this.platforms = this.physics.add.staticGroup();
@@ -60,10 +70,27 @@ export class Scene1 extends Phaser.Scene {
     })
 
     this.cursors = this.input.keyboard.createCursorKeys()
+
+    this.gold = this.physics.add.group({
+      key: 'gold',
+      repeat: 11,
+      setXY: { x:12, y:0, stepX:70 },
+    })
+
+    this.gold.children.iterate(c => {
+      const child = c as Phaser.Physics.Arcade.Image
+      child.scale = 2
+      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8))
+    })
+
+    this.physics.add.collider(this.gold, this.platforms)
+    this.physics.add.overlap(this.player, this.gold, this.handleCollectGold, undefined, this)
+
+    this.scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', color:'#000'}) // Show text.
+
   }
 
   update() {
-
     if (!this.cursors) { // Nothing being pressed
       return
     }
@@ -82,7 +109,7 @@ export class Scene1 extends Phaser.Scene {
     }
 
     if (this.cursors.up?.isDown && this.player?.body.touching.down) {
-      this.player.setVelocityY(-330)
+      this.player.setVelocityY(-330) // Jump.
     }
   }
 }
