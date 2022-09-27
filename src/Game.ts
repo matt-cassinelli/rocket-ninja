@@ -1,6 +1,6 @@
 import 'phaser';
 import { Physics } from 'phaser';
-import { Scene1 } from './scenes/scene1';
+import { Scene1 } from './scenes/Scene1';
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,

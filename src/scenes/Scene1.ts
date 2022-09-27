@@ -1,5 +1,5 @@
 import { Physics } from "phaser"
-import { Player } from '../objects/player'
+import { Player } from '../objects/Player'
 
 export class Scene1 extends Phaser.Scene {
 
