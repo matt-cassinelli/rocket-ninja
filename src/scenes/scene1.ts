@@ -1,32 +1,28 @@
+import { Physics } from "phaser"
+
 export class Scene1 extends Phaser.Scene {
 
   private platforms?: Phaser.Physics.Arcade.StaticGroup // "?" means it could be undefined.
   private gold?: Phaser.Physics.Arcade.Group
+  private bombs?: Phaser.Physics.Arcade.Group
   private player?: Phaser.Physics.Arcade.Sprite
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
   private score: number = 0
-  private scoreText?: Phaser.GameObjects.Text
+  private scoreText?: Phaser.GameObjects.Text // [todo] Move these to the constructor or create().
+  private gameOver = false
 
-  private handleCollectGold(player: Phaser.GameObjects.GameObject, gold: Phaser.GameObjects.GameObject) {
-    const g = gold as Phaser.Physics.Arcade.Image // Casting.
-    g.disableBody(true, true) // Hide the gold you collided with.
-    this.score += 10
-    this.scoreText?.setText(`score: ${this.score}`)
-    // [todo] Add sound fx.
-  }
-  
   constructor() {
     super('Scene1')
   }
 
   preload() {
-    this.load.image('background', 'images/sky.png')
-    this.load.image('ground',     'images/platform.png')
-    this.load.image('gold',       'images/gold.png')
-    this.load.image('bomb',       'images/bomb.png')
+    this.load.image('background', 'sky.png')
+    this.load.image('ground',     'platform.png')
+    this.load.image('gold',       'gold.png')
+    this.load.image('bomb',       'bomb.png')
     this.load.spritesheet(
       'dude', // Spritesheets contain frames for animations.
-      'images/dude.png',
+      'dude.png',
       {frameWidth: 32, frameHeight: 48}
     )
   }
@@ -88,6 +84,42 @@ export class Scene1 extends Phaser.Scene {
 
     this.scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', color:'#000'}) // Show text.
 
+    this.bombs = this.physics.add.group()
+    this.physics.add.collider(this.bombs, this.platforms)
+    this.physics.add.collider(this.player, this.bombs, this.handleHitBomb, undefined, this)
+  }
+
+  private handleCollectGold(player: Phaser.GameObjects.GameObject, gold: Phaser.GameObjects.GameObject) {
+    const g = gold as Phaser.Physics.Arcade.Image // Casting.
+    g.disableBody(true, true) // Hide the gold you collided with.
+    this.score += 10
+    this.scoreText?.setText(`score: ${this.score}`)
+    // [todo] Add sound fx.
+
+    if (this.gold?.countActive() === 0) {
+      this.gold.children.iterate(c => {
+        const child = c as Phaser.Physics.Arcade.Image
+        child.enableBody(true, child.x, 0, true, true)
+      })
+
+      if (this.player) {
+        const x = this.player.x < 400
+          ? Phaser.Math.Between(400, 800) // If the player is on the left side, bomb will go somewhere on the right side
+          : Phaser.Math.Between(0, 400) // else if the player is on the right side, bomb goes on the left side
+
+        const bomb: Phaser.Physics.Arcade.Image = this.bombs?.create(x, 16, 'bomb')
+        bomb.setBounce(1)
+        bomb.setCollideWorldBounds(true)
+        bomb.setVelocityY(Phaser.Math.Between(-200, 200))
+      }
+    }
+  }
+
+  private handleHitBomb(player: Phaser.GameObjects.GameObject, bomb: Phaser.GameObjects.GameObject) {
+    this.physics.pause() // this should be a kill method inside Player
+    this.player?.setTint(0xff0000)
+    this.player?.anims.play('turn')
+    this.gameOver = true
   }
 
   update() {

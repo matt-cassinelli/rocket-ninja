@@ -10,6 +10,6 @@
     "phaser": "3.55.2"
   },
   "scripts": {
-    "start": "parcel ./index.html -p 8080"
+    "start": "parcel ./index.html -p 8080 --open"
   }
 }
