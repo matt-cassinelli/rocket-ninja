@@ -23,9 +23,9 @@ export class Scene1 extends Phaser.Scene {
     this.load.image('gold',       'gold.png')
     this.load.image('bomb',       'bomb.png')
     this.load.spritesheet(
-      'dude', // Spritesheets contain frames for animations.
-      'dude.png',
-      {frameWidth: 32, frameHeight: 48}
+      'player', // Spritesheets contain frames for animations.
+      'player-black-29x37.png',
+      {frameWidth: 29, frameHeight: 37}
     )
   }
 
