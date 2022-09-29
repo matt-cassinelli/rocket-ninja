@@ -1,4 +1,5 @@
 import { Physics } from "phaser"
+import { InputHandler } from "../helpers/InputHandler";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
 
@@ -62,8 +63,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         //this.setDisplaySize(40,40)
     }
 
-    update(cursors: any) {
-        if (cursors.right?.isDown) { // If right key is pressed,
+    update(inputHandler: InputHandler) {
+        if (inputHandler.rightPressed) { // If right key is pressed,
             this?.anims.play('right', true)
             if (this.body.touching.down) { // And on ground,
                 this.setVelocityX(this.LEFTRIGHT_FLOOR_SPEED); // Move immediately
@@ -74,7 +75,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
                 this.setAccelerationX(this.LEFTRIGHT_INAIR_ACCEL); // Move gradually
             }
         }
-        else if (cursors.left?.isDown) { // Same for left key
+        else if (inputHandler.leftPressed) { // Same for left key
             this?.anims.play('left', true)
             if (this.body.touching.down) { 
                 this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED); 
@@ -93,7 +94,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             }
         }
 
-        if (cursors.up?.isDown) { // If Jump is pressed,
+        if (inputHandler.upPressed) { // If Jump is pressed,
             if (this?.body.touching.down) { // And player is on ground,
                 this.setVelocityY(-this.GROUND_JUMP_SPEED) // Jump
             }

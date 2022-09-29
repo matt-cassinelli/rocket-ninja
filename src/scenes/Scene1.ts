@@ -1,4 +1,5 @@
 import { Physics } from "phaser"
+import { InputHandler } from "../helpers/InputHandler"
 import { Player } from '../objects/Player'
 
 export class Scene1 extends Phaser.Scene {
@@ -6,12 +7,10 @@ export class Scene1 extends Phaser.Scene {
   private platforms?: Phaser.Physics.Arcade.StaticGroup // "?" means it could be undefined.
   private gold?: Phaser.Physics.Arcade.Group
   private bombs?: Phaser.Physics.Arcade.Group
-  //private player?: Phaser.Physics.Arcade.Sprite
   private player?: Player
-  private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
+  private inputHandler!: InputHandler;
   private score: number = 0
   private scoreText?: Phaser.GameObjects.Text // [todo] Move these to the constructor or create().
-  //private gameOver = false
 
   constructor() {
     super('Scene1')
@@ -45,8 +44,6 @@ export class Scene1 extends Phaser.Scene {
     this.platforms = this.createPlatforms();
 
     this.player = new Player(this, 100, 450)
-
-    //const player = new Player(this, 100, 450)
     //this.add.existing(player)
 
     this.physics.add.collider(this.player, this.platforms) // The player should collide with platforms.
@@ -72,7 +69,7 @@ export class Scene1 extends Phaser.Scene {
     this.physics.add.collider(this.bombs, this.platforms)
     this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
 
-    this.cursors = this.input.keyboard.createCursorKeys()
+    this.inputHandler = new InputHandler(this)
   }
 
   private handleCollectGold(player: Phaser.GameObjects.GameObject, gold: Phaser.GameObjects.GameObject) {
@@ -102,7 +99,8 @@ export class Scene1 extends Phaser.Scene {
   }
 
   update() {
-    this.player?.update(this.cursors)
+    this.inputHandler.update();
+    this.player?.update(this.inputHandler);
     if (this.player?.isDead) {
       this.physics.pause()
       this.time.addEvent({
