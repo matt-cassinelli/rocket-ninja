@@ -22,6 +22,7 @@ export class Scene1 extends Phaser.Scene {
     this.load.image('ground',     'platform.png')
     this.load.image('gold',       'gold.png')
     this.load.image('bomb',       'bomb.png')
+    this.load.image('aura',       'aura-black.png')
     this.load.spritesheet(
       'player', // Spritesheets contain frames for animations.
       'player-black-29x37.png',
@@ -45,6 +46,9 @@ export class Scene1 extends Phaser.Scene {
 
     this.player = new Player(this, 100, 450)
 
+    //const player = new Player(this, 100, 450)
+    //this.add.existing(player)
+
     this.physics.add.collider(this.player, this.platforms) // The player should collide with platforms.
 
     this.gold = this.physics.add.group({
@@ -66,7 +70,7 @@ export class Scene1 extends Phaser.Scene {
 
     this.bombs = this.physics.add.group()
     this.physics.add.collider(this.bombs, this.platforms)
-    this.physics.add.collider(this.player, this.bombs, this.player.kill, undefined, this.player)
+    this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
 
     this.cursors = this.input.keyboard.createCursorKeys()
   }
