@@ -1,7 +1,6 @@
 dist
-*.tmj
 .cache
-*-bkp-*
+private
 readme.md
 node_modules
 package-lock.json

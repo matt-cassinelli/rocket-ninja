@@ -66,10 +66,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     update(inputHandler: InputHandler) {
         if (inputHandler.rightPressed) { // If right key is pressed,
             this?.anims.play('right', true)
-            if (this.body.touching.down) { // And on ground,
+            if (this.body.blocked.down) { // And on ground,
                 this.setVelocityX(this.LEFTRIGHT_FLOOR_SPEED); // Move immediately
-                this.setAccelerationX(0);
                 //this.setAccelerationX(LEFTRIGHT_ACCEL_GROUNDED);
+                this.setAccelerationX(0);
             }
             else { // But if in air,
                 this.setAccelerationX(this.LEFTRIGHT_INAIR_ACCEL); // Move gradually
@@ -77,10 +77,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
         else if (inputHandler.leftPressed) { // Same for left key
             this?.anims.play('left', true)
-            if (this.body.touching.down) { 
-                this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED); 
-                this.setAccelerationX(0);
+            if (this.body.blocked.down) { 
+                this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED);
                 //this.setAccelerationX(-LEFTRIGHT_ACCEL_GROUNDED);
+                this.setAccelerationX(0);
             }
             else {
                 this.setAccelerationX(-this.LEFTRIGHT_INAIR_ACCEL);
@@ -89,13 +89,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         else { // If neither left or right are pressed,
             this?.anims.play('turn', true)
             this.setAccelerationX(0);
-            if (this.body.touching.down) { // If on ground,
+            if (this.body.blocked.down) { // If on ground,
                 this?.setVelocityX(0) // Immediately halt.
             }
         }
 
         if (inputHandler.upPressed) { // If Jump is pressed,
-            if (this?.body.blocked.down) { // And player is on ground,
+            if (this.body.blocked.down) { // And player is on ground,
                 this.setVelocityY(-this.GROUND_JUMP_SPEED) // Jump
             }
             else if (this.body.blocked.right) { // If player is by right wall

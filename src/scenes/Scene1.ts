@@ -14,28 +14,27 @@ export class Scene1 extends Phaser.Scene {
   private score: number = 0
   private scoreText?: Phaser.GameObjects.Text // [todo] Move these to the constructor or create().
   private map?: Phaser.Tilemaps.Tilemap;
-  private layer?: Phaser.Tilemaps.TilemapLayer
 
   constructor() {
     super('Scene1')
   }
 
   preload() {
-    this.load.image('background', 'sky.png')
-    this.load.image('ground',     'platform.png')
-    this.load.image('gold',       'gold.png')
-    this.load.image('bomb',       'bomb.png')
-    this.load.image('aura',       'aura-black.png')
-    this.load.image("tile", "tile.png");
+    // this.load.image('background', 'sky.png')
+    this.load.image('ground', 'platform.png')
+    this.load.image('gold',   'gold.png')
+    this.load.image('bomb',   'bomb.png')
+    this.load.image('aura',   'aura-black.png')
+    this.load.image('tile',   'tile-black.png');
+    this.load.tilemapTiledJSON(
+      "map",
+      "map.json",
+    );
     this.load.spritesheet(
       'player', // Spritesheets contain frames for animations.
       'player-black-29x37.png',
       {frameWidth: 29, frameHeight: 37}
-    )
-    this.load.tilemapTiledJSON(
-      "map",
-      "map.json",
-    )
+    );
   }
 
   createPlatforms() {
@@ -52,12 +51,18 @@ export class Scene1 extends Phaser.Scene {
     this.map.addTilesetImage("tileset01", "tile");
     this.map.setCollision(1);
     this.platforms = this.map.createLayer("layer01", "tileset01");
+    // this.platforms.
   }
 
   create() {
     this.inputHandler = new InputHandler(this)
 
-    this.add.image(400, 300, 'background')
+    // this.add.image(
+    //   this.game.config.width as number / 2,
+    //   this.game.config.height as number /2,
+    //   'background'
+    // )
+
     this.scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', color:'#000'})
     
     this.player = new Player(this, 100, 350) // [todo] Place according to tilemap.
