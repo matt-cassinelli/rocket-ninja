@@ -1,11 +1,16 @@
 import 'phaser';
-import { Physics } from 'phaser';
+import { Physics, Scale } from 'phaser';
 import { Scene1 } from './scenes/Scene1';
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  scale: {
+    mode: Phaser.Scale.MAX_ZOOM,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    // parent: 'game',
+    width: 1152, // 32px * 36 tiles
+    height: 704  // 32px * 22 tiles
+  },
   backgroundColor: 0x333333,
   parent: 'game',
   scene: [Scene1],
@@ -13,7 +18,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     default: 'arcade',
     arcade: {
       gravity: { y: 400 },
-      debug: false
+      debug: true
     }
   }
 };
