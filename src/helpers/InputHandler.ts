@@ -47,4 +47,7 @@ export class InputHandler {
         this.rightPressed  = (this.keyRight.isDown || this.keyD.isDown)
         this.attackPressed = (this.keyZ.isDown || this.keyEnter.isDown)
     }
+
+    // [todo] Apply the dependency inversion principle -
+    // The InputHandler should not know about the Scene, but the Scene should know about the InputHandler.
 }

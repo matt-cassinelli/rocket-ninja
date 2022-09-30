@@ -4,13 +4,17 @@ import { Player } from '../objects/Player'
 
 export class Scene1 extends Phaser.Scene {
 
-  private platforms?: Phaser.Physics.Arcade.StaticGroup // "?" means it could be undefined.
+  //private platforms?: Phaser.Physics.Arcade.StaticGroup // "?" means it could be undefined.
+  private platforms!: Phaser.Tilemaps.TilemapLayer // ! or ?'s are needed because in Phaser we initiate things in create(),
+                                                   // but TS wants you to do it in the constructor.
   private gold?: Phaser.Physics.Arcade.Group
   private bombs?: Phaser.Physics.Arcade.Group
   private player?: Player
   private inputHandler!: InputHandler;
   private score: number = 0
   private scoreText?: Phaser.GameObjects.Text // [todo] Move these to the constructor or create().
+  private map?: Phaser.Tilemaps.Tilemap;
+  private layer?: Phaser.Tilemaps.TilemapLayer
 
   constructor() {
     super('Scene1')
@@ -22,10 +26,15 @@ export class Scene1 extends Phaser.Scene {
     this.load.image('gold',       'gold.png')
     this.load.image('bomb',       'bomb.png')
     this.load.image('aura',       'aura-black.png')
+    this.load.image("tile", "tile.png");
     this.load.spritesheet(
       'player', // Spritesheets contain frames for animations.
       'player-black-29x37.png',
       {frameWidth: 29, frameHeight: 37}
+    )
+    this.load.tilemapTiledJSON(
+      "map",
+      "map.json",
     )
   }
 
@@ -38,14 +47,23 @@ export class Scene1 extends Phaser.Scene {
     return platforms
   }
 
-  create() {
-    this.add.image(400, 300, 'background')
-    
-    this.platforms = this.createPlatforms();
+  createMap() {
+    this.map = this.add.tilemap("map");
+    this.map.addTilesetImage("tileset01", "tile");
+    this.map.setCollision(1);
+    this.platforms = this.map.createLayer("layer01", "tileset01");
+  }
 
-    this.player = new Player(this, 100, 450)
+  create() {
+    this.inputHandler = new InputHandler(this)
+
+    this.add.image(400, 300, 'background')
+    this.scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', color:'#000'})
+    
+    this.player = new Player(this, 100, 350) // [todo] Place according to tilemap.
     //this.add.existing(player)
 
+    this.createMap();
     this.physics.add.collider(this.player, this.platforms) // The player should collide with platforms.
 
     this.gold = this.physics.add.group({
@@ -54,7 +72,7 @@ export class Scene1 extends Phaser.Scene {
       setXY: { x:12, y:0, stepX:70 },
     })
 
-    this.gold.children.iterate(c => {
+    this.gold.children.iterate(c => { // [todo] Place according to tilemap.
       const child = c as Phaser.Physics.Arcade.Image
       child.scale = 2
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8))
@@ -63,13 +81,9 @@ export class Scene1 extends Phaser.Scene {
     this.physics.add.collider(this.gold, this.platforms)
     this.physics.add.overlap(this.player, this.gold, this.handleCollectGold, undefined, this)
 
-    this.scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', color:'#000'}) // Show text.
-
-    this.bombs = this.physics.add.group()
+    this.bombs = this.physics.add.group() // [todo] Place according to tilemap.
     this.physics.add.collider(this.bombs, this.platforms)
     this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
-
-    this.inputHandler = new InputHandler(this)
   }
 
   private handleCollectGold(player: Phaser.GameObjects.GameObject, gold: Phaser.GameObjects.GameObject) {

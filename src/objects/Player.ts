@@ -95,7 +95,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         if (inputHandler.upPressed) { // If Jump is pressed,
-            if (this?.body.touching.down) { // And player is on ground,
+            if (this?.body.blocked.down) { // And player is on ground,
                 this.setVelocityY(-this.GROUND_JUMP_SPEED) // Jump
             }
             else if (this.body.blocked.right) { // If player is by right wall
