@@ -1,4 +1,5 @@
 dist
+*.tmj
 .cache
 private
 readme.md

@@ -15,7 +15,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     private WALL_JUMP_UP_SPEED:    number = 290;
     private WALL_JUMP_AWAY_SPEED:  number = 290;
 
-    constructor(scene: Phaser.Scene, x: number, y: number) {
+    constructor(scene:Phaser.Scene, x:number, y:number ) {
         super(scene, x, y, 'player')
         this.scene = scene;
 

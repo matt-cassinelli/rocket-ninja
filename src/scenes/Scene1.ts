@@ -6,7 +6,7 @@ import { Coin } from '../objects/Coin'
 export class Scene1 extends Phaser.Scene {
 
   //private platforms?: Phaser.Physics.Arcade.StaticGroup
-  private platforms!: Phaser.Tilemaps.TilemapLayer // ! or ? is needed to assure TS this will be created, even though it's not in constructor.
+  private platformLayer!: Phaser.Tilemaps.TilemapLayer // ! or ? is needed to assure TS this will be created, even though it's not in constructor.
                                                    // Phaser uses preload() and create() for construction instead.
   private coinGroup!: Phaser.Physics.Arcade.StaticGroup
   private bombs?: Phaser.Physics.Arcade.Group
@@ -43,14 +43,15 @@ export class Scene1 extends Phaser.Scene {
     //this.map = this.add.tilemap("map");
     this.map.addTilesetImage("tileset01", "tile-solid");
     this.map.setCollision(1);
-    this.platforms = this.map.createLayer("solid-layer", "tileset01");
+    this.platformLayer = this.map.createLayer("solid-layer", "tileset01");
     // this.platforms.
   }
 
   createCoins() {
+    //this.map.filterObjects('object-layer', o => o.name === 'coin')
     this.coinGroup = this.physics.add.staticGroup({});
     this.coinGroup.addMultiple( // @ts-ignore https://phaser.discourse.group/t/10239/3
-      this.map!.createFromObjects('coin-layer', {key: 'coin', classType: Coin}) // [todo] Change Layer name in Tiled editor
+      this.map.createFromObjects('object-layer', {name:'coin', key: 'coin', classType: Coin}) // [todo] Change Layer name in Tiled editor
     )
     //   const coins: Coin[] = <Coin[]>this.map.createFromObjects('coin-layer', {
     //     name: 'player1', // @ts-ignore
@@ -70,11 +71,16 @@ export class Scene1 extends Phaser.Scene {
 
     this.scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', color:'#000'})
     
-    this.player = new Player(this, 100, 350) // [todo] Place according to tilemap.
+
     //this.add.existing(player)
 
     this.createPlatforms();
-    this.physics.add.collider(this.player, this.platforms) // The player should collide with platforms.
+
+    const playerTiledObject: Phaser.Types.Tilemaps.TiledObject =
+      this.map.findObject('object-layer', o => o.name === 'player') // Bug: This is returning default(?) coords.
+    this.player = new Player(this, playerTiledObject.x!, playerTiledObject.y!) // 100, 350
+
+    this.physics.add.collider(this.player, this.platformLayer) // The player should collide with platforms.
 
     this.createCoins();
     this.physics.add.overlap(
@@ -86,7 +92,7 @@ export class Scene1 extends Phaser.Scene {
     )
 
     this.bombs = this.physics.add.group() // [todo] Place according to tilemap.
-    this.physics.add.collider(this.bombs, this.platforms)
+    this.physics.add.collider(this.bombs, this.platformLayer)
     this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
   }
 
