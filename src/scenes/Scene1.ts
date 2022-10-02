@@ -2,31 +2,36 @@ import { Physics } from "phaser"
 import { InputHandler } from "../helpers/InputHandler"
 import { Player } from '../objects/Player'
 import { Coin } from '../objects/Coin'
+import { Missile } from '../objects/Missile'
 
-export class Scene1 extends Phaser.Scene {
-
+export class Scene1 extends Phaser.Scene
+{
   //private platforms?: Phaser.Physics.Arcade.StaticGroup
   private platformLayer!: Phaser.Tilemaps.TilemapLayer // ! or ? is needed to assure TS this will be created, even though it's not in constructor.
                                                    // Phaser uses preload() and create() for construction instead.
   private coinGroup!: Phaser.Physics.Arcade.StaticGroup
   private bombs?: Phaser.Physics.Arcade.Group
-  private player?: Player
+  private player!: Player
   private inputHandler!: InputHandler;
   private score: number = 0
   private scoreText?: Phaser.GameObjects.Text // [todo] Move these to the constructor or create().
   private map!: Phaser.Tilemaps.Tilemap;
+  private missileGroup!: Phaser.Physics.Arcade.Group
 
-  constructor() {
+  constructor()
+  {
     super('Scene1')
   }
 
-  preload() {
+  preload()
+  {
     // this.load.image('background', 'sky.png')
-    this.load.image('ground',     'platform.png')
-    this.load.image('coin',       'coin.png')
-    this.load.image('bomb',       'bomb.png')
-    this.load.image('aura',       'aura-black.png')
+    this.load.image('ground',     'platform.png');
+    this.load.image('coin',       'coin.png');
+    this.load.image('bomb',       'bomb.png');
+    this.load.image('aura',       'aura-black.png');
     this.load.image('tile-solid', 'tile-solid.png');
+    this.load.image('missile',    'missile.png');
     this.load.tilemapTiledJSON(
       "map",
       "map.json",
@@ -38,7 +43,8 @@ export class Scene1 extends Phaser.Scene {
     );
   }
 
-  createPlatforms() {
+  createPlatforms()
+  {
     this.map = this.make.tilemap({key: 'map'})
     //this.map = this.add.tilemap("map");
     this.map.addTilesetImage("tileset01", "tile-solid");
@@ -47,7 +53,8 @@ export class Scene1 extends Phaser.Scene {
     // this.platforms.
   }
 
-  createCoins() {
+  createCoins()
+  {
     //this.map.filterObjects('object-layer', o => o.name === 'coin')
     this.coinGroup = this.physics.add.staticGroup({});
     this.coinGroup.addMultiple( // @ts-ignore https://phaser.discourse.group/t/10239/3
@@ -60,7 +67,8 @@ export class Scene1 extends Phaser.Scene {
     // Phaser.Tilemaps.ObjectLayer
   }
 
-  create() {
+  create()
+  {
     this.inputHandler = new InputHandler(this)
 
     // this.add.image(
@@ -71,14 +79,12 @@ export class Scene1 extends Phaser.Scene {
 
     this.scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', color:'#000'})
     
-
-    //this.add.existing(player)
-
     this.createPlatforms();
 
     const playerTiledObject: Phaser.Types.Tilemaps.TiledObject =
       this.map.findObject('object-layer', o => o.name === 'player') // Bug: This is returning default(?) coords.
     this.player = new Player(this, playerTiledObject.x!, playerTiledObject.y!) // 100, 350
+        //this.add.existing(player)
 
     this.physics.add.collider(this.player, this.platformLayer) // The player should collide with platforms.
 
@@ -94,9 +100,15 @@ export class Scene1 extends Phaser.Scene {
     this.bombs = this.physics.add.group() // [todo] Place according to tilemap.
     this.physics.add.collider(this.bombs, this.platformLayer)
     this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
+
+    this.missileGroup = this.physics.add.group()
+    this.missileGroup.add(
+      new Missile(this, 700, 300) // [todo] add a missile group and do a foreach on it. Add timer to periodically launch. Add collider to destroy.
+    )
   }
 
-  private handleCollectCoin(player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject) {
+  private handleCollectCoin(player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject)
+  {
     coin.destroy()
     // (coin as Coin).collect
     this.score += (<Coin>coin).value // Unfortunately we need to cast because Phaser won't accept custom types as arguments here...
@@ -104,27 +116,20 @@ export class Scene1 extends Phaser.Scene {
     // [todo] Add sound fx.
   }
 
-  // private createBouncingBombs() {
-  //     if (this.player) {
-  //       const pos = this.player.x < 400 // [todo] use screen width, not hard coded number.
-  //         ? Phaser.Math.Between(400, 800) // If the player is on the left side, bomb will go somewhere on the right side
-  //         : Phaser.Math.Between(0, 400) // else if the player is on the right side, bomb goes on the left side
-  //       const bomb: Phaser.Physics.Arcade.Image = this.bombs?.create(pos, 16, 'bomb')
-  //       bomb.setBounce(1)
-  //       bomb.setCollideWorldBounds(true)
-  //       bomb.setVelocityY(Phaser.Math.Between(-200, 200))
-  //     }
-  // }
-
-  update() {
+  update()
+  {
     this.inputHandler.update();
-    this.player?.update(this.inputHandler);
-    if (this.player?.isDead) {
-      this.physics.pause()
+    this.player.update(this.inputHandler);
+    if (this.player.isDead) {
+      this.physics.pause();
       this.time.addEvent({
         delay: 1500,
         callback: () => this.scene.restart()
-      })
+      });
     }
+
+		this.missileGroup.getChildren().forEach(m =>
+      (m as Missile).update(this.player.x, this.player.y)
+    );
   }
 }
