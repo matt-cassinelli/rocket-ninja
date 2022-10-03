@@ -5,39 +5,60 @@ export class Missile extends Phaser.Physics.Arcade.Image
 	private IMAGE_SIZE: number = 0.15;
 	private HIT_BOX_SIZE = 70;
 
-	constructor(scene:Phaser.Scene, x:number, y:number) 
-	{ // [todo] keep a reference of the player instance in this class instead of using the update() method?
+	constructor(scene:Phaser.Scene, x:number, y:number, initialTargetX?:number, initialTargetY?:number) 
+	{ // Ideally I would keep a reference of our Player in this class. Using update() method instead
 		super(scene, x, y, 'missile')
-		this.scene = scene;
+		scene.add.existing(this)
 		scene.physics.add.existing(this)
+		this.scene = scene;
 		this.addToDisplayList();
 		this.scale = this.IMAGE_SIZE;
-		// this.HIT_BOX_SIZE = this.scale
 		this.body.setCircle(
 			this.HIT_BOX_SIZE,
 			(-this.HIT_BOX_SIZE + this.width / 2),
 			(-this.HIT_BOX_SIZE + this.height / 2)
 		);
+
+		// scene.physics.add.collider(
+		// 	this,
+		// 	scene.platformLayer,
+		// 	this.missileGroup.getChildren()[0].hitWall,
+		// 	undefined,
+		// 	this.missileGroup //this.missileGroup.getChildren()[0]
+		// )
+
+		if (initialTargetX !== undefined && initialTargetY !== undefined)
+		{
+			this.setRotation(
+				this.getTargetRotation(initialTargetX, initialTargetY)
+			)
+		}
+
 	}
 
 	update(targetX:number, targetY:number)
 	{
-		//const target = this.target
-		const targetRotation = Phaser.Math.Angle.Between(
-			this.x, this.y,
-			targetX, targetY
-		)
+		//const target = this.target // If using reference
+		const targetRotation = this.getTargetRotation(targetX, targetY)
 		this.rotateWithLimit(targetRotation, this.TURN_DEGREES_PER_FRAME)
 		this.moveForwards(this.SPEED) // [todo] adjust speed based on distance to player?
 	}
 
-	moveForwards(speed: number)
+	private getTargetRotation(targetX:number, targetY:number)
+	{
+		return Phaser.Math.Angle.Between(
+			this.x, this.y,
+			targetX, targetY
+		)
+	}
+
+	private moveForwards(speed: number)
 	{
 		this.body.velocity.x = Math.cos(this.rotation) * speed
 		this.body.velocity.y = Math.sin(this.rotation) * speed
 	}
 
-	rotateWithLimit(targetRotation: number, limit: number)
+	private rotateWithLimit(targetRotation: number, limit: number)
 	{
 		let difference = Phaser.Math.Angle.Wrap(targetRotation - this.rotation)
 	
@@ -56,6 +77,10 @@ export class Missile extends Phaser.Physics.Arcade.Image
 				this.setAngle(this.angle - this.TURN_DEGREES_PER_FRAME) // Rotate anticlockwise
 			}
 		}
+	}
 
+	hitWall()
+	{
+		this.destroy
 	}
 }

@@ -3,12 +3,13 @@ import { InputHandler } from "../helpers/InputHandler"
 import { Player } from '../objects/Player'
 import { Coin } from '../objects/Coin'
 import { Missile } from '../objects/Missile'
+import { MissileTurret } from '../objects/MissileTurret'
 
 export class Scene1 extends Phaser.Scene
 {
   //private platforms?: Phaser.Physics.Arcade.StaticGroup
   private platformLayer!: Phaser.Tilemaps.TilemapLayer // ! or ? is needed to assure TS this will be created, even though it's not in constructor.
-                                                   // Phaser uses preload() and create() for construction instead.
+                                                       // Phaser uses preload() and create() for construction instead.
   private coinGroup!: Phaser.Physics.Arcade.StaticGroup
   private bombs?: Phaser.Physics.Arcade.Group
   private player!: Player
@@ -16,6 +17,9 @@ export class Scene1 extends Phaser.Scene
   private score: number = 0
   private scoreText?: Phaser.GameObjects.Text // [todo] Move these to the constructor or create().
   private map!: Phaser.Tilemaps.Tilemap;
+  
+  //private missileTurrets? //: MissileTurret[];
+  private missileTurretGroup!: Phaser.GameObjects.Group
   private missileGroup!: Phaser.Physics.Arcade.Group
 
   constructor()
@@ -26,12 +30,13 @@ export class Scene1 extends Phaser.Scene
   preload()
   {
     // this.load.image('background', 'sky.png')
-    this.load.image('ground',     'platform.png');
-    this.load.image('coin',       'coin.png');
-    this.load.image('bomb',       'bomb.png');
-    this.load.image('aura',       'aura-black.png');
-    this.load.image('tile-solid', 'tile-solid.png');
-    this.load.image('missile',    'missile.png');
+    this.load.image('ground',         'platform.png');
+    this.load.image('coin',           'coin.png');
+    this.load.image('bomb',           'bomb.png');
+    this.load.image('aura',           'aura-black.png');
+    this.load.image('tile-solid',     'tile-solid.png');
+    this.load.image('missile',        'missile.png');
+    this.load.image('missile-turret', 'missile-turret.png');
     this.load.tilemapTiledJSON(
       "map",
       "map.json",
@@ -71,7 +76,7 @@ export class Scene1 extends Phaser.Scene
   {
     this.inputHandler = new InputHandler(this)
 
-    // this.add.image(
+    // this.add.image( // Add background
     //   this.game.config.width as number / 2,
     //   this.game.config.height as number /2,
     //   'background'
@@ -101,10 +106,29 @@ export class Scene1 extends Phaser.Scene
     this.physics.add.collider(this.bombs, this.platformLayer)
     this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
 
+    this.missileTurretGroup = this.add.group();
     this.missileGroup = this.physics.add.group()
-    this.missileGroup.add(
-      new Missile(this, 700, 300) // [todo] add a missile group and do a foreach on it. Add timer to periodically launch. Add collider to destroy.
+
+    const tiledObjs = this.map.filterObjects('object-layer', o => o.name === 'missile-turret')
+    
+    tiledObjs.forEach(tiledObj =>
+      this.missileTurretGroup.add(
+        new MissileTurret(this, tiledObj.x!, tiledObj.y!)
+      )
     )
+
+    this.physics.add.collider(
+      this.missileGroup, // missileGroup.missiles
+      this.platformLayer,
+      this.missileCollide,
+      undefined,
+      this
+    )
+  }
+
+  private missileCollide (missile: any, platformLayer: any) {
+      //missile.kill();
+      missile.destroy();
   }
 
   private handleCollectCoin(player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject)
@@ -118,8 +142,6 @@ export class Scene1 extends Phaser.Scene
 
   update()
   {
-    this.inputHandler.update();
-    this.player.update(this.inputHandler);
     if (this.player.isDead) {
       this.physics.pause();
       this.time.addEvent({
@@ -128,8 +150,19 @@ export class Scene1 extends Phaser.Scene
       });
     }
 
-		this.missileGroup.getChildren().forEach(m =>
+    this.inputHandler.update();
+    this.player.move(this.inputHandler);
+
+    this.missileTurretGroup.getChildren().forEach(mt =>
+      if (this.missileGroup.countActive() < 1) {
+        this.missileGroup.add(
+          (mt as MissileTurret).fire(this.player.x, this.player.y)
+        )
+      }
+    )
+
+    this.missileGroup.getChildren().forEach(m =>
       (m as Missile).update(this.player.x, this.player.y)
-    );
+    )
   }
 }

@@ -135,6 +135,18 @@
                  "width":0,
                  "x":112,
                  "y":376
+                }, 
+                {
+                 "class":"",
+                 "height":0,
+                 "id":14,
+                 "name":"missile-turret",
+                 "point":true,
+                 "rotation":0,
+                 "visible":true,
+                 "width":0,
+                 "x":524.371038092469,
+                 "y":111.637103809247
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -143,7 +155,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":14,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
