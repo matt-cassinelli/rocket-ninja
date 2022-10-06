@@ -3,8 +3,9 @@ import { InputHandler } from "../helpers/InputHandler";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
 
-    isDead: Boolean = false;
+    health: integer = 100; // isDead: Boolean = false;
     scene: Phaser.Scene;
+    //body: Phaser.Physics.Arcade.Body;
 
     private LEFTRIGHT_FLOOR_SPEED: number = 300;
     private LEFTRIGHT_SPEED_LIMIT: number = 300;
@@ -15,7 +16,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     private WALL_JUMP_UP_SPEED:    number = 290;
     private WALL_JUMP_AWAY_SPEED:  number = 290;
 
-    constructor(scene:Phaser.Scene, x:number, y:number ) {
+    constructor(scene:Phaser.Scene, x:number, y:number)
+    {
         super(scene, x, y, 'player')
         this.scene = scene;
 
@@ -63,7 +65,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         //this.setDisplaySize(40,40)
     }
 
-    update(inputHandler: InputHandler) {
+    move(inputHandler: InputHandler) {
         if (inputHandler.rightPressed) { // If right key is pressed,
             this?.anims.play('right', true)
             if (this.body.blocked.down) { // And on ground,
@@ -109,9 +111,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    damage(amount: number)
+    {
+        this.health -= amount;
+    }
+
     die() {
       //console.log(this); // Debug
-      this.isDead = true;
       this.scene.cameras.main.shake(500, 0.02)
       this.setTint(0xff0000)
       this.anims.play('turn')

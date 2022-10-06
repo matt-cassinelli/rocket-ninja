@@ -4,6 +4,7 @@ export class Missile extends Phaser.Physics.Arcade.Image
 	private TURN_DEGREES_PER_FRAME = 1.18;
 	private IMAGE_SIZE: number = 0.15;
 	private HIT_BOX_SIZE = 70;
+	//body: Phaser.Physics.Arcade.Body;
 
 	constructor(scene:Phaser.Scene, x:number, y:number, initialTargetX?:number, initialTargetY?:number) 
 	{ // Ideally I would keep a reference of our Player in this class. Using update() method instead
