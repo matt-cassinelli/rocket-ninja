@@ -102,7 +102,7 @@ export class Scene1 extends Phaser.Scene
 
     this.physics.add.collider(
       this.player,
-      this.missileGroup, // @ts-ignore
+      this.missileGroup,
       this.handlePlayerMissileCollide,
       undefined,
       this
