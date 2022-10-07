@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <title>My Game</title>
-    <script src="./src/Game.ts"></script>
+    <script src="./src/Main.ts"></script>
     <style>
       * {
-        margin: 0;
+        margin:  0;
         padding: 0;
 		  }
       body {
@@ -16,6 +17,10 @@
         align-items: center;     / handled by Scale Manager instead
         width: 100vw;            /
         height: 100vh;          */
+      }
+      canvas {
+        touch-action:     none;
+        -ms-touch-action: none;
       }
     </style>
   </head>

@@ -15,36 +15,16 @@ export class Scene1 extends Phaser.Scene
   
   private coinGroup!:          Phaser.Physics.Arcade.StaticGroup
   private bombs?:              Phaser.Physics.Arcade.Group
-  private missileTurretGroup!: Phaser.GameObjects.Group // private missileTurrets? //: MissileTurret[];
+  private missileTurretGroup!: Phaser.GameObjects.Group // private missileTurrets?: MissileTurret[];
   private missileGroup!:       Phaser.Physics.Arcade.Group
 
   private score:               number = 0
-  private scoreText?:          Phaser.GameObjects.Text // [todo] Move these to the constructor or create().
+  private scoreText?:          Phaser.GameObjects.Text
   private healthText!:         Phaser.GameObjects.Text
 
   constructor()
   {
     super('Scene1')
-  }
-
-  preload()
-  {
-    this.load.image('ground',         'platform.png');
-    this.load.image('coin',           'coin.png');
-    this.load.image('bomb',           'bomb.png');
-    this.load.image('aura',           'aura-black.png');
-    this.load.image('tile-solid',     'tile-solid.png');
-    this.load.image('missile',        'missile.png');
-    this.load.image('missile-turret', 'missile-turret.png');
-    this.load.tilemapTiledJSON(
-      "map",
-      "map1.json",
-    );
-    this.load.spritesheet(
-      'player', // Spritesheets contain frames for animations.
-      'player-black-29x37.png',
-      {frameWidth: 29, frameHeight: 37}
-    );
   }
 
   create()
@@ -54,8 +34,8 @@ export class Scene1 extends Phaser.Scene
     this.createPlatforms();
 
     const playerTiledObject: Phaser.Types.Tilemaps.TiledObject =
-      this.map.findObject('object-layer', o => o.name === 'player') // [todo] Check this works.
-    this.player = new Player(this, playerTiledObject.x!, playerTiledObject.y!) // 100, 350 //this.add.existing(player)
+      this.map.findObject('object-layer', o => o.name === 'player')
+    this.player = new Player(this, playerTiledObject.x!, playerTiledObject.y!) // 100, 350 // this.add.existing(player)
 
     this.createCoins();
 
@@ -94,7 +74,7 @@ export class Scene1 extends Phaser.Scene
       this.missileGroup, // missileGroup.missiles
       this.platformLayer,
       function(missile: any, platformLayer: any) { // Anonymous function
-        missile.destroy(); //missile.kill();
+        missile.destroy(); // missile.kill();
       },
       undefined,
       this

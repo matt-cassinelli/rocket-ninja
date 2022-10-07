@@ -1,6 +1,6 @@
 export class Coin extends Phaser.GameObjects.Image {
 
-    value: integer; // Ranges from 1-10
+    readonly value: integer; // Ranges from 1-10
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'coin')
