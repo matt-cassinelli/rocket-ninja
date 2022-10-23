@@ -1,5 +1,3 @@
-// In a seperate Scene so it can load once
- 
 export class PreloadAssets extends Phaser.Scene {
  
     constructor() {
@@ -26,13 +24,11 @@ export class PreloadAssets extends Phaser.Scene {
       );
       // [old] this.load.image('tilesets\cavesofgallet_tiles.png', 'my-tileset')
       // [old] this.load.image('tilesets\tiles_packed.png', 'my-tileset')
+      // [old] this.load.tilemapTiledJSON('tileset-dungeon-16x16', 'tilesets/tileset-dungeon-16x16.tsj');
       this.load.image({
         key: 'tileset',
         url: 'tilesets/tileset-dungeon-32x32.png',
       });
-
-      //this.load.tilemapTiledJSON('tileset-dungeon-16x16', 'tilesets/tileset-dungeon-16x16.tsj');
-      
     }
  
     create(): void {

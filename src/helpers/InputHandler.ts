@@ -19,12 +19,12 @@ export class InputHandler {
     leftPressed: boolean = false;
     upPressed: boolean = false;
     attackPressed: boolean = false;
-    //private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
-    //private keyboard //: Phaser.Types.Input.Keyboard
+    // [old] private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
+    // [old] private keyboard //: Phaser.Types.Input.Keyboard
     
     constructor(scene: Phaser.Scene) {
-        //this.cursors = this.input.keyboard.createCursorKeys()
-        //this.keyboard = scene.input.keyboard
+        // [old] this.cursors = this.input.keyboard.createCursorKeys()
+        // [old] this.keyboard = scene.input.keyboard
         this.scene = scene;
 
         this.keyUp    = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);

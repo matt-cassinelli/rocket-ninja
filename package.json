@@ -10,6 +10,8 @@
     "phaser": "3.55.2"
   },
   "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "parcel ./index.html build",
     "start": "parcel ./index.html -p 8080 --open"
   }
 }

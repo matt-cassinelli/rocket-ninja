@@ -7,21 +7,23 @@ import { MissileTurret } from '../objects/MissileTurret'
 
 export class Scene1 extends Phaser.Scene
 {
-  private map!:                Phaser.Tilemaps.Tilemap;
-  private tileset!:            Phaser.Tilemaps.Tileset;
-  private platformLayer!:      Phaser.Tilemaps.TilemapLayer
+  private map!:                 Phaser.Tilemaps.Tilemap;
+  private tileset!:             Phaser.Tilemaps.Tileset;
+  private tileLayerSolids!:     Phaser.Tilemaps.TilemapLayer;
+  private tileLayerBackground!: Phaser.Tilemaps.TilemapLayer;
+  // [idea] private objectLayer!: Phaser.Tilemaps.TilemapLayer; // Phaser.Tilemaps.ObjectLayer;
 
-  private inputHandler!:       InputHandler;
-  private player!:             Player
+  private inputHandler!:        InputHandler;
+  private player!:              Player;
   
-  private coinGroup!:          Phaser.Physics.Arcade.StaticGroup
-  private bombs?:              Phaser.Physics.Arcade.Group
-  private missileTurretGroup!: Phaser.GameObjects.Group // private missileTurrets?: MissileTurret[];
-  private missileGroup!:       Phaser.Physics.Arcade.Group
+  private coinGroup!:           Phaser.Physics.Arcade.StaticGroup;
+  // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
+  private missileTurretGroup!:  Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
+  private missileGroup!:        Phaser.Physics.Arcade.Group;
 
-  private score:               number = 0
-  private scoreText?:          Phaser.GameObjects.Text
-  private healthText!:         Phaser.GameObjects.Text
+  private score:                number = 0;
+  private scoreText?:           Phaser.GameObjects.Text;
+  private healthText!:          Phaser.GameObjects.Text;
 
   constructor()
   {
@@ -30,26 +32,31 @@ export class Scene1 extends Phaser.Scene
 
   create()
   {
-    this.inputHandler = new InputHandler(this)
+    this.inputHandler = new InputHandler(this);
 
-    // Map/Tiled stuff
-    this.map = this.make.tilemap({key: 'map'}) // this.add.tilemap("map");
-
-    // [old] this.map.addTilesetImage('tileset');
+    // Map & layers
+    this.map = this.make.tilemap({key: 'map'}) // [old] this.add.tilemap("map");
     this.tileset = this.map.addTilesetImage('tileset', 'tileset');
+    // [dbg] console.log('tilesets', this.tilemap.tilesets);
+    // [old] this.map.addTilesetImage('tileset');
+    // [old] this.map.addTilesetImage("solids-tileset", "tile-solid");
+    // [old] this.map.setCollision(1);
 
-    // Platforms
+    this.tileLayerSolids = this.map.createLayer('tile-layer-solids', this.tileset); // [old] this.platforms.
+    this.tileLayerSolids.setCollisionByExclusion([-1]); // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
+    this.tileLayerBackground = this.map.createLayer('tile-layer-background', this.tileset);
 
-    //this.map.addTilesetImage("solids-tileset", "tile-solid"); // Needed for Phaser to load it properly
-    this.map.setCollision(1);
-    this.platformLayer = this.map.createLayer('solid-layer', 'tileset'); // this.platforms.
-
-    //console.log('tilesets', this.tilemap.tilesets);
-
+    // Door implementation
+    // [old] this.map.addTilesetImage("door", "door");
+    // [old] const doorTiledObj = this.map.filterObjects('object-layer', o => o.name === 'door')
+    // [old] const door = this.map.createFromObjects('object-layer', {name:'door'})
+    // [idea] this.physics.add.collider(this.player, door)
+    // [idea] this.objectLayer = this.map.createLayer('object-layer', this.tileset);
+    
     // Player
     const playerTiledObject: Phaser.Types.Tilemaps.TiledObject =
       this.map.findObject('object-layer', o => o.name === 'player')
-    this.player = new Player(this, playerTiledObject.x!, playerTiledObject.y!) // 100, 350 // this.add.existing(player)
+    this.player = new Player(this, playerTiledObject.x!, playerTiledObject.y!) // 100, 350 // [idea] this.add.existing(player)
 
     // Coins
     this.coinGroup = this.physics.add.staticGroup({});
@@ -72,17 +79,11 @@ export class Scene1 extends Phaser.Scene
     this.scoreText  = this.add.text(16,  16, 'score: 0',    {fontSize: '32px', color:'#FFF'})
     this.healthText = this.add.text(250, 16, 'health: 100', {fontSize: '32px', color:'#FFF'})
 
-    this.bombs = this.physics.add.group() // [todo] Place according to tilemap.
+    // [todo] this.bombs = this.physics.add.group() // Place according to tilemap.
 
     //____________Colliders____________//
 
-    this.physics.add.collider(this.player, this.platformLayer)
-
-    // [doing]
-    this.map.addTilesetImage("door", "door");
-    const doorTiledObj = this.map.filterObjects('object-layer', o => o.name === 'door')
-    const door = this.map.createFromObjects('object-layer', {name:'door'})
-    this.physics.add.collider(this.player, door)
+    this.physics.add.collider(this.player, this.tileLayerSolids)
 
     this.physics.add.overlap(
       this.player,
@@ -90,8 +91,8 @@ export class Scene1 extends Phaser.Scene
       function (player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject)
       {
         coin.destroy()
-        // (coin as Coin).collect
-        this.score += (<Coin>coin).value // Unfortunately we need to cast because Phaser won't accept custom types as arguments here...
+        // [old] (coin as Coin).collect
+        this.score += (<Coin>coin).value // Unfortunately we need to cast because Phaser won't accept custom types as arguments here.
         this.scoreText?.setText(`score: ${this.score}`)
         // [todo] Add sound fx.
       },
@@ -99,14 +100,14 @@ export class Scene1 extends Phaser.Scene
       this
     )
 
-    this.physics.add.collider(this.bombs, this.platformLayer)
-    this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
+    // [todo] this.physics.add.collider(this.bombs, this.platformLayer)
+    // [todo] this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
 
     this.physics.add.collider(
-      this.missileGroup, // missileGroup.missiles
-      this.platformLayer,
+      this.missileGroup, // [old] missileGroup.missiles
+      this.tileLayerSolids,
       function(missile: any, platformLayer: any) { // Anonymous function
-        missile.destroy(); // missile.kill();
+        missile.destroy(); // [idea] missile.kill();
       },
       undefined,
       this
@@ -121,16 +122,6 @@ export class Scene1 extends Phaser.Scene
         this.healthText.setText(`health: ${this.player.health}`)
         this.cameras.main.shake(100, 0.01)
         return
-      },
-      undefined,
-      this
-    )
-
-    this.physics.add.collider(
-      this.missileGroup, // missileGroup.missiles
-      this.platformLayer,
-      function(missile: any, platformLayer: any) { // Anonymous function
-        missile.destroy(); //missile.kill();
       },
       undefined,
       this
