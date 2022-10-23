@@ -15,7 +15,7 @@ export class Scene1 extends Phaser.Scene
   private player!:             Player
   
   private coinGroup!:          Phaser.Physics.Arcade.StaticGroup
-  private bombs?:              Phaser.Physics.Arcade.Group
+  // [todo] private bombs?:    Phaser.Physics.Arcade.Group
   private missileTurretGroup!: Phaser.GameObjects.Group // [old] private missileTurrets?: MissileTurret[];
   private missileGroup!:       Phaser.Physics.Arcade.Group
 
@@ -34,16 +34,15 @@ export class Scene1 extends Phaser.Scene
 
     // Map/Tiled stuff
     this.map = this.make.tilemap({key: 'map'}) // [old] this.add.tilemap("map");
-
+    this.tileset = this.map.addTilesetImage('tileset', 'tileset');
     // [old] this.map.addTilesetImage('tileset');
-    this.tileset = this.map.addTilesetImage('tileset', 'tileset'); // Needed for Phaser to load it properly
-
-    // Platforms
     // [old] this.map.addTilesetImage("solids-tileset", "tile-solid");
-    this.map.setCollision(1);
-    this.platformLayer = this.map.createLayer('solid-layer', 'tileset'); // [old] this.platforms.
-
     // [dbg] console.log('tilesets', this.tilemap.tilesets);
+
+    // Platform layer
+    this.map.setCollision(1);
+    this.platformLayer = this.map.createLayer('solid-layer', this.tileset); // [old] this.platforms.
+    this.platformLayer.setCollisionByExclusion([-1]); // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
 
     // Player
     const playerTiledObject: Phaser.Types.Tilemaps.TiledObject =
@@ -71,7 +70,7 @@ export class Scene1 extends Phaser.Scene
     this.scoreText  = this.add.text(16,  16, 'score: 0',    {fontSize: '32px', color:'#FFF'})
     this.healthText = this.add.text(250, 16, 'health: 100', {fontSize: '32px', color:'#FFF'})
 
-    this.bombs = this.physics.add.group() // [todo] Place according to tilemap.
+    // [todo] this.bombs = this.physics.add.group() // Place according to tilemap.
 
     //____________Colliders____________//
 
@@ -98,8 +97,8 @@ export class Scene1 extends Phaser.Scene
       this
     )
 
-    this.physics.add.collider(this.bombs, this.platformLayer)
-    this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
+    // [todo] this.physics.add.collider(this.bombs, this.platformLayer)
+    // [todo] this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
 
     this.physics.add.collider(
       this.missileGroup, // [old] missileGroup.missiles
