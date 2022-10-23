@@ -4,10 +4,10 @@ export class Missile extends Phaser.Physics.Arcade.Image
 	private TURN_DEGREES_PER_FRAME = 1.18;
 	private IMAGE_SIZE: number = 0.15;
 	private HIT_BOX_SIZE = 70;
-	//body: Phaser.Physics.Arcade.Body;
+	// [idea] body: Phaser.Physics.Arcade.Body;
 
 	constructor(scene:Phaser.Scene, x:number, y:number, initialTargetX?:number, initialTargetY?:number) 
-	{ // Ideally I would keep a reference of our Player in this class. Using update() method instead
+	{ // Ideally I would keep a reference of our Player in this class. Using update() method for now instead
 		super(scene, x, y, 'missile')
 		scene.add.existing(this)
 		scene.physics.add.existing(this)
@@ -20,6 +20,7 @@ export class Missile extends Phaser.Physics.Arcade.Image
 			(-this.HIT_BOX_SIZE + this.height / 2)
 		);
 
+		// [old]
 		// scene.physics.add.collider(
 		// 	this,
 		// 	scene.platformLayer,
@@ -39,7 +40,7 @@ export class Missile extends Phaser.Physics.Arcade.Image
 
 	update(targetX:number, targetY:number)
 	{
-		//const target = this.target // If using reference
+		// [if using reference] const target = this.target
 		const targetRotation = this.getTargetRotation(targetX, targetY)
 		this.rotateWithLimit(targetRotation, this.TURN_DEGREES_PER_FRAME)
 		this.moveForwards(this.SPEED) // [todo] adjust speed based on distance to player?
@@ -63,17 +64,17 @@ export class Missile extends Phaser.Physics.Arcade.Image
 	{
 		let difference = Phaser.Math.Angle.Wrap(targetRotation - this.rotation)
 	
-		if (Math.abs(difference) < Phaser.Math.DegToRad(this.TURN_DEGREES_PER_FRAME)) // If difference is less than how much we can turn
+		if (Math.abs(difference) < Phaser.Math.DegToRad(this.TURN_DEGREES_PER_FRAME)) // If difference is less than how much we can turn...
 		{
 			this.rotation = targetRotation; // Face target
 		}
-		else // If difference is greater than how much we can turn in one frame
+		else // If difference is greater than how much we can turn in one frame...
 		{
-			if (difference > 0) // If difference is positive
+			if (difference > 0) // If difference is positive...
 			{
 				this.setAngle(this.angle + this.TURN_DEGREES_PER_FRAME) // Rotate clockwise
 			}
-			else // If difference is negative
+			else // If difference is negative...
 			{
 				this.setAngle(this.angle - this.TURN_DEGREES_PER_FRAME) // Rotate anticlockwise
 			}

@@ -3,9 +3,9 @@ import { InputHandler } from "../helpers/InputHandler";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
 
-    health: integer = 100; // isDead: Boolean = false;
+    health: integer = 100; // [old] isDead: Boolean = false;
     scene: Phaser.Scene;
-    //body: Phaser.Physics.Arcade.Body;
+    // [idea] body: Phaser.Physics.Arcade.Body;
 
     private LEFTRIGHT_FLOOR_SPEED: number = 300;
     private LEFTRIGHT_SPEED_LIMIT: number = 300;
@@ -29,9 +29,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true); // Prevent going off-screen.
         this.setMaxVelocity(this.LEFTRIGHT_SPEED_LIMIT, this.UPDOWN_SPEED_LIMIT)
         this.setDrag(this.LEFTRIGHT_INAIR_DRAG, 0);
-        //this.scene.physics.world.enable(this);
-        //this.setFriction(1000) // This method seemed to have no effect. Instead we mimic friction in the update() method
-                                 // by setting velocity when on ground, and setting accel. when in air.
+        // [idea] this.scene.physics.world.enable(this);
+        // [old] this.setFriction(1000) // This method seemed to have no effect. Instead we mimic friction in the update()
+                                        // method by setting velocity when on ground, and setting accel. when in air.
         
         //_________INITIALISE GRAPHICS_________//
 
@@ -61,8 +61,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
           frames: [ { key: 'player', frame: 4} ],
           frameRate: 20
         })
-        //this.setScale(0.5);
-        //this.setDisplaySize(40,40)
+        // [old] this.setScale(0.5);
+        // [old] this.setDisplaySize(40,40)
     }
 
     move(inputHandler: InputHandler) {
@@ -70,7 +70,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this?.anims.play('right', true)
             if (this.body.blocked.down) { // And on ground,
                 this.setVelocityX(this.LEFTRIGHT_FLOOR_SPEED); // Move immediately
-                //this.setAccelerationX(LEFTRIGHT_ACCEL_GROUNDED);
+                // [old] this.setAccelerationX(LEFTRIGHT_ACCEL_GROUNDED);
                 this.setAccelerationX(0);
             }
             else { // But if in air,
@@ -81,7 +81,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this?.anims.play('left', true)
             if (this.body.blocked.down) { 
                 this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED);
-                //this.setAccelerationX(-LEFTRIGHT_ACCEL_GROUNDED);
+                // [old] this.setAccelerationX(-LEFTRIGHT_ACCEL_GROUNDED);
                 this.setAccelerationX(0);
             }
             else {
@@ -102,11 +102,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             }
             else if (this.body.blocked.right) { // If player is by right wall
                 this.setVelocity(-this.WALL_JUMP_AWAY_SPEED, -this.WALL_JUMP_UP_SPEED) // Jump up and away from wall
-                //this.setAccelerationX(-500);
+                // [old] this.setAccelerationX(-500);
             }
             else if (this.body.blocked.left) { // Same for left wall
                 this.setVelocity(this.WALL_JUMP_AWAY_SPEED, -this.WALL_JUMP_UP_SPEED) 
-                //this.setAccelerationX(500);
+                // [old] this.setAccelerationX(500);
             }
         }
     }
@@ -117,7 +117,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     die() {
-      //console.log(this); // Debug
+      // [dbg] console.log(this);
       this.scene.cameras.main.shake(500, 0.02)
       this.setTint(0xff0000)
       this.anims.play('turn')

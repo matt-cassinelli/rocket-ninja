@@ -4,9 +4,9 @@ import { Scene1 } from './scenes/Scene1';
 import { PreloadAssets } from './scenes/PreloadAssets';
 
 const myScaleConfig : Phaser.Types.Core.ScaleConfig = {
-  mode: Phaser.Scale.MAX_ZOOM, // Phaser.Scale.FIT
+  mode: Phaser.Scale.MAX_ZOOM, // [old] Phaser.Scale.FIT
   autoCenter: Phaser.Scale.CENTER_BOTH,
-  // parent: 'game',
+  // [old] parent: 'game',
   width: 1184, // 32px * 37 tiles
   height: 704  // 32px * 22 tiles
 }

@@ -5,15 +5,16 @@ export class Coin extends Phaser.GameObjects.Image {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'coin')
         this.scene = scene;
-        //scene.add.existing(this)
+        // [idea] scene.add.existing(this)
 
         this.value = Math.round(
             (Math.random() * 9) + 1
         )
         this.setScale(1 + (this.value * 0.1))
-        //this.setDisplaySize(40,40)
+        // [idea] this.setDisplaySize(40,40)
     }
 
+    // [idea]
     // collect() {
         // this.disableBody(true, true)
         // this.setActive(false);
