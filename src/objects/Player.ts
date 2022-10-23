@@ -43,6 +43,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             blendMode: 'OVERLAY'
         })
         emitter.startFollow(this)
+        this.setScale(0.9)
         this.scene.add.existing(this); // Add this sprite to the scene.
         this.anims.create({
           key: 'left',
