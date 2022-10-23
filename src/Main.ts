@@ -7,7 +7,7 @@ const myScaleConfig : Phaser.Types.Core.ScaleConfig = {
   mode: Phaser.Scale.MAX_ZOOM, // Phaser.Scale.FIT
   autoCenter: Phaser.Scale.CENTER_BOTH,
   // parent: 'game',
-  width: 1152, // 32px * 36 tiles
+  width: 1184, // 32px * 37 tiles
   height: 704  // 32px * 22 tiles
 }
 
@@ -36,4 +36,4 @@ window.addEventListener('load', () => {
   const game = new Game(myGameConfig);
 });
 
-//new Phaser.Game(myGameConfig);
+// [idea] new Phaser.Game(myGameConfig);
