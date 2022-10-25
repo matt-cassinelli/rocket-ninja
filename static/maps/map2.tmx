@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="37" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="26">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="37" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="31">
  <editorsettings>
   <chunksize width="32" height="32"/>
   <export target="map2.json" format="json"/>
@@ -34,7 +34,7 @@
    </objectgroup>
   </tile>
  </tileset>
- <layer id="6" name="tile-layer-background" width="37" height="22">
+ <layer id="6" name="tile-layer-background" width="37" height="22" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -49,7 +49,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -87,33 +87,43 @@
 </data>
  </layer>
  <objectgroup id="5" name="object-layer-shapes" visible="0">
-  <object id="22" name="turret-1-vision" x="831.465" y="662.801">
-   <polygon points="-88,10.6667 323.955,10.0303 326.365,-628.996 -801.029,-632.572 -802.49,-84.2121 -505.38,-214.544 38.3811,-214.544"/>
+  <object id="22" name="turret-vision" x="831.465" y="662.801">
+   <properties>
+    <property name="for-turret-id" value="29"/>
+   </properties>
+   <polygon points="-15.465,9.199 320.535,9.199 320.535,-630.801 -799.465,-630.801 -799.465,-110.801 -511.465,-214.801 32.535,-214.801"/>
   </object>
  </objectgroup>
  <objectgroup id="2" name="object-layer">
-  <object id="4" name="coin" x="402.256" y="436.707">
+  <object id="4" name="coin" x="400" y="432">
    <point/>
   </object>
-  <object id="5" name="coin" x="1133.94" y="548.191">
+  <object id="5" name="coin" x="1136" y="560">
    <point/>
   </object>
-  <object id="6" name="coin" x="783.279" y="438.198">
+  <object id="6" name="coin" x="784" y="432">
    <point/>
   </object>
-  <object id="7" name="coin" x="58.1265" y="390.117">
+  <object id="7" name="coin" x="48" y="384">
    <point/>
   </object>
-  <object id="9" name="coin" x="1131.02" y="383.809">
+  <object id="9" name="coin" x="1136" y="384">
    <point/>
   </object>
-  <object id="10" name="coin" x="58.5997" y="565.515">
+  <object id="10" name="coin" x="48" y="560">
    <point/>
   </object>
-  <object id="13" name="player" x="597.047" y="628.469">
+  <object id="13" name="player" x="592" y="592">
    <point/>
   </object>
-  <object id="17" name="coin" x="595.212" y="210.299">
+  <object id="17" name="key" x="592" y="144">
+   <point/>
+  </object>
+  <object id="27" name="door" gid="26" x="576" y="448" width="32" height="32"/>
+  <object id="29" name="missile-turret" x="944" y="208">
+   <point/>
+  </object>
+  <object id="30" name="missile-turret" x="240" y="208">
    <point/>
   </object>
  </objectgroup>
