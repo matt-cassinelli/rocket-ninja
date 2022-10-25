@@ -5,14 +5,14 @@ A 2D platformer with a focus on enjoyable movement.
 Dodge rockets and reach the door before your time runs out!
 
 
-## Play:
+## Play
 
 Option 1: https://rocket-ninja.netlify.app/
 
 Option 2: (executable coming soon)
 
 
-## Run locally:
+## Run locally
 
 1. Download or clone the repo
 2. Open a terminal and navigate to the root of the repo

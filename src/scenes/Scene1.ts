@@ -11,22 +11,22 @@ export class Scene1 extends Phaser.Scene
   private tileset!:             Phaser.Tilemaps.Tileset;
   private tileLayerSolids!:     Phaser.Tilemaps.TilemapLayer;
   private tileLayerBackground!: Phaser.Tilemaps.TilemapLayer;
-  // [idea] private objectLayer!: Phaser.Tilemaps.TilemapLayer; // Phaser.Tilemaps.ObjectLayer;
+  private objectLayer!:         Phaser.Tilemaps.ObjectLayer;
 
   private inputHandler!:        InputHandler;
-  private player!:              Player;
   
   private coinGroup!:           Phaser.Physics.Arcade.StaticGroup;
-  // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
   private missileTurretGroup!:  Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
   private missileGroup!:        Phaser.Physics.Arcade.Group;
+  // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
+
+  private player!:              Player;
 
   private score:                number = 0;
   private scoreText?:           Phaser.GameObjects.Text;
   private healthText!:          Phaser.GameObjects.Text;
 
-  constructor()
-  {
+  constructor() {
     super('Scene1')
   }
 
@@ -34,17 +34,47 @@ export class Scene1 extends Phaser.Scene
   {
     this.inputHandler = new InputHandler(this);
 
-    // Map & layers
+    // Load map
     this.map = this.make.tilemap({key: 'map'}) // [old] this.add.tilemap("map");
+
+    // Load tileset
     this.tileset = this.map.addTilesetImage('tileset', 'tileset');
     // [dbg] console.log('tilesets', this.tilemap.tilesets);
     // [old] this.map.addTilesetImage('tileset');
     // [old] this.map.addTilesetImage("solids-tileset", "tile-solid");
     // [old] this.map.setCollision(1);
 
+    // Load layers from map
     this.tileLayerSolids = this.map.createLayer('tile-layer-solids', this.tileset); // [old] this.platforms.
-    this.tileLayerSolids.setCollisionByExclusion([-1]); // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
     this.tileLayerBackground = this.map.createLayer('tile-layer-background', this.tileset);
+    this.objectLayer = this.map.getObjectLayer('object-layer');
+
+    // Create groups to hold objects. This is convenient for handling collisions for all objects of a certain type.
+    this.coinGroup = this.physics.add.staticGroup({});
+    this.missileTurretGroup = this.add.group();
+    this.missileGroup = this.physics.add.group();
+
+    // Instantiate objects for each coordinate in our object layer
+    this.objectLayer.objects.forEach((object) => {
+      // [dbg]console.log(object)
+
+      if (object.name === 'coin') {
+        this.coinGroup.add(
+          new Coin(this, object.x, object.y)
+        )
+      }
+
+      if (object.name === 'missile-turret') {
+        this.missileTurretGroup.add(
+          new MissileTurret(this, object.x, object.y)
+        )
+      }
+
+      if (object.name === 'player') {
+        this.player = new Player(this, object.x, object.y) // [old] 100, 350 // [idea] this.add.existing(player)
+      }
+
+    })
 
     // Door implementation
     // [old] this.map.addTilesetImage("door", "door");
@@ -52,53 +82,14 @@ export class Scene1 extends Phaser.Scene
     // [old] const door = this.map.createFromObjects('object-layer', {name:'door'})
     // [idea] this.physics.add.collider(this.player, door)
     // [idea] this.objectLayer = this.map.createLayer('object-layer', this.tileset);
-    
-    // Player
-    const playerTiledObject: Phaser.Types.Tilemaps.TiledObject =
-      this.map.findObject('object-layer', o => o.name === 'player')
-    this.player = new Player(this, playerTiledObject.x!, playerTiledObject.y!) // 100, 350 // [idea] this.add.existing(player)
-
-    // Coins
-    this.coinGroup = this.physics.add.staticGroup({});
-    this.coinGroup.addMultiple( // @ts-ignore https://phaser.discourse.group/t/10239/3
-      this.map.createFromObjects('object-layer', {name:'coin', key: 'coin', classType: Coin}) // [todo] Change Layer name in Tiled editor
-    )
-
-    // Missiles
-    this.missileTurretGroup = this.add.group();
-    this.missileGroup = this.physics.add.group()
-
-    const missileTurretTiledObjs = this.map.filterObjects('object-layer', o => o.name === 'missile-turret')
-    
-    missileTurretTiledObjs.forEach(tiledObj =>
-      this.missileTurretGroup.add(
-        new MissileTurret(this, tiledObj.x!, tiledObj.y!)
-      )
-    )
 
     this.scoreText  = this.add.text(16,  16, 'score: 0',    {fontSize: '32px', color:'#FFF'})
     this.healthText = this.add.text(250, 16, 'health: 100', {fontSize: '32px', color:'#FFF'})
 
-    // [todo] this.bombs = this.physics.add.group() // Place according to tilemap.
+    //____________Add colliders____________//
 
-    //____________Colliders____________//
-
-    this.physics.add.collider(this.player, this.tileLayerSolids)
-
-    this.physics.add.overlap(
-      this.player,
-      this.coinGroup,
-      function (player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject)
-      {
-        coin.destroy()
-        // [old] (coin as Coin).collect
-        this.score += (<Coin>coin).value // Unfortunately we need to cast because Phaser won't accept custom types as arguments here.
-        this.scoreText?.setText(`score: ${this.score}`)
-        // [todo] Add sound fx.
-      },
-      undefined,
-      this
-    )
+    this.tileLayerSolids.setCollisionByExclusion([-1]); // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
+    this.physics.add.collider(this.player, this.tileLayerSolids) // Are both of these needed?
 
     // [todo] this.physics.add.collider(this.bombs, this.platformLayer)
     // [todo] this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
@@ -122,6 +113,20 @@ export class Scene1 extends Phaser.Scene
         this.healthText.setText(`health: ${this.player.health}`)
         this.cameras.main.shake(100, 0.01)
         return
+      },
+      undefined,
+      this
+    )
+
+    this.physics.add.overlap(
+      this.player,
+      this.coinGroup,
+      function (player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject)
+      {
+        coin.destroy() // [old] (coin as Coin).collect
+        this.score += (<Coin>coin).value // Unfortunately we need to cast because Phaser won't accept custom types as arguments here.
+        this.scoreText?.setText(`score: ${this.score}`)
+        // [todo] Add sound fx.
       },
       undefined,
       this
