@@ -89,11 +89,11 @@
                  "polygon":[
                         {
                          "x":-15.465,
-                         "y":9.19899999999996
+                         "y":9.199
                         }, 
                         {
                          "x":320.535,
-                         "y":9.19899999999996
+                         "y":9.199
                         }, 
                         {
                          "x":320.535,
@@ -236,18 +236,6 @@
                 }, 
                 {
                  "class":"",
-                 "gid":26,
-                 "height":32,
-                 "id":27,
-                 "name":"door",
-                 "rotation":0,
-                 "visible":true,
-                 "width":32,
-                 "x":576,
-                 "y":448
-                }, 
-                {
-                 "class":"",
                  "height":0,
                  "id":29,
                  "name":"missile-turret",
@@ -269,6 +257,18 @@
                  "width":0,
                  "x":240,
                  "y":208
+                }, 
+                {
+                 "class":"door",
+                 "height":0,
+                 "id":31,
+                 "name":"door",
+                 "point":true,
+                 "rotation":0,
+                 "visible":true,
+                 "width":0,
+                 "x":592,
+                 "y":432
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -277,7 +277,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":31,
+ "nextobjectid":32,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",

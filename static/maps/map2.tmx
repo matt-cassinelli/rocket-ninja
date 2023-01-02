@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="37" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="31">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="37" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="32">
  <editorsettings>
   <chunksize width="32" height="32"/>
   <export target="map2.json" format="json"/>
@@ -119,11 +119,13 @@
   <object id="17" name="key" x="592" y="144">
    <point/>
   </object>
-  <object id="27" name="door" gid="26" x="576" y="448" width="32" height="32"/>
   <object id="29" name="missile-turret" x="944" y="208">
    <point/>
   </object>
   <object id="30" name="missile-turret" x="240" y="208">
+   <point/>
+  </object>
+  <object id="31" name="door" class="door" x="592" y="432">
    <point/>
   </object>
  </objectgroup>
