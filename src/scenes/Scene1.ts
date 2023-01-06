@@ -8,6 +8,7 @@ import { Door } from "../objects/Door"
 
 export class Scene1 extends Phaser.Scene
 {
+  private mapKey:               string;
   private map!:                 Phaser.Tilemaps.Tilemap;
   private tileset!:             Phaser.Tilemaps.Tileset;
   private tileLayerSolids!:     Phaser.Tilemaps.TilemapLayer;
@@ -32,19 +33,30 @@ export class Scene1 extends Phaser.Scene
     super('Scene1')
   }
 
+  init(props: any) // This gets called on scene.restart(). Called before preload() and create().
+  {
+    console.log("Init method props: ");
+    console.log(props);
+    const { mapKey } = props;
+    if (mapKey) {
+      this.mapKey = mapKey;
+    } else {
+      this.mapKey = 'map2.json';
+    }
+  }
+
   create()
   {
     this.inputHandler = new InputHandler(this);
 
     // Load map
-    this.map = this.make.tilemap({key: 'map'}) // [old] this.add.tilemap("map");
+    console.log("mapKey: " + this.mapKey);
+    this.map = this.make.tilemap({key: this.mapKey}) // [old] this.add.tilemap("map");
+    console.log("Map: ");
+    console.log(this.map);
 
     // Load tileset
     this.tileset = this.map.addTilesetImage('tileset', 'tileset');
-    // [dbg] console.log('tilesets', this.tilemap.tilesets);
-    // [old] this.map.addTilesetImage('tileset');
-    // [old] this.map.addTilesetImage("solids-tileset", "tile-solid");
-    // [old] this.map.setCollision(1);
 
     // Load layers from map
     this.tileLayerSolids = this.map.createLayer('tile-layer-solids', this.tileset); // [old] this.platforms.
@@ -78,7 +90,8 @@ export class Scene1 extends Phaser.Scene
       }
 
       if (object.name === 'door') {
-        this.door = new Door(this, object.x, object.y);
+        // console.log(object);
+        this.door = new Door(this, object);
       }
 
     })
@@ -149,8 +162,7 @@ export class Scene1 extends Phaser.Scene
       this.player,
       this.door,
       function () {
-        console.log("You touched the door!");
-        return;
+        this.scene.restart({ mapKey: this.door.leadsTo })
       },
       undefined,
       this
@@ -159,7 +171,6 @@ export class Scene1 extends Phaser.Scene
     // this.missileTurretGroup.getChildren().forEach(mt =>
     //   (mt as MissileTurret).fire(this.player.x, this.player.y, this.missileGroup)
     // );
-
   }
 
   update()
