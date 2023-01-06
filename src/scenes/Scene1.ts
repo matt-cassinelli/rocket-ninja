@@ -4,9 +4,11 @@ import { Player } from '../objects/Player'
 import { Coin } from '../objects/Coin'
 import { Missile } from '../objects/Missile'
 import { MissileTurret } from '../objects/MissileTurret'
+import { Door } from "../objects/Door"
 
 export class Scene1 extends Phaser.Scene
 {
+  private mapKey:               string;
   private map!:                 Phaser.Tilemaps.Tilemap;
   private tileset!:             Phaser.Tilemaps.Tileset;
   private tileLayerSolids!:     Phaser.Tilemaps.TilemapLayer;
@@ -17,10 +19,11 @@ export class Scene1 extends Phaser.Scene
   
   private coinGroup!:           Phaser.Physics.Arcade.StaticGroup;
   private missileTurretGroup!:  Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
-  private missileGroup!:        Phaser.Physics.Arcade.Group;
+  private missileGroup!:        Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
   // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
 
   private player!:              Player;
+  private door?:                Door;
 
   private score:                number = 0;
   private scoreText?:           Phaser.GameObjects.Text;
@@ -30,19 +33,30 @@ export class Scene1 extends Phaser.Scene
     super('Scene1')
   }
 
+  init(props: any) // This gets called on scene.restart(). Called before preload() and create().
+  {
+    console.log("Init method props: ");
+    console.log(props);
+    const { mapKey } = props;
+    if (mapKey) {
+      this.mapKey = mapKey;
+    } else {
+      this.mapKey = 'map2.json';
+    }
+  }
+
   create()
   {
     this.inputHandler = new InputHandler(this);
 
     // Load map
-    this.map = this.make.tilemap({key: 'map'}) // [old] this.add.tilemap("map");
+    console.log("mapKey: " + this.mapKey);
+    this.map = this.make.tilemap({key: this.mapKey}) // [old] this.add.tilemap("map");
+    console.log("Map: ");
+    console.log(this.map);
 
     // Load tileset
     this.tileset = this.map.addTilesetImage('tileset', 'tileset');
-    // [dbg] console.log('tilesets', this.tilemap.tilesets);
-    // [old] this.map.addTilesetImage('tileset');
-    // [old] this.map.addTilesetImage("solids-tileset", "tile-solid");
-    // [old] this.map.setCollision(1);
 
     // Load layers from map
     this.tileLayerSolids = this.map.createLayer('tile-layer-solids', this.tileset); // [old] this.platforms.
@@ -65,6 +79,7 @@ export class Scene1 extends Phaser.Scene
       }
 
       if (object.name === 'missile-turret') {
+        // [dbg] console.log(object);
         this.missileTurretGroup.add(
           new MissileTurret(this, object.x, object.y)
         )
@@ -72,6 +87,11 @@ export class Scene1 extends Phaser.Scene
 
       if (object.name === 'player') {
         this.player = new Player(this, object.x, object.y) // [old] 100, 350 // [idea] this.add.existing(player)
+      }
+
+      if (object.name === 'door') {
+        // console.log(object);
+        this.door = new Door(this, object);
       }
 
     })
@@ -86,6 +106,13 @@ export class Scene1 extends Phaser.Scene
     this.scoreText  = this.add.text(16,  16, 'score: 0',    {fontSize: '32px', color:'#FFF'})
     this.healthText = this.add.text(250, 16, 'health: 100', {fontSize: '32px', color:'#FFF'})
 
+    // this.missileTurretGroup.getChildren().forEach(mt => {
+    //   if ( !(mt as MissileTurret).missile ) {
+    //     (mt as MissileTurret).fire(this.player.x, this.player.y, this.missileGroup);
+    //   }
+    // })
+
+
     //____________Add colliders____________//
 
     this.tileLayerSolids.setCollisionByExclusion([-1]); // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
@@ -98,7 +125,7 @@ export class Scene1 extends Phaser.Scene
       this.missileGroup, // [old] missileGroup.missiles
       this.tileLayerSolids,
       function(missile: any, platformLayer: any) { // Anonymous function
-        missile.destroy(); // [idea] missile.kill();
+        missile.destroy();
       },
       undefined,
       this
@@ -110,9 +137,9 @@ export class Scene1 extends Phaser.Scene
       function (player: Player, missile: Missile): void {
         missile.destroy();
         player.damage(70);
-        this.healthText.setText(`health: ${this.player.health}`)
-        this.cameras.main.shake(100, 0.01)
-        return
+        this.healthText.setText(`health: ${this.player.health}`);
+        this.cameras.main.shake(100, 0.01);
+        return;
       },
       undefined,
       this
@@ -121,8 +148,7 @@ export class Scene1 extends Phaser.Scene
     this.physics.add.overlap(
       this.player,
       this.coinGroup,
-      function (player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject)
-      {
+      function (player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject) {
         coin.destroy() // [old] (coin as Coin).collect
         this.score += (<Coin>coin).value // Unfortunately we need to cast because Phaser won't accept custom types as arguments here.
         this.scoreText?.setText(`score: ${this.score}`)
@@ -131,6 +157,20 @@ export class Scene1 extends Phaser.Scene
       undefined,
       this
     )
+
+    this.physics.add.overlap(
+      this.player,
+      this.door,
+      function () {
+        this.scene.restart({ mapKey: this.door.leadsTo })
+      },
+      undefined,
+      this
+    )
+
+    // this.missileTurretGroup.getChildren().forEach(mt =>
+    //   (mt as MissileTurret).fire(this.player.x, this.player.y, this.missileGroup)
+    // );
   }
 
   update()
@@ -147,13 +187,17 @@ export class Scene1 extends Phaser.Scene
     this.inputHandler.update();
     this.player.move(this.inputHandler);
 
-    this.missileTurretGroup.getChildren().forEach(mt => {
-      if (this.missileGroup.countActive() < 1) {
-        this.missileGroup.add(
-          (mt as MissileTurret).fire(this.player.x, this.player.y)
-        )
-      }
-    })
+    //this.missileTurretGroup.getChildren().forEach(mt => {
+      // [todo] cast mt as MissileTurret
+      //this.missileGroup.children.entries
+      //if ( (mt as MissileTurret).missile === undefined ) {
+        //console.log('Missile turrets missile before firing:');
+        //console.log((mt as MissileTurret).missile);
+        //(mt as MissileTurret).fire(this.player.x, this.player.y, this.missileGroup);
+        //console.log('Missile turrets missile after firing:');
+        //console.log((mt as MissileTurret).missile)
+      //}
+    //})
 
     this.missileGroup.getChildren().forEach(m =>
       (m as Missile).update(this.player.x, this.player.y)

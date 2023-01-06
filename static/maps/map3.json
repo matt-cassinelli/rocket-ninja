@@ -38,7 +38,7 @@
          "name":"tile-layer-background",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":37,
          "x":0,
          "y":0
@@ -58,7 +58,7 @@
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -80,56 +80,10 @@
          "draworder":"topdown",
          "id":5,
          "name":"object-layer-shapes",
-         "objects":[
-                {
-                 "class":"",
-                 "height":0,
-                 "id":22,
-                 "name":"turret-vision",
-                 "polygon":[
-                        {
-                         "x":-15.465,
-                         "y":9.199
-                        }, 
-                        {
-                         "x":320.535,
-                         "y":9.199
-                        }, 
-                        {
-                         "x":320.535,
-                         "y":-630.801
-                        }, 
-                        {
-                         "x":-799.465,
-                         "y":-630.801
-                        }, 
-                        {
-                         "x":-799.465,
-                         "y":-110.801
-                        }, 
-                        {
-                         "x":-511.465,
-                         "y":-214.801
-                        }, 
-                        {
-                         "x":32.535,
-                         "y":-214.801
-                        }],
-                 "properties":[
-                        {
-                         "name":"for-turret-id",
-                         "type":"string",
-                         "value":"29"
-                        }],
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":831.465,
-                 "y":662.801
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -141,74 +95,14 @@
                 {
                  "class":"",
                  "height":0,
-                 "id":4,
-                 "name":"coin",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":400,
-                 "y":432
-                }, 
-                {
-                 "class":"",
-                 "height":0,
                  "id":5,
                  "name":"coin",
                  "point":true,
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":1136,
-                 "y":560
-                }, 
-                {
-                 "class":"",
-                 "height":0,
-                 "id":6,
-                 "name":"coin",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":784,
-                 "y":432
-                }, 
-                {
-                 "class":"",
-                 "height":0,
-                 "id":7,
-                 "name":"coin",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":48,
-                 "y":384
-                }, 
-                {
-                 "class":"",
-                 "height":0,
-                 "id":9,
-                 "name":"coin",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":1136,
-                 "y":384
-                }, 
-                {
-                 "class":"",
-                 "height":0,
-                 "id":10,
-                 "name":"coin",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":48,
-                 "y":560
+                 "x":752,
+                 "y":656
                 }, 
                 {
                  "class":"",
@@ -225,42 +119,6 @@
                 {
                  "class":"",
                  "height":0,
-                 "id":17,
-                 "name":"key",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":592,
-                 "y":144
-                }, 
-                {
-                 "class":"",
-                 "height":0,
-                 "id":29,
-                 "name":"missile-turret",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":944,
-                 "y":208
-                }, 
-                {
-                 "class":"",
-                 "height":0,
-                 "id":30,
-                 "name":"missile-turret",
-                 "point":true,
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":240,
-                 "y":208
-                }, 
-                {
-                 "class":"",
-                 "height":0,
                  "id":31,
                  "name":"door",
                  "point":true,
@@ -271,15 +129,15 @@
                          "value":true
                         }, 
                         {
-                         "name":"LeadsTo",
+                         "name":"map4.json",
                          "type":"string",
-                         "value":"map3.json"
+                         "value":""
                         }],
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":592,
-                 "y":432
+                 "x":880,
+                 "y":656
                 }],
          "opacity":1,
          "type":"objectgroup",
