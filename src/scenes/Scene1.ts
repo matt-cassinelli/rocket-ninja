@@ -5,24 +5,28 @@ import { Coin } from '../objects/Coin'
 import { Missile } from '../objects/Missile'
 import { MissileTurret } from '../objects/MissileTurret'
 import { Door } from "../objects/Door"
+import PhaserRaycaster from 'phaser-raycaster';
 
 export class Scene1 extends Phaser.Scene
 {
   private mapKey:               string;
   private map!:                 Phaser.Tilemaps.Tilemap;
   private tileset!:             Phaser.Tilemaps.Tileset;
-  private tileLayerSolids!:     Phaser.Tilemaps.TilemapLayer;
+  tileLayerSolids!:             Phaser.Tilemaps.TilemapLayer;
   private tileLayerBackground!: Phaser.Tilemaps.TilemapLayer;
   private objectLayer!:         Phaser.Tilemaps.ObjectLayer;
+  private objectShapeLayer:     Phaser.Tilemaps.ObjectLayer;
 
+  raycasterPlugin:              PhaserRaycaster;
   private inputHandler!:        InputHandler;
   
   private coinGroup!:           Phaser.Physics.Arcade.StaticGroup;
   private missileTurretGroup!:  Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
-  private missileGroup!:        Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
+  missileGroup!:                Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
+  // private missileVisionGroup?:  Phaser.GameObjects.Group;
   // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
 
-  private player!:              Player;
+  player!:                      Player;
   private door?:                Door;
 
   private score:                number = 0;
@@ -33,10 +37,8 @@ export class Scene1 extends Phaser.Scene
     super('Scene1')
   }
 
-  init(props: any) // This gets called on scene.restart(). Called before preload() and create().
-  {
-    console.log("Init method props: ");
-    console.log(props);
+  init(props: any) { // This gets called on scene.restart(). Called before preload() and create().
+    // [dbg] console.log("Init method props: " + props);
     const { mapKey } = props;
     if (mapKey) {
       this.mapKey = mapKey;
@@ -45,32 +47,31 @@ export class Scene1 extends Phaser.Scene
     }
   }
 
-  create()
-  {
+  create() {
     this.inputHandler = new InputHandler(this);
 
     // Load map
-    console.log("mapKey: " + this.mapKey);
+    // [dbg] console.log("mapKey: " + this.mapKey);
     this.map = this.make.tilemap({key: this.mapKey}) // [old] this.add.tilemap("map");
-    console.log("Map: ");
-    console.log(this.map);
+    // [dbg] console.log("Map: " + this.map);
 
     // Load tileset
     this.tileset = this.map.addTilesetImage('tileset', 'tileset');
 
     // Load layers from map
-    this.tileLayerSolids = this.map.createLayer('tile-layer-solids', this.tileset); // [old] this.platforms.
+    this.tileLayerSolids     = this.map.createLayer('tile-layer-solids', this.tileset); // [old] this.platforms.
     this.tileLayerBackground = this.map.createLayer('tile-layer-background', this.tileset);
-    this.objectLayer = this.map.getObjectLayer('object-layer');
+    this.objectLayer      = this.map.getObjectLayer('object-layer');
+    this.objectShapeLayer = this.map.getObjectLayer('object-layer-shapes');
 
     // Create groups to hold objects. This is convenient for handling collisions for all objects of a certain type.
     this.coinGroup = this.physics.add.staticGroup({});
     this.missileTurretGroup = this.add.group();
     this.missileGroup = this.physics.add.group();
+    //  
 
     // Instantiate objects for each coordinate in our object layer
     this.objectLayer.objects.forEach((object) => {
-      // [dbg]console.log(object)
 
       if (object.name === 'coin') {
         this.coinGroup.add(
@@ -81,7 +82,12 @@ export class Scene1 extends Phaser.Scene
       if (object.name === 'missile-turret') {
         // [dbg] console.log(object);
         this.missileTurretGroup.add(
-          new MissileTurret(this, object.x, object.y)
+          new MissileTurret(
+            this,
+            object.x,
+            object.y,
+            object.id
+          )
         )
       }
 
@@ -90,28 +96,12 @@ export class Scene1 extends Phaser.Scene
       }
 
       if (object.name === 'door') {
-        // console.log(object);
         this.door = new Door(this, object);
       }
-
     })
 
-    // Door implementation
-    // [old] this.map.addTilesetImage("door", "door");
-    // [old] const doorTiledObj = this.map.filterObjects('object-layer', o => o.name === 'door')
-    // [old] const door = this.map.createFromObjects('object-layer', {name:'door'})
-    // [idea] this.physics.add.collider(this.player, door)
-    // [idea] this.objectLayer = this.map.createLayer('object-layer', this.tileset);
-
-    this.scoreText  = this.add.text(16,  16, 'score: 0',    {fontSize: '32px', color:'#FFF'})
-    this.healthText = this.add.text(250, 16, 'health: 100', {fontSize: '32px', color:'#FFF'})
-
-    // this.missileTurretGroup.getChildren().forEach(mt => {
-    //   if ( !(mt as MissileTurret).missile ) {
-    //     (mt as MissileTurret).fire(this.player.x, this.player.y, this.missileGroup);
-    //   }
-    // })
-
+    this.scoreText  = this.add.text(16,  16, `score: ${this.score}`,    {fontSize: '32px', color:'#FFF'})
+    this.healthText = this.add.text(250, 16, `health: ${this.player.health}`, {fontSize: '32px', color:'#FFF'})
 
     //____________Add colliders____________//
 
@@ -167,14 +157,9 @@ export class Scene1 extends Phaser.Scene
       undefined,
       this
     )
-
-    // this.missileTurretGroup.getChildren().forEach(mt =>
-    //   (mt as MissileTurret).fire(this.player.x, this.player.y, this.missileGroup)
-    // );
   }
 
-  update()
-  {
+  update() {
     if (this.player.health < 1) {
       this.player.die();
       this.physics.pause();
@@ -187,21 +172,8 @@ export class Scene1 extends Phaser.Scene
     this.inputHandler.update();
     this.player.move(this.inputHandler);
 
-    //this.missileTurretGroup.getChildren().forEach(mt => {
-      // [todo] cast mt as MissileTurret
-      //this.missileGroup.children.entries
-      //if ( (mt as MissileTurret).missile === undefined ) {
-        //console.log('Missile turrets missile before firing:');
-        //console.log((mt as MissileTurret).missile);
-        //(mt as MissileTurret).fire(this.player.x, this.player.y, this.missileGroup);
-        //console.log('Missile turrets missile after firing:');
-        //console.log((mt as MissileTurret).missile)
-      //}
-    //})
-
     this.missileGroup.getChildren().forEach(m =>
       (m as Missile).update(this.player.x, this.player.y)
     )
   }
-
 }

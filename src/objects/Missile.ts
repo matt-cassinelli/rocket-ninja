@@ -1,3 +1,5 @@
+import { MissileTurret } from "./MissileTurret";
+
 export class Missile extends Phaser.Physics.Arcade.Image
 {
     private SPEED: number = 119;
@@ -6,7 +8,9 @@ export class Missile extends Phaser.Physics.Arcade.Image
 	private HIT_BOX_SIZE = 70;
 	// [idea] body: Phaser.Physics.Arcade.Body;
 
-	constructor(scene:Phaser.Scene, x:number, y:number, initialTargetX?:number, initialTargetY?:number) 
+	// [old] originatingTurret? : MissileTurret;
+
+	constructor(scene:Phaser.Scene, x:number, y:number, initialTargetX?:number, initialTargetY?:number /* [old], originatingTurret?:MissileTurret*/) 
 	{ // Ideally I would keep a reference of our Player in this class. Using update() method for now instead
 		super(scene, x, y, 'missile')
 		scene.add.existing(this)
@@ -20,6 +24,15 @@ export class Missile extends Phaser.Physics.Arcade.Image
 			(-this.HIT_BOX_SIZE + this.height / 2)
 		);
 
+		if (initialTargetX !== undefined && initialTargetY !== undefined)
+		{
+			this.setRotation(
+				this.getTargetRotation(initialTargetX, initialTargetY)
+			)
+		}
+
+		// [old] this.originatingTurret = originatingTurret
+
 		// [old]
 		// scene.physics.add.collider(
 		// 	this,
@@ -28,14 +41,6 @@ export class Missile extends Phaser.Physics.Arcade.Image
 		// 	undefined,
 		// 	this.missileGroup //this.missileGroup.getChildren()[0]
 		// )
-
-		if (initialTargetX !== undefined && initialTargetY !== undefined)
-		{
-			this.setRotation(
-				this.getTargetRotation(initialTargetX, initialTargetY)
-			)
-		}
-
 	}
 
 	update(targetX:number, targetY:number)
@@ -81,8 +86,8 @@ export class Missile extends Phaser.Physics.Arcade.Image
 		}
 	}
 
-	hitWall()
-	{
-		this.destroy
-	}
+	// destroy()
+	// {
+	// 	this.destroy
+	// }
 }
