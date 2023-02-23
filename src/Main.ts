@@ -2,6 +2,7 @@ import 'phaser';
 import { Physics, Scale } from 'phaser';
 import { Scene1 } from './scenes/Scene1';
 import { PreloadAssets } from './scenes/PreloadAssets';
+import PhaserRaycaster from 'phaser-raycaster';
 
 const myScaleConfig : Phaser.Types.Core.ScaleConfig = {
   mode: Phaser.Scale.MAX_ZOOM, // [old] Phaser.Scale.FIT
@@ -23,6 +24,13 @@ const myGameConfig: Phaser.Types.Core.GameConfig = {
       gravity: { y: 400 },
       debug: false
     }
+  },
+  plugins: {
+    scene: [{
+      key: 'PhaserRaycaster',
+      plugin: PhaserRaycaster,
+      mapping: 'raycasterPlugin'
+    }]
   }
 };
 

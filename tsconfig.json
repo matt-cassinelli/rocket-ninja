@@ -6,7 +6,8 @@
     "outDir": "./dist/",
     //"strict": true, // https://maxoid.io/what-is-strict-mode-in-typescript-and-why-and-when-you-should-use-it/
     "noImplicitAny": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
