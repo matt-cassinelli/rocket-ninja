@@ -8,7 +8,6 @@ export class MissileTurret extends Phaser.GameObjects.Image
     private SIZE: number = 50;
     
     missile?: Missile;
-    //vision: Phaser.GameObjects.Polygon;
     raycaster: Raycaster;
     ray: Raycaster.Ray;
     id: number;

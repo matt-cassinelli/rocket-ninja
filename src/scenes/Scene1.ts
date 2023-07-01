@@ -91,7 +91,11 @@ export class Scene1 extends Phaser.Scene
       }
 
       if (object.name === 'player') {
-        this.player = new Player(this, object.x, object.y) // [old] 100, 350 // [idea] this.add.existing(player)
+        // [todo] keep player health when change level
+        // if (this.player === undefined) ...
+        this.player = new Player(this, object.x, object.y); 
+        // else
+        // this.add.existing(player)
       }
 
       if (object.name === 'door') {
@@ -114,7 +118,7 @@ export class Scene1 extends Phaser.Scene
       this.missileGroup, // [old] missileGroup.missiles
       this.tileLayerSolids,
       function(missile: any, platformLayer: any) { // Anonymous function
-        missile.destroy();
+        missile.explode();
       },
       undefined,
       this
@@ -124,7 +128,7 @@ export class Scene1 extends Phaser.Scene
       this.player,
       this.missileGroup,
       function (player: Player, missile: Missile): void {
-        missile.destroy();
+        missile.explode();
         player.damage(70);
         this.healthText.setText(`health: ${this.player.health}`);
         return;

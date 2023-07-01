@@ -7,7 +7,6 @@ export class Missile extends Phaser.Physics.Arcade.Image
 	private IMAGE_SIZE: number = 0.14;
 	private HIT_BOX_SIZE = 70;
 	// [idea] body: Phaser.Physics.Arcade.Body;
-
 	// [old] originatingTurret? : MissileTurret;
 
 	constructor(scene:Phaser.Scene, x:number, y:number, initialTargetX?:number, initialTargetY?:number /* [old], originatingTurret?:MissileTurret*/) 
@@ -30,17 +29,6 @@ export class Missile extends Phaser.Physics.Arcade.Image
 				this.getTargetRotation(initialTargetX, initialTargetY)
 			)
 		}
-
-		// [old] this.originatingTurret = originatingTurret
-
-		// [old]
-		// scene.physics.add.collider(
-		// 	this,
-		// 	scene.platformLayer,
-		// 	this.missileGroup.getChildren()[0].hitWall,
-		// 	undefined,
-		// 	this.missileGroup //this.missileGroup.getChildren()[0]
-		// )
 	}
 
 	update(targetX:number, targetY:number)
@@ -86,8 +74,17 @@ export class Missile extends Phaser.Physics.Arcade.Image
 		}
 	}
 
-	// destroy()
-	// {
-	// 	this.destroy
-	// }
+	explode()
+	{
+        const particles = this.scene.add.particles('explosion'); // If we don't put the emitter first, it appears in front of the player.
+        const emitter = particles.createEmitter({
+            lifespan: {min: 50, max: 300},
+            speed: { min: 100, max: 600 },
+            scale: { start: 0.4, end: 0 },
+			alpha: { start: 1, end: 0 }
+        })
+
+		emitter.explode(30, this.x, this.y);
+		this.destroy();
+	}
 }
