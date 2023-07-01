@@ -64,6 +64,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         })
         // [old] this.setScale(0.5);
         // [old] this.setDisplaySize(40,40)
+
+        this.depth = 1;
     }
 
     move(inputHandler: InputHandler) {
