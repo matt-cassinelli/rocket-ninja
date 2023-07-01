@@ -23,7 +23,6 @@ export class Scene1 extends Phaser.Scene
   private coinGroup!:           Phaser.Physics.Arcade.StaticGroup;
   private missileTurretGroup!:  Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
   missileGroup!:                Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
-  // private missileVisionGroup?:  Phaser.GameObjects.Group;
   // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
 
   player!:                      Player;
@@ -64,7 +63,7 @@ export class Scene1 extends Phaser.Scene
     this.objectLayer      = this.map.getObjectLayer('object-layer');
     this.objectShapeLayer = this.map.getObjectLayer('object-layer-shapes');
 
-    // Create groups to hold objects. This is convenient for handling collisions for all objects of a certain type.
+    // Create groups to hold objects (convenient for handling collisions for all objects of a certain type)
     this.coinGroup = this.physics.add.staticGroup({});
     this.missileTurretGroup = this.add.group();
     this.missileGroup = this.physics.add.group();
@@ -103,7 +102,7 @@ export class Scene1 extends Phaser.Scene
     this.scoreText  = this.add.text(16,  16, `score: ${this.score}`,    {fontSize: '32px', color:'#FFF'})
     this.healthText = this.add.text(250, 16, `health: ${this.player.health}`, {fontSize: '32px', color:'#FFF'})
 
-    //____________Add colliders____________//
+    // #region ADD COLLIDERS
 
     this.tileLayerSolids.setCollisionByExclusion([-1]); // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
     this.physics.add.collider(this.player, this.tileLayerSolids) // Are both of these needed?
@@ -128,7 +127,6 @@ export class Scene1 extends Phaser.Scene
         missile.destroy();
         player.damage(70);
         this.healthText.setText(`health: ${this.player.health}`);
-        this.cameras.main.shake(100, 0.01);
         return;
       },
       undefined,
@@ -157,14 +155,16 @@ export class Scene1 extends Phaser.Scene
       undefined,
       this
     )
+
+    // #endregion
   }
 
   update() {
     if (this.player.health < 1) {
-      this.player.die();
       this.physics.pause();
+      this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' }).setOrigin(0.5, 0.5);
       this.time.addEvent({
-        delay: 1500,
+        delay: 2500,
         callback: () => this.scene.restart()
       });
     }

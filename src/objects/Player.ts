@@ -27,7 +27,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
                                                // required before any physics methods can be used (e.g. setBounce)
         this.setBounce(0); // 0.2
         this.setCollideWorldBounds(true); // Prevent going off-screen.
-        this.setMaxVelocity(this.LEFTRIGHT_SPEED_LIMIT, this.UPDOWN_SPEED_LIMIT)
+        this.setMaxVelocity(this.LEFTRIGHT_SPEED_LIMIT, this.UPDOWN_SPEED_LIMIT);
         this.setDrag(this.LEFTRIGHT_INAIR_DRAG, 0);
         // [idea] this.scene.physics.world.enable(this);
         // [old] this.setFriction(1000) // This method seemed to have no effect. Instead we mimic friction in the update()
@@ -35,15 +35,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         
         //_________INITIALISE GRAPHICS_________//
 
-        const particles = this.scene.add.particles('aura') // If we don't put the emitter first, it appears in front of the player.
+        const particles = this.scene.add.particles('aura'); // If we don't put the emitter first, it appears in front of the player.
         const emitter = particles.createEmitter({
             speed: 20,
             scale: {start: 0.2, end: 0},
             alpha: {start: 0.5, end: 0},
             blendMode: 'OVERLAY'
         })
-        emitter.startFollow(this)
-        this.setScale(0.95)
+        emitter.startFollow(this);
+        this.setScale(0.95);
         this.scene.add.existing(this); // Add this sprite to the scene.
         this.anims.create({
           key: 'left',
@@ -114,13 +114,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     damage(amount: number)
     {
+        this.scene.cameras.main.shake(100, 0.01);
         this.health -= amount;
-    }
-
-    die() {
-      // [dbg] console.log(this);
-      this.scene.cameras.main.shake(100, 0.02)
-      this.setTint(0xff0000)
-      this.anims.play('turn')
     }
 }
