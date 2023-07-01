@@ -4,15 +4,15 @@
   "devDependencies": {
     "parcel-bundler": "1.12.5",
     "parcel-plugin-static-files-copy": "2.6.0",
-    "typescript": "4.8.3"
+    "typescript": "5.1.6"
   },
   "dependencies": {
-    "phaser": "3.55.2",
+    "phaser": "3.60.0",
     "phaser-raycaster": "^0.10.6"
   },
   "scripts": {
     "prebuild-unix": "rm -rf dist",
-    "prebuild": "if exist .next ( rmdir /s /q .next )",
+    "prebuild": "if exist dist ( rmdir /s /q dist )",
     "build": "parcel ./index.html build",
     "start": "parcel ./index.html -p 8080 --open"
   }

@@ -140,9 +140,9 @@ export class Scene1 extends Phaser.Scene
     this.physics.add.overlap(
       this.player,
       this.coinGroup,
-      function (player: Phaser.GameObjects.GameObject, coin: Phaser.GameObjects.GameObject) {
-        coin.destroy() // [old] (coin as Coin).collect
-        this.score += (<Coin>coin).value // Unfortunately we need to cast because Phaser won't accept custom types as arguments here.
+      (player, coin): void => {
+        (coin as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy()
+        this.score += (coin as Coin).value
         this.scoreText?.setText(`score: ${this.score}`)
         // [todo] Add sound fx.
       },

@@ -35,14 +35,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         
         //_________INITIALISE GRAPHICS_________//
 
-        const particles = this.scene.add.particles('aura'); // If we don't put the emitter first, it appears in front of the player.
-        const emitter = particles.createEmitter({
-            speed: 20,
-            scale: {start: 0.2, end: 0},
-            alpha: {start: 0.5, end: 0},
-            blendMode: 'OVERLAY'
-        })
-        emitter.startFollow(this);
+        const particles = this.scene.add.particles(
+            this.x,
+            this.y,
+            'aura',
+            {
+                speed: 20,
+                scale: {start: 0.2, end: 0},
+                alpha: {start: 0.5, end: 0},
+                blendMode: 'OVERLAY'
+            }
+        
+        ); // If we don't put the emitter first, it appears in front of the player.
+
+        particles.startFollow(this);
         this.setScale(0.95);
         this.scene.add.existing(this); // Add this sprite to the scene.
         this.anims.create({

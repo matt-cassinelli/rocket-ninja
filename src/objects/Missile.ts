@@ -76,15 +76,18 @@ export class Missile extends Phaser.Physics.Arcade.Image
 
 	explode()
 	{
-        const particles = this.scene.add.particles('explosion'); // If we don't put the emitter first, it appears in front of the player.
-        const emitter = particles.createEmitter({
-            lifespan: {min: 50, max: 300},
-            speed: { min: 100, max: 600 },
-            scale: { start: 0.4, end: 0 },
-			alpha: { start: 1, end: 0 }
-        })
-
-		emitter.explode(30, this.x, this.y);
+        const particles = this.scene.add.particles(
+			this.x,
+			this.y,
+			'explosion',
+			{
+				lifespan: {min: 50, max: 300},
+				speed: { min: 100, max: 600 },
+				scale: { start: 0.4, end: 0 },
+				alpha: { start: 1, end: 0 }
+			}
+		);
+        particles.explode(30);
 		this.destroy();
 	}
 }
