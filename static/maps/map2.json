@@ -362,7 +362,7 @@
         {
          "columns":6,
          "firstgid":1,
-         "image":"..\/tilesets\/tileset-dungeon-32x32.png",
+         "image":"..\/tilesets\/tileset-simple-32x32.png",
          "imageheight":320,
          "imagewidth":192,
          "margin":0,

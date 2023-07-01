@@ -29,7 +29,7 @@ export class PreloadAssets extends Phaser.Scene {
       );
       this.load.image({
         key: 'tileset',
-        url: 'tilesets/tileset-dungeon-32x32.png',
+        url: 'tilesets/tileset-simple-32x32.png',
       });
     }
  
