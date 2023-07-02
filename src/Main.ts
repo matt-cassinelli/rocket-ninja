@@ -1,7 +1,7 @@
 import 'phaser';
 import { Physics, Scale } from 'phaser';
 import { GameScene } from './scenes/GameScene';
-import { PreloadAssets } from './scenes/PreloadAssets';
+import { LoadingScene } from './scenes/LoadingScene';
 import PhaserRaycaster from 'phaser-raycaster';
 
 const myScaleConfig : Phaser.Types.Core.ScaleConfig = {
@@ -17,7 +17,7 @@ const myGameConfig: Phaser.Types.Core.GameConfig = {
   backgroundColor: 0x333333,
   scale: myScaleConfig,
   parent: 'game',
-  scene: [PreloadAssets, GameScene],
+  scene: [LoadingScene, GameScene],
   physics: {
     default: 'arcade',
     arcade: {

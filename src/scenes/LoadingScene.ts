@@ -1,8 +1,8 @@
-export class PreloadAssets extends Phaser.Scene {
+export class LoadingScene extends Phaser.Scene {
  
     constructor() {
         super({
-            key : 'PreloadAssets'
+            key : 'LoadingScene'
         });
     }
  
@@ -13,7 +13,6 @@ export class PreloadAssets extends Phaser.Scene {
       this.load.on('progress', (value: number) =>
       {
         const padding = 300;
-        console.log(value);
         progress.clear();
         progress.fillStyle(0x15cc1a, 1);
         progress.fillRect(0 + padding, this.scale.height / 2, (this.scale.width * value) - (padding * 2), 18);
