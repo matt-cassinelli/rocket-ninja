@@ -15,10 +15,10 @@ export class InputHandler {
     private keyZ;
     private keyEnter;
 
-    rightPressed: boolean = false;
-    leftPressed: boolean = false;
-    upPressed: boolean = false;
-    attackPressed: boolean = false;
+    rightPressed = false;
+    leftPressed = false;
+    upPressed = false;
+    attackPressed = false;
     // [old] private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     // [old] private keyboard //: Phaser.Types.Input.Keyboard
     
@@ -42,10 +42,10 @@ export class InputHandler {
     }
 
     update() {
-        this.upPressed     = (this.keyUp.isDown || this.keyW.isDown || this.keySpace.isDown)
-        this.leftPressed   = (this.keyLeft.isDown || this.keyA.isDown)
-        this.rightPressed  = (this.keyRight.isDown || this.keyD.isDown)
-        this.attackPressed = (this.keyZ.isDown || this.keyEnter.isDown)
+        this.upPressed     = (this.keyUp.isDown || this.keyW.isDown || this.keySpace.isDown);
+        this.leftPressed   = (this.keyLeft.isDown || this.keyA.isDown);
+        this.rightPressed  = (this.keyRight.isDown || this.keyD.isDown);
+        this.attackPressed = (this.keyZ.isDown || this.keyEnter.isDown);
     }
 
     // [todo] Apply the dependency inversion principle -
