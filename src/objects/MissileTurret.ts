@@ -1,22 +1,20 @@
-import { Missile } from "./Missile"
-import PhaserRaycaster from 'phaser-raycaster'
-import { Scene1 } from '../scenes/Scene1'
+import { Missile } from './Missile';
+import { GameScene } from '../scenes/GameScene';
 
 export class MissileTurret extends Phaser.GameObjects.Image
 {
-    private DELAY: number = 100; // ms
-    private SIZE: number = 50;
+    private DELAY = 100; // ms
+    private SIZE = 50;
     
     missile?: Missile;
-    //vision: Phaser.GameObjects.Polygon;
     raycaster: Raycaster;
     ray: Raycaster.Ray;
     id: number;
     intersections: Phaser.Geom.Point[];
 
-    constructor(scene:Scene1, x:number, y:number, id:number)
+    constructor(scene:GameScene, x:number, y:number, id:number)
     {
-        super(scene, x, y, 'missile-turret')
+        super(scene, x, y, 'missile-turret');
 
         scene.add.existing(this);
         // [old] scene.physics.add.existing(this) // Physics not needed
@@ -44,23 +42,23 @@ export class MissileTurret extends Phaser.GameObjects.Image
         });
 
         this.intersections = this.ray.castCircle();
-
+        
         scene.physics.add.overlap( // @ts-ignore
-            this.ray, 
+            this.ray,
             scene.player,
             function (ray: any, player: Phaser.GameObjects.GameObject) {
-                this.fire(scene.player.x, scene.player.y, scene.missileGroup)
+                this.fire(scene.player.x, scene.player.y, scene.missileGroup);
             },
             this.ray.processOverlap.bind(this.ray),
             this
-        )
+        );
 
         this.addToUpdateList();
     }
 
     fire(initialtargetX:number, initialTargetY:number, missileGroup:Phaser.GameObjects.Group) {
         if (this.missile?.active !== true) {
-            this.missile = new Missile(this.scene, this.x, this.y, initialtargetX, initialTargetY /* [old], this*/)
+            this.missile = new Missile(this.scene, this.x, this.y, initialtargetX, initialTargetY /* [old], this*/);
             missileGroup.add(this.missile);
         }
         // [dbg] console.log("firing missile")
