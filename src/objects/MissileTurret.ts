@@ -1,6 +1,6 @@
 import { Missile } from "./Missile"
 import PhaserRaycaster from 'phaser-raycaster'
-import { Scene1 } from '../scenes/Scene1'
+import { GameScene } from '../scenes/GameScene'
 
 export class MissileTurret extends Phaser.GameObjects.Image
 {
@@ -13,7 +13,7 @@ export class MissileTurret extends Phaser.GameObjects.Image
     id: number;
     intersections: Phaser.Geom.Point[];
 
-    constructor(scene:Scene1, x:number, y:number, id:number)
+    constructor(scene:GameScene, x:number, y:number, id:number)
     {
         super(scene, x, y, 'missile-turret')
 

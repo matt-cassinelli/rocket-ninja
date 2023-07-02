@@ -7,7 +7,7 @@ import { MissileTurret } from '../objects/MissileTurret'
 import { Door } from "../objects/Door"
 import PhaserRaycaster from 'phaser-raycaster';
 
-export class Scene1 extends Phaser.Scene
+export class GameScene extends Phaser.Scene
 {
   private mapKey:               string;
   private map!:                 Phaser.Tilemaps.Tilemap;
@@ -33,7 +33,7 @@ export class Scene1 extends Phaser.Scene
   private healthText!:          Phaser.GameObjects.Text;
 
   constructor() {
-    super('Scene1')
+    super('GameScene')
   }
 
   init(props: any) { // This gets called on scene.restart(). Called before preload() and create().

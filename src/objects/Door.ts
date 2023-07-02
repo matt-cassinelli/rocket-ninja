@@ -1,4 +1,4 @@
-import { Scene1 } from '../scenes/Scene1';
+import { GameScene } from '../scenes/GameScene';
 
 export class Door extends Phaser.GameObjects.Image {
 
@@ -7,7 +7,7 @@ export class Door extends Phaser.GameObjects.Image {
 
     constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
         super(scene, object.x, object.y, 'door-open');
-        //console.log('Instantiating a Door with these properties:'); console.log(object.properties);
+        //console.log('Instantiating a Door with these properties:' + object.properties);
         this.isOpen  = object.properties.find((x:any) => x.name === 'IsOpen')?.value;
         this.leadsTo = object.properties.find((x:any) => x.name === 'LeadsTo')?.value
         scene.add.existing(this);

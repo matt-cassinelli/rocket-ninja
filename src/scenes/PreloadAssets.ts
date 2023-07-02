@@ -34,6 +34,6 @@ export class PreloadAssets extends Phaser.Scene {
     }
  
     create(): void {
-        this.scene.start('Scene1');
+        this.scene.start('GameScene');
     }
 }
