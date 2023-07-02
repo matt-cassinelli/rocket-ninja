@@ -8,6 +8,22 @@ export class PreloadAssets extends Phaser.Scene {
  
     preload(): void
     {
+      const progress = this.add.graphics();
+
+      this.load.on('progress', (value: number) =>
+      {
+        const padding = 300;
+        console.log(value);
+        progress.clear();
+        progress.fillStyle(0x15cc1a, 1);
+        progress.fillRect(0 + padding, this.scale.height / 2, (this.scale.width * value) - (padding * 2), 18);
+      });
+
+      this.load.on('complete', () =>
+      {
+        progress.destroy();
+      });
+
       this.load.image('coin',           'images/coin.png');
       this.load.image('aura',           'images/aura-black.png');
       this.load.image('missile',        'images/missile.png');
@@ -34,6 +50,6 @@ export class PreloadAssets extends Phaser.Scene {
     }
  
     create(): void {
-        this.scene.start('GameScene');
+      this.scene.start('GameScene');
     }
 }
