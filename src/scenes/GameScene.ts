@@ -28,8 +28,8 @@ export class GameScene extends Phaser.Scene
   player!:                      Player;
   private door?:                Door;
 
-  private score:                number = 0;
-  private scoreText?:           Phaser.GameObjects.Text;
+  private gold:                 number = 0;
+  private goldText?:            Phaser.GameObjects.Text;
   private healthText!:          Phaser.GameObjects.Text;
 
   constructor() {
@@ -103,8 +103,9 @@ export class GameScene extends Phaser.Scene
       }
     })
 
-    this.scoreText  = this.add.text(16,  16, `score: ${this.score}`,    {fontSize: '32px', color:'#FFF'})
-    this.healthText = this.add.text(250, 16, `health: ${this.player.health}`, {fontSize: '32px', color:'#FFF'})
+    const padding = 36;
+    this.goldText  = this.add.text(this.scale.width - (padding * 2) - 64,  padding, `${this.gold}`, {fontSize: '48px', color:'#f9c810', align: 'right', fixedWidth: 100});
+    this.healthText = this.add.text(padding, padding, `${this.player.health}`, {fontSize: '48px', color:'#e41051'});
 
     // #region ADD COLLIDERS
 
@@ -130,7 +131,7 @@ export class GameScene extends Phaser.Scene
       function (player: Player, missile: Missile): void {
         missile.explode();
         player.damage(70);
-        this.healthText.setText(`health: ${this.player.health}`);
+        this.healthText.setText(`${this.player.health}`);
         return;
       },
       undefined,
@@ -142,8 +143,8 @@ export class GameScene extends Phaser.Scene
       this.coinGroup,
       (player, coin): void => {
         (coin as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy()
-        this.score += (coin as Coin).value
-        this.scoreText?.setText(`score: ${this.score}`)
+        this.gold += (coin as Coin).value
+        this.goldText?.setText(`${this.gold}`)
         // [todo] Add sound fx.
       },
       undefined,
