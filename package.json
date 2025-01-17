@@ -1,22 +1,24 @@
 {
-  "name": "platformer-game-1",
-  "version": "1.0.0",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
-    "eslint": "^8.44.0",
-    "parcel-bundler": "1.12.5",
-    "parcel-plugin-static-files-copy": "2.6.0",
-    "typescript": "5.1.6"
-  },
+  "name": "rocket-ninja",
+  "private": true,
   "dependencies": {
-    "phaser": "3.60.0",
-    "phaser-raycaster": "^0.10.6"
+    "phaser": "3.87.0",
+    "phaser-raycaster": "0.10.11"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "8.20.0",
+    "@typescript-eslint/parser": "8.20.0",
+    "eslint": "9.18.0",
+    "typescript": "5.7.3",
+    "vite": "6.0.7",
+    "vite-plugin-html": "3.2.2"
   },
   "scripts": {
-    "prebuild-unix": "rm -rf dist",
-    "prebuild": "if exist dist ( rmdir /s /q dist )",
-    "build": "parcel ./index.html build",
-    "start": "parcel ./index.html -p 8080 --open"
+    "clean-unix": "rm -rf dist",
+    "clean-win": "if exist dist ( rmdir /s /q dist )",
+    "build": "npm run clean-unix && tsc && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start": "vite --open"
   }
 }

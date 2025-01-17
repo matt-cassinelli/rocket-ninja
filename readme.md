@@ -18,8 +18,13 @@ Option 2: (executable coming soon)
 2. Open a terminal and navigate to the root of the repo
 3. Install npm
 4. Install project dependencies with `npm install`
-5. Start the dev server (with hot-reload) with `npm run start`, OR
+5. Start the dev server (with hot-reload) with `npm run preview`, OR
 5. Compile a production release with `npm run build`
+
+
+## TODO
+- Player should not be able to hold jump
+- Improve maps
 
 
 ## Design notes

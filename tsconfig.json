@@ -3,7 +3,6 @@
     "target": "ES6",
     "module": "ES6",
     "moduleResolution": "node",
-    "outDir": "./dist/",
     //"strict": true, // https://maxoid.io/what-is-strict-mode-in-typescript-and-why-and-when-you-should-use-it/
     "noImplicitAny": true,
     "sourceMap": true,
