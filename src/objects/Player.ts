@@ -14,8 +14,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private WALL_JUMP_UP_SPEED = 290;
   private WALL_JUMP_AWAY_SPEED = 290;
 
-  constructor(scene:Phaser.Scene, x:number, y:number)
-  {
+  constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
     this.scene = scene;
 
@@ -28,7 +27,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setDrag(this.LEFTRIGHT_INAIR_DRAG, 0);
     // [idea] this.scene.physics.world.enable(this);
     // [old] this.setFriction(1000) // This method seemed to have no effect. Instead we mimic friction in the update() method by setting velocity when on ground, and setting accel. when in air.
-        
+
     //_________INITIALISE GRAPHICS_________//
 
     const trail = this.scene.add.particles(
@@ -37,8 +36,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       'aura',
       {
         speed: 20,
-        scale: {start: 0.2, end: 0},
-        alpha: {start: 0.5, end: 0},
+        scale: { start: 0.2, end: 0 },
+        alpha: { start: 0.5, end: 0 },
         blendMode: 'OVERLAY'
       }
     ); // If we don't put the emitter first, it appears in front of the player.
@@ -49,19 +48,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.add.existing(this); // Add this sprite to the scene.
     this.anims.create({
       key: 'left',
-      frames: this.anims.generateFrameNumbers('player', {start: 0, end: 3}),
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
       frameRate: 10,
       repeat: -1 // Loop forever.
     });
     this.anims.create({
       key: 'right',
-      frames: this.anims.generateFrameNumbers('player', {start: 5, end: 8}),
+      frames: this.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
       frameRate: 10,
       repeat: -1
     });
     this.anims.create({
       key: 'turn',
-      frames: [ { key: 'player', frame: 4} ],
+      frames: [{ key: 'player', frame: 4 }],
       frameRate: 20
     });
     // [old] this.setScale(0.5);
@@ -110,14 +109,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         // [old] this.setAccelerationX(-500);
       }
       else if (this.body.blocked.left) { // Same for left wall
-        this.setVelocity(this.WALL_JUMP_AWAY_SPEED, -this.WALL_JUMP_UP_SPEED); 
+        this.setVelocity(this.WALL_JUMP_AWAY_SPEED, -this.WALL_JUMP_UP_SPEED);
         // [old] this.setAccelerationX(500);
       }
     }
   }
 
-  damage(amount: number)
-  {
+  damage(amount: number) {
     this.scene.cameras.main.shake(100, 0.04);
     this.health -= amount;
   }

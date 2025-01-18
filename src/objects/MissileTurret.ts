@@ -1,76 +1,73 @@
 import { Missile } from './Missile';
 import { GameScene } from '../scenes/GameScene';
 
-export class MissileTurret extends Phaser.GameObjects.Image
-{
-    private DELAY = 100; // ms
-    private SIZE = 50;
-    
-    missile?: Missile;
-    raycaster: Raycaster;
-    ray: Raycaster.Ray;
-    id: number;
-    intersections: Phaser.Geom.Point[];
+export class MissileTurret extends Phaser.GameObjects.Image {
+  private DELAY = 100; // ms
+  private SIZE = 50;
 
-    constructor(scene:GameScene, x:number, y:number, id:number)
-    {
-        super(scene, x, y, 'missile-turret');
+  missile?: Missile;
+  raycaster: Raycaster;
+  ray: Raycaster.Ray;
+  id: number;
+  intersections: Phaser.Geom.Point[];
 
-        scene.add.existing(this);
-        // [old] scene.physics.add.existing(this) // Physics not needed
-        this.scene = scene; // needed?
-        this.setDisplaySize(this.SIZE, this.SIZE);
-        
-        // [todo] Delay firing to match sound
-        // new Phaser.Time.TimerEvent(
-        //     {delay: 100, repeat: 20}
-        // )
+  constructor(scene: GameScene, x: number, y: number, id: number) {
+    super(scene, x, y, 'missile-turret');
 
-        // [idea] Allow multiple missiles
-        // this.missiles = [];
+    scene.add.existing(this);
+    // [old] scene.physics.add.existing(this) // Physics not needed
+    this.scene = scene; // needed?
+    this.setDisplaySize(this.SIZE, this.SIZE);
 
-        this.id = id;
+    // [todo] Delay firing to match sound
+    // new Phaser.Time.TimerEvent(
+    //     {delay: 100, repeat: 20}
+    // )
 
-        this.raycaster = scene.raycasterPlugin.createRaycaster({debug: false});
-        this.raycaster.mapGameObjects(scene.player, true);
-        this.raycaster.mapGameObjects(scene.tileLayerSolids, false, {collisionTiles: [-1]});
-        
-        this.ray = this.raycaster.createRay({
-            origin: {x: x, y: y},
-            autoSlice: true,
-            enablePhysics: true
-        });
+    // [idea] Allow multiple missiles
+    // this.missiles = [];
 
-        this.intersections = this.ray.castCircle();
-        
-        scene.physics.add.overlap( // @ts-ignore
-            this.ray,
-            scene.player,
-            function (ray: any, player: Phaser.GameObjects.GameObject) {
-                this.fire(scene.player.x, scene.player.y, scene.missileGroup);
-            },
-            this.ray.processOverlap.bind(this.ray),
-            this
-        );
+    this.id = id;
 
-        this.addToUpdateList();
+    this.raycaster = scene.raycasterPlugin.createRaycaster({ debug: false });
+    this.raycaster.mapGameObjects(scene.player, true);
+    this.raycaster.mapGameObjects(scene.tileLayerSolids, false, { collisionTiles: [-1] });
+
+    this.ray = this.raycaster.createRay({
+      origin: { x: x, y: y },
+      autoSlice: true,
+      enablePhysics: true
+    });
+
+    this.intersections = this.ray.castCircle();
+
+    scene.physics.add.overlap( // @ts-ignore
+      this.ray,
+      scene.player,
+      function (ray: any, player: Phaser.GameObjects.GameObject) {
+        this.fire(scene.player.x, scene.player.y, scene.missileGroup);
+      },
+      this.ray.processOverlap.bind(this.ray),
+      this
+    );
+
+    this.addToUpdateList();
+  }
+
+  fire(initialtargetX: number, initialTargetY: number, missileGroup: Phaser.GameObjects.Group) {
+    if (this.missile?.active !== true) {
+      this.missile = new Missile(this.scene, this.x, this.y, initialtargetX, initialTargetY /* [old], this*/);
+      missileGroup.add(this.missile);
     }
+    // [dbg] console.log("firing missile")
+    // [todo] play sound, then wait a bit before firing
+    // [idea] this.missiles.push(...
+    // [old] return this.missile
+  }
 
-    fire(initialtargetX:number, initialTargetY:number, missileGroup:Phaser.GameObjects.Group) {
-        if (this.missile?.active !== true) {
-            this.missile = new Missile(this.scene, this.x, this.y, initialtargetX, initialTargetY /* [old], this*/);
-            missileGroup.add(this.missile);
-        }
-        // [dbg] console.log("firing missile")
-        // [todo] play sound, then wait a bit before firing
-        // [idea] this.missiles.push(...
-        // [old] return this.missile
-    }
+  update() {
+    this.intersections = this.ray.castCircle();
+  }
 
-    update()
-    {
-        this.intersections = this.ray.castCircle();
-    }
-
-    // [idea] canSeePlayer(player) {}
+  // [idea] canSeePlayer(player) {}
 }

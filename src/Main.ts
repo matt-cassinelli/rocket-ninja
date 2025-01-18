@@ -3,7 +3,7 @@ import { GameScene } from './scenes/GameScene';
 import { LoadingScene } from './scenes/LoadingScene';
 import PhaserRaycaster from 'phaser-raycaster';
 
-const myScaleConfig : Phaser.Types.Core.ScaleConfig = {
+const myScaleConfig: Phaser.Types.Core.ScaleConfig = {
   mode: Phaser.Scale.MAX_ZOOM, // [old] Phaser.Scale.FIT
   autoCenter: Phaser.Scale.CENTER_BOTH,
   // [old] parent: 'game',

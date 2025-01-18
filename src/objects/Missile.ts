@@ -68,7 +68,7 @@ export class Missile extends Phaser.Physics.Arcade.Image {
       this.y,
       'explosion',
       {
-        lifespan: {min: 50, max: 300},
+        lifespan: { min: 50, max: 300 },
         speed: { min: 100, max: 600 },
         scale: { start: 0.4, end: 0 },
         alpha: { start: 1, end: 0 }

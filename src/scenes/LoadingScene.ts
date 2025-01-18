@@ -36,11 +36,11 @@ export class LoadingScene extends Phaser.Scene {
     this.load.spritesheet( // Spritesheets contain frames for animations.
       'player',
       'spritesheets/player-black-29x37.png',
-      {frameWidth: 29, frameHeight: 37}
+      { frameWidth: 29, frameHeight: 37 }
     );
     this.load.image({
       key: 'tileset',
-      url: 'tilesets/tileset-simple-32x32.png',
+      url: 'tilesets/tileset-simple-32x32.png'
     });
   }
 
