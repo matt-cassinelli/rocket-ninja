@@ -21,6 +21,8 @@
     "build": "npm run clean-unix && tsc && vite build",
     "lint": "eslint",
     "preview": "vite preview",
-    "start": "vite --open"
+    "start": "vite --open",
+
+    "dev": "vite --config vite/config.dev.mjs"
   }
 }

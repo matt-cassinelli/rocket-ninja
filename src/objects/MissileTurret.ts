@@ -11,8 +11,8 @@ export class MissileTurret extends Phaser.GameObjects.Image {
   id: number;
   intersections: Phaser.Geom.Point[];
 
-  constructor(scene: GameScene, x: number, y: number, id: number) {
-    super(scene, x, y, 'missile-turret');
+  constructor(scene: GameScene, object: Phaser.Types.Tilemaps.TiledObject) {
+    super(scene, object.x, object.y, 'missile-turret');
 
     scene.add.existing(this);
     // [old] scene.physics.add.existing(this) // Physics not needed
@@ -27,14 +27,14 @@ export class MissileTurret extends Phaser.GameObjects.Image {
     // [idea] Allow multiple missiles
     // this.missiles = [];
 
-    this.id = id;
+    this.id = object.id;
 
     this.raycaster = scene.raycasterPlugin.createRaycaster({ debug: false });
     this.raycaster.mapGameObjects(scene.player, true);
     this.raycaster.mapGameObjects(scene.tileLayerSolids, false, { collisionTiles: [-1] });
 
     this.ray = this.raycaster.createRay({
-      origin: { x: x, y: y },
+      origin: { x: object.x, y: object.y },
       autoSlice: true,
       enablePhysics: true
     });

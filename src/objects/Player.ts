@@ -14,8 +14,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private WALL_JUMP_UP_SPEED = 290;
   private WALL_JUMP_AWAY_SPEED = 290;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, 'player');
+  constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
+    super(scene, object.x, object.y, 'player');
     this.scene = scene;
 
     //_________INITIALISE PHYSICS_________//
@@ -83,7 +83,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     else if (inputHandler.leftPressed) { // Same for left key
       this?.anims.play('left', true);
-      if (this.body.blocked.down) { 
+      if (this.body.blocked.down) {
         this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED);
         // [old] this.setAccelerationX(-LEFTRIGHT_ACCEL_GROUNDED);
         this.setAccelerationX(0);

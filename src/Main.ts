@@ -1,26 +1,23 @@
-import 'phaser';
+import { Game, Types } from 'phaser';
 import { GameScene } from './scenes/GameScene';
 import { LoadingScene } from './scenes/LoadingScene';
 import PhaserRaycaster from 'phaser-raycaster';
 
-const myScaleConfig: Phaser.Types.Core.ScaleConfig = {
-  mode: Phaser.Scale.MAX_ZOOM, // [old] Phaser.Scale.FIT
-  autoCenter: Phaser.Scale.CENTER_BOTH,
-  // [old] parent: 'game',
-  width: 1184, // 32px * 37 tiles
-  height: 704  // 32px * 22 tiles
-};
-
-const myGameConfig: Phaser.Types.Core.GameConfig = {
+const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
+  width: 1184, // 32px * 37 tiles
+  height: 704, // 32px * 22 tiles
+  parent: 'game-container',
   backgroundColor: 0x333333,
-  scale: myScaleConfig,
-  parent: 'game',
+  scale: {
+    mode: Phaser.Scale.MAX_ZOOM, // [old] Phaser.Scale.FIT
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
   scene: [LoadingScene, GameScene],
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 400 },
+      gravity: { x: 0, y: 400 },
       debug: false
     }
   },
@@ -33,12 +30,4 @@ const myGameConfig: Phaser.Types.Core.GameConfig = {
   }
 };
 
-export class Game extends Phaser.Game {
-  constructor(config: Phaser.Types.Core.GameConfig) {
-    super(config);
-  }
-}
-
-window.addEventListener('load', () => {
-  new Game(myGameConfig);
-});
+export default new Game(config);

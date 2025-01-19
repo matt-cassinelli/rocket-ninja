@@ -24,13 +24,16 @@ module.exports = [
       'prefer-const': 'warn',
       'no-unused-vars': 'warn',
 
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+
       '@stylistic/semi': ['warn', 'always'],
       '@stylistic/eol-last': 'warn',
       '@stylistic/no-multiple-empty-lines': 'warn',
       '@stylistic/no-trailing-spaces': 'warn',
       '@stylistic/object-curly-spacing': ['warn', 'always'],
       '@stylistic/object-curly-newline': 'warn',
-      '@stylistic/indent': ['warn', 2, { ignoredNodes: ['ConditionalExpression'] }],
+      '@stylistic/indent': ['warn', 2, { ignoredNodes: ['ConditionalExpression'], SwitchCase: 1 }],
       '@stylistic/brace-style': ['warn', 'stroustrup', { allowSingleLine: true }],
       '@stylistic/type-annotation-spacing': 'warn',
       '@stylistic/comma-dangle': ['warn', 'never'],
