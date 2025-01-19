@@ -5,8 +5,8 @@ export class Door extends Phaser.GameObjects.Image {
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'door-open');
-    console.log('Instantiating a Door with these properties:');
-    console.log(object.properties);
+    //console.log('Instantiating a Door with these properties:');
+    //console.log(object.properties);
     this.isOpen  = object.properties.find((x: Phaser.Types.Tilemaps.TiledObject) => x.name === 'IsOpen')?.value;
     this.leadsTo = object.properties.find((x: Phaser.Types.Tilemaps.TiledObject) => x.name === 'LeadsTo')?.value;
     this.id = object.properties.find((x: Phaser.Types.Tilemaps.TiledObject) => x.name === 'DoorId')?.value;

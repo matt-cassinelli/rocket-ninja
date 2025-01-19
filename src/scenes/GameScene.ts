@@ -30,7 +30,7 @@ export class GameScene extends Phaser.Scene {
 
   private gold = 0;
   private goldText?:            Phaser.GameObjects.Text;
-  private healthText!:          Phaser.GameObjects.Text;
+  private healthText:           Phaser.GameObjects.Text | undefined;
 
   constructor() {
     super('GameScene');
@@ -111,12 +111,7 @@ export class GameScene extends Phaser.Scene {
       padding, `${this.gold}`,
       { fontSize: '48px', color: '#f9c810', align: 'right', fixedWidth: 100 }
     );
-    this.healthText = this.add.text(
-      padding,
-      padding,
-      `${this.player.health}`,
-      { fontSize: '48px', color: '#e41051' }
-    );
+    this.renderHealth(this.player.health);
 
     // Add colliders
     // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
@@ -189,11 +184,21 @@ export class GameScene extends Phaser.Scene {
       undefined,
       this
     );
+
+    // Timers
+    this.time.addEvent({
+      delay: 1000, // ms
+      callback: () => {
+        this.player.health -= 1;
+        this.renderHealth(this.player.health);
+      },
+      loop: true
+    });
   }
 
   // Update each frame (keep lightweight)
   update() {
-    if (this.player.health <= 0) {
+    if (this.player.isDead()) {
       this.physics.pause();
       this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
         .setOrigin(0.5, 0.5);
@@ -209,5 +214,20 @@ export class GameScene extends Phaser.Scene {
     this.missileGroup.getChildren().forEach(m =>
       (m as Missile).update(this.player.x, this.player.y)
     );
+  }
+
+  renderHealth(value: number): void {
+    const padding = 36;
+    if (this.healthText) {
+      this.healthText.setText(`${value}`);
+    }
+    else {
+      this.healthText = this.add.text(
+        padding,
+        padding,
+        `${value}`,
+        { fontSize: '48px', color: '#e41051' }
+      );
+    }
   }
 }

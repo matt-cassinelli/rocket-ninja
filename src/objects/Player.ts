@@ -1,7 +1,7 @@
 import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  health: integer = 100; // [old] isDead: Boolean = false;
+  health: integer = 200;
   scene: Phaser.Scene;
   // [idea] body: Phaser.Physics.Arcade.Body;
 
@@ -118,5 +118,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   damage(amount: number) {
     this.scene.cameras.main.shake(100, 0.04);
     this.health -= amount;
+  }
+
+  isDead(): boolean {
+    return this.health <= 0;
   }
 }
