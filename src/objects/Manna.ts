@@ -1,8 +1,8 @@
-export class Coin extends Phaser.GameObjects.Image {
+export class Manna extends Phaser.GameObjects.Image {
   readonly value: integer; // Ranges from 1-10
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
-    super(scene, object.x, object.y, 'coin');
+    super(scene, object.x, object.y, 'manna');
     // [old] this.scene = scene;
     scene.add.existing(this);
 
@@ -10,9 +10,7 @@ export class Coin extends Phaser.GameObjects.Image {
       (Math.random() * 9) + 1
     );
 
-    this.setScale(1 + (this.value * 0.1));
-    // [idea] this.setDisplaySize(40,40)
-    // [dbg] console.log(this)
+    this.setScale(0.1 + (this.value * 0.09));
   }
 
   // [idea]

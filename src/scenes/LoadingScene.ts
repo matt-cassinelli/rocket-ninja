@@ -19,7 +19,7 @@ export class LoadingScene extends Phaser.Scene {
       progress.destroy();
     });
 
-    this.load.image('coin',           'images/coin.png');
+    this.load.image('manna',          'images/manna.png');
     this.load.image('aura',           'images/aura-black.png');
     this.load.image('missile',        'images/missile.png');
     this.load.image('missile-turret', 'images/missile-turret.png');

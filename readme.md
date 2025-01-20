@@ -22,7 +22,6 @@ https://rocket-ninja.netlify.app/
 
 ## TODO
 - Closed door visual
-- Health pickups. Combine health & gold
 - Represent health with bar
 - Player should not be able to hold jump
 - Improve maps

@@ -1,7 +1,7 @@
 import { Physics } from 'phaser';
 import { InputHandler } from '../helpers/InputHandler';
 import { Player } from '../objects/Player';
-import { Coin } from '../objects/Coin';
+import { Manna } from '../objects/Manna';
 import { Missile } from '../objects/Missile';
 import { MissileTurret } from '../objects/MissileTurret';
 import { Door } from '../objects/Door';
@@ -19,7 +19,7 @@ export class GameScene extends Phaser.Scene {
   raycasterPlugin:              PhaserRaycaster;
   private inputHandler!:        InputHandler;
 
-  private coinGroup!:           Phaser.Physics.Arcade.StaticGroup;
+  private mannaGroup!:          Phaser.Physics.Arcade.StaticGroup;
   private missileTurretGroup!:  Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
   missileGroup!:                Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
   private keys!: Phaser.GameObjects.Group;
@@ -28,8 +28,6 @@ export class GameScene extends Phaser.Scene {
   player!:                      Player;
   private door?:                Door;
 
-  private gold = 0;
-  private goldText?:            Phaser.GameObjects.Text;
   private healthText:           Phaser.GameObjects.Text | undefined;
 
   constructor() {
@@ -64,7 +62,7 @@ export class GameScene extends Phaser.Scene {
     this.objectShapeLayer = this.map.getObjectLayer('object-layer-shapes');
 
     // Create groups to hold objects (convenient for handling collisions for all objects of a certain type)
-    this.coinGroup = this.physics.add.staticGroup({});
+    this.mannaGroup = this.physics.add.staticGroup({});
     this.missileTurretGroup = this.add.group();
     this.missileGroup = this.physics.add.group();
     this.keys = this.physics.add.staticGroup();
@@ -72,9 +70,9 @@ export class GameScene extends Phaser.Scene {
     // Instantiate objects for each coordinate in our object layer
     this.objectLayer.objects.forEach((object) => {
       switch (object.name) { // TODO: object.type or object.name?
-        case 'coin': {
-          this.coinGroup.add(
-            new Coin(this, object)
+        case 'manna': {
+          this.mannaGroup.add(
+            new Manna(this, object)
           );
           break;
         }
@@ -105,12 +103,6 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    const padding = 36;
-    this.goldText  = this.add.text(
-      this.scale.width - (padding * 2) - 64,
-      padding, `${this.gold}`,
-      { fontSize: '48px', color: '#f9c810', align: 'right', fixedWidth: 100 }
-    );
     this.renderHealth(this.player.health);
 
     // Add colliders
@@ -137,7 +129,7 @@ export class GameScene extends Phaser.Scene {
       function(player: Player, missile: Missile): void {
         missile.explode();
         player.damage(70);
-        this.healthText.setText(`${this.player.health}`);
+        this.renderHealth(player.health);
         return;
       },
       undefined,
@@ -146,11 +138,11 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.add.overlap(
       this.player,
-      this.coinGroup,
-      (player, coin): void => {
-        (coin as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy();
-        this.gold += (coin as Coin).value; // TODO: Should the player hold this instead?
-        this.goldText?.setText(`${this.gold}`);
+      this.mannaGroup,
+      (player, manna): void => {
+        (manna as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy();
+        this.player.health += (manna as Manna).value; // TODO: Should the player hold this instead?
+        this.renderHealth(this.player.health);
         // TODO: Add sound fx.
       },
       undefined,
@@ -162,7 +154,6 @@ export class GameScene extends Phaser.Scene {
       this.keys,
       (player, key): void => {
         const door = this.door;
-        console.log('Player touched key');
         if ((key as Key).forDoor === door.id) {
           door.open();
           // TODO: Is this still the standard way?
@@ -178,6 +169,7 @@ export class GameScene extends Phaser.Scene {
       this.door, // TODO: Door group
       (player, door): void => {
         if ((door as Door).isOpen) {
+          this.healthText = undefined;
           this.scene.restart({ mapKey: (door as Door).leadsTo });
         }
       },
@@ -185,7 +177,6 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
-    // Timers
     this.time.addEvent({
       delay: 1000, // ms
       callback: () => {
@@ -198,14 +189,8 @@ export class GameScene extends Phaser.Scene {
 
   // Update each frame (keep lightweight)
   update() {
-    if (this.player.isDead()) {
-      this.physics.pause();
-      this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
-        .setOrigin(0.5, 0.5);
-      this.time.addEvent({
-        delay: 2500,
-        callback: () => this.scene.restart()
-      });
+    if (this.player?.isDead()) {
+      this.endGame();
     }
 
     this.inputHandler.update();
@@ -229,5 +214,19 @@ export class GameScene extends Phaser.Scene {
         { fontSize: '48px', color: '#e41051' }
       );
     }
+  }
+
+  endGame(): void {
+    this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
+      .setOrigin(0.5, 0.5);
+    this.healthText = undefined; // We get an error without this.
+    //this.game.pause();
+    //this.events.removeAllListeners();
+    this.physics.pause();
+    this.time.addEvent({
+      delay: 2500,
+      callback: () => this.scene.restart()
+    });
+    //this.scene.stop();
   }
 }

@@ -93,31 +93,30 @@
          "name":"object-layer",
          "objects":[
                 {
-                 "class":"",
                  "height":0,
                  "id":5,
-                 "name":"coin",
+                 "name":"manna",
                  "point":true,
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":752,
                  "y":656
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":13,
                  "name":"player",
                  "point":true,
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":592,
                  "y":592
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":31,
                  "name":"door",
@@ -134,6 +133,7 @@
                          "value":""
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":880,
@@ -149,7 +149,7 @@
  "nextobjectid":32,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.9.2",
+ "tiledversion":"1.11.1",
  "tileheight":32,
  "tilesets":[
         {
@@ -161,7 +161,7 @@
          "margin":0,
          "name":"tileset",
          "spacing":0,
-         "tilecount":60,
+         "tilecount":6,
          "tileheight":32,
          "tilerendersize":"grid",
          "tiles":[
@@ -170,15 +170,14 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
-                             "class":"",
                              "height":32,
                              "id":1,
                              "name":"",
                              "rotation":0,
+                             "type":"",
                              "visible":true,
                              "width":32,
                              "x":0,
@@ -192,34 +191,33 @@
                     }
                 }, 
                 {
-                 "class":"door",
-                 "id":25
+                 "id":25,
+                 "type":"door"
                 }, 
                 {
                  "id":26,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
-                             "class":"",
                              "height":32,
                              "id":1,
                              "name":"",
                              "rotation":0,
+                             "type":"",
                              "visible":true,
                              "width":32,
                              "x":0,
                              "y":0
                             }, 
                             {
-                             "class":"",
                              "height":32,
                              "id":2,
                              "name":"",
                              "rotation":0,
+                             "type":"",
                              "visible":true,
                              "width":32,
                              "x":0,
@@ -237,15 +235,14 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
-                             "class":"",
                              "height":32,
                              "id":1,
                              "name":"",
                              "rotation":0,
+                             "type":"",
                              "visible":true,
                              "width":32,
                              "x":0,
@@ -263,15 +260,14 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
-                             "class":"",
                              "height":14.4974,
                              "id":1,
                              "name":"",
                              "rotation":0,
+                             "type":"",
                              "visible":true,
                              "width":32,
                              "x":0,
@@ -289,15 +285,14 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
-                             "class":"",
                              "height":32,
                              "id":1,
                              "name":"",
                              "rotation":0,
+                             "type":"",
                              "visible":true,
                              "width":32,
                              "x":0,
@@ -314,6 +309,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":"1.9",
+ "version":"1.10",
  "width":37
 }
