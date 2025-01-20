@@ -1,16 +1,19 @@
-export class Manna extends Phaser.GameObjects.Image {
-  readonly value: integer; // Ranges from 1-10
+export class Manna extends Phaser.Physics.Arcade.Sprite {
+  worth = 5;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'manna');
-    // [old] this.scene = scene;
+
+    this.anims.create({
+      key: 'rotate',
+      frames: this.anims.generateFrameNumbers('manna', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: -1
+    });
+
+    this.anims.play('rotate', true);
+    this.setScale(1.5);
     scene.add.existing(this);
-
-    this.value = Math.round(
-      (Math.random() * 9) + 1
-    );
-
-    this.setScale(0.1 + (this.value * 0.09));
   }
 
   // [idea]

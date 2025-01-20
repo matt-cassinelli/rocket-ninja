@@ -21,12 +21,16 @@ https://rocket-ninja.netlify.app/
 
 
 ## TODO
-- Better manna gfx
 - Closed door visual
 - Player should not be able to hold jump
+- Knockback
+- Use knockback to reach areas
+- Camera follows player (bigger maps)
 - Improve maps
 - Bounce pads
 - Animation on death
+- Side doors
+- Door color should match key color
 - Release an executable
 
 

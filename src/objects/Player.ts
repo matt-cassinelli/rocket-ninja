@@ -1,7 +1,7 @@
 import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  health: integer = 200;
+  health: integer = 180;
   scene: Phaser.Scene;
   // [idea] body: Phaser.Physics.Arcade.Body;
 
@@ -30,6 +30,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     //_________INITIALISE GRAPHICS_________//
 
+    // TODO: Not working
     const trail = this.scene.add.particles(
       this.x,
       this.y,

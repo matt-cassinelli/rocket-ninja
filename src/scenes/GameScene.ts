@@ -142,7 +142,7 @@ export class GameScene extends Phaser.Scene {
       this.mannaGroup,
       (player, manna): void => {
         (manna as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy();
-        this.player.health += (manna as Manna).value; // TODO: Should the player hold this instead?
+        this.player.health += (manna as Manna).worth;
         this.healthBar.setLevel(this.player.health);
         // TODO: Add sound fx.
       },

@@ -19,7 +19,6 @@ export class LoadingScene extends Phaser.Scene {
       progress.destroy();
     });
 
-    this.load.image('manna',          'images/manna.png');
     this.load.image('aura',           'images/aura-black.png');
     this.load.image('missile',        'images/missile.png');
     this.load.image('missile-turret', 'images/missile-turret.png');
@@ -38,6 +37,11 @@ export class LoadingScene extends Phaser.Scene {
       'player',
       'spritesheets/player-black-29x37.png',
       { frameWidth: 29, frameHeight: 37 }
+    );
+    this.load.spritesheet(
+      'manna',
+      'spritesheets/spr_coin_strip4.png',
+      { frameWidth: 16, frameHeight: 16 }
     );
     this.load.image({
       key: 'tileset',
