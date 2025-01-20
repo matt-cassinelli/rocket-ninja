@@ -21,11 +21,12 @@ https://rocket-ninja.netlify.app/
 
 
 ## TODO
+- Better manna gfx
 - Closed door visual
-- Represent health with bar
 - Player should not be able to hold jump
 - Improve maps
 - Bounce pads
+- Animation on death
 - Release an executable
 
 

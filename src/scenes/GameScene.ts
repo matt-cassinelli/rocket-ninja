@@ -7,28 +7,29 @@ import { MissileTurret } from '../objects/MissileTurret';
 import { Door } from '../objects/Door';
 import PhaserRaycaster from 'phaser-raycaster';
 import { Key } from '../objects/Key';
+import { HealthBar } from '../objects/HealthBar';
 
 export class GameScene extends Phaser.Scene {
   private mapKey: string;
-  private map!:                 Phaser.Tilemaps.Tilemap;
-  private tileset!:             Phaser.Tilemaps.Tileset;
-  tileLayerSolids!:             Phaser.Tilemaps.TilemapLayer;
-  private objectLayer!:         Phaser.Tilemaps.ObjectLayer;
-  private objectShapeLayer:     Phaser.Tilemaps.ObjectLayer;
+  private map!:                Phaser.Tilemaps.Tilemap;
+  private tileset!:            Phaser.Tilemaps.Tileset;
+  tileLayerSolids!:            Phaser.Tilemaps.TilemapLayer;
+  private objectLayer!:        Phaser.Tilemaps.ObjectLayer;
+  private objectShapeLayer:    Phaser.Tilemaps.ObjectLayer;
 
-  raycasterPlugin:              PhaserRaycaster;
-  private inputHandler!:        InputHandler;
+  raycasterPlugin:             PhaserRaycaster;
+  private inputHandler!:       InputHandler;
 
-  private mannaGroup!:          Phaser.Physics.Arcade.StaticGroup;
-  private missileTurretGroup!:  Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
-  missileGroup!:                Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
-  private keys!: Phaser.GameObjects.Group;
+  private mannaGroup!:         Phaser.Physics.Arcade.StaticGroup;
+  private missileTurretGroup!: Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
+  missileGroup!:               Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
+  private keys!:               Phaser.GameObjects.Group;
   // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
 
-  player!:                      Player;
-  private door?:                Door;
+  player!:                     Player;
+  private door?:               Door;
 
-  private healthText:           Phaser.GameObjects.Text | undefined;
+  private healthBar:           HealthBar | undefined;
 
   constructor() {
     super('GameScene');
@@ -103,7 +104,7 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    this.renderHealth(this.player.health);
+    this.healthBar = new HealthBar(this, this.player.health);
 
     // Add colliders
     // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
@@ -129,7 +130,7 @@ export class GameScene extends Phaser.Scene {
       function(player: Player, missile: Missile): void {
         missile.explode();
         player.damage(70);
-        this.renderHealth(player.health);
+        this.healthBar.setLevel(player.health);
         return;
       },
       undefined,
@@ -142,7 +143,7 @@ export class GameScene extends Phaser.Scene {
       (player, manna): void => {
         (manna as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy();
         this.player.health += (manna as Manna).value; // TODO: Should the player hold this instead?
-        this.renderHealth(this.player.health);
+        this.healthBar.setLevel(this.player.health);
         // TODO: Add sound fx.
       },
       undefined,
@@ -169,7 +170,6 @@ export class GameScene extends Phaser.Scene {
       this.door, // TODO: Door group
       (player, door): void => {
         if ((door as Door).isOpen) {
-          this.healthText = undefined;
           this.scene.restart({ mapKey: (door as Door).leadsTo });
         }
       },
@@ -181,8 +181,9 @@ export class GameScene extends Phaser.Scene {
       delay: 1000, // ms
       callback: () => {
         this.player.health -= 1;
-        this.renderHealth(this.player.health);
+        this.healthBar.setLevel(this.player.health);
       },
+      callbackScope: this,
       loop: true
     });
   }
@@ -201,32 +202,13 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  renderHealth(value: number): void {
-    const padding = 36;
-    if (this.healthText) {
-      this.healthText.setText(`${value}`);
-    }
-    else {
-      this.healthText = this.add.text(
-        padding,
-        padding,
-        `${value}`,
-        { fontSize: '48px', color: '#e41051' }
-      );
-    }
-  }
-
   endGame(): void {
     this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
       .setOrigin(0.5, 0.5);
-    this.healthText = undefined; // We get an error without this.
-    //this.game.pause();
-    //this.events.removeAllListeners();
     this.physics.pause();
     this.time.addEvent({
       delay: 2500,
       callback: () => this.scene.restart()
     });
-    //this.scene.stop();
   }
 }
