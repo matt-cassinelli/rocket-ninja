@@ -11,6 +11,17 @@ export class Manna extends Phaser.Physics.Arcade.Sprite {
       repeat: -1
     });
 
+    const hoverIntensity = 4;
+    scene.tweens.add({
+      targets: this,
+      y: this.y - hoverIntensity,
+      duration: Phaser.Math.Between(950, 1300),
+      delay: Phaser.Math.Between(0, 500),
+      ease: 'Sine.easeInOut',
+      yoyo: true,
+      loop: -1
+    });
+
     this.anims.play('rotate', true);
     this.setScale(1.5);
     scene.add.existing(this);

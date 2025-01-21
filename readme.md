@@ -21,18 +21,26 @@ https://rocket-ninja.netlify.app/
 
 
 ## TODO
-- Closed door visual
-- Player should not be able to hold jump
-- Knockback
-- Use knockback to reach areas
 - Camera follows player (bigger maps)
 - Improve maps
 - Bounce pads
+- Sloped surfaces
+- Weapons:
+  - Rocket
+  - Shield
+  - Grenade
+  - Grappling hook
+  - EMP
+- Knockback
+- Use knockback to reach areas
+- When turret sees player, it moves and plays sound
+- Player should not be able to hold jump
 - Animation on death
 - Side doors
 - Door color should match key color
 - Release an executable
 - Responsive music
+- Bosses / AI
 
 
 ## Design notes
