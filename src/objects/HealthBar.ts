@@ -31,10 +31,10 @@ export class HealthBar {
   }
 
   private getColor(health: number): number {
-    if (health < 50)
+    if (health < this.maxHealth * 0.2)
       return 0xff0000;
 
-    if (health < 100)
+    if (health < this.maxHealth * 0.4)
       return 0xff8800;
 
     return 0x00ff00;

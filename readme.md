@@ -32,6 +32,7 @@ https://rocket-ninja.netlify.app/
 - Side doors
 - Door color should match key color
 - Release an executable
+- Responsive music
 
 
 ## Design notes

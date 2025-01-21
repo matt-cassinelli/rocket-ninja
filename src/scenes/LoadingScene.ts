@@ -22,7 +22,6 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image('aura',           'images/aura-black.png');
     this.load.image('missile',        'images/missile.png');
     this.load.image('missile-turret', 'images/missile-turret.png');
-    this.load.image('door-open',      'images/door-1-open.png');
     this.load.image('explosion',      'images/explosion.png');
     this.load.image('key',            'images/key.svg');
     this.load.tilemapTiledJSON(
@@ -39,10 +38,16 @@ export class LoadingScene extends Phaser.Scene {
       { frameWidth: 29, frameHeight: 37 }
     );
     this.load.spritesheet(
+      'door',
+      'spritesheets/tech-door-1-40x56.png',
+      { frameWidth: 40, frameHeight: 56 }
+    );
+    this.load.spritesheet(
       'manna',
       'spritesheets/spr_coin_strip4.png',
       { frameWidth: 16, frameHeight: 16 }
     );
+
     this.load.image({
       key: 'tileset',
       url: 'tilesets/tileset-simple-32x32.png'
