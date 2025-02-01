@@ -1,18 +1,17 @@
 import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  health: integer = 180;
+  health: integer = 170;
   scene: Phaser.Scene;
-  // [idea] body: Phaser.Physics.Arcade.Body;
 
   private LEFTRIGHT_FLOOR_SPEED = 300;
-  private LEFTRIGHT_SPEED_LIMIT = 300;
-  private LEFTRIGHT_INAIR_ACCEL = 999;
-  private LEFTRIGHT_INAIR_DRAG = 200;
-  private UPDOWN_SPEED_LIMIT = 999;
+  private LEFTRIGHT_INAIR_LIMIT = 300;
+  private LEFTRIGHT_INAIR_ACCEL = 1500;
+  private LEFTRIGHT_INAIR_DRAG = 400;
+  //private UPDOWN_SPEED_LIMIT = 999;
   private GROUND_JUMP_SPEED = 350;
-  private WALL_JUMP_UP_SPEED = 290;
-  private WALL_JUMP_AWAY_SPEED = 290;
+  private WALL_JUMP_UP_SPEED = 250;
+  private WALL_JUMP_AWAY_SPEED = 300;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
@@ -21,31 +20,26 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     //_________INITIALISE PHYSICS_________//
 
     this.scene.physics.add.existing(this); // Add this physics body to the scene, this is required before any physics methods can be used (e.g. setBounce)
-    this.setBounce(0); // 0.2
-    this.setCollideWorldBounds(true); // Prevent going off-screen.
-    this.setMaxVelocity(this.LEFTRIGHT_SPEED_LIMIT, this.UPDOWN_SPEED_LIMIT);
+    this.setCollideWorldBounds(true);
+    //this.setMaxVelocity(this.LEFTRIGHT_SPEED_LIMIT, this.UPDOWN_SPEED_LIMIT);
     this.setDrag(this.LEFTRIGHT_INAIR_DRAG, 0);
     // [idea] this.scene.physics.world.enable(this);
     // [old] this.setFriction(1000) // This method seemed to have no effect. Instead we mimic friction in the update() method by setting velocity when on ground, and setting accel. when in air.
 
     //_________INITIALISE GRAPHICS_________//
 
-    // TODO: Not working
-    const trail = this.scene.add.particles(
-      this.x,
-      this.y,
-      'aura',
-      {
-        speed: 20,
-        scale: { start: 0.2, end: 0 },
-        alpha: { start: 0.5, end: 0 },
-        blendMode: 'OVERLAY'
-      }
-    ); // If we don't put the emitter first, it appears in front of the player.
+    const trail = this.scene.add.particles(0, 0, 'aura', {
+      scale: 0.2,
+      speed: { min: 1, max: 18 },
+      alpha: { start: 0.5, end: 0, ease: 'sine.inout' },
+      lifespan: 3000,
+      frequency: 12,
+      blendMode: 'OVERLAY'
+    });
 
     trail.startFollow(this);
+    trail.alpha = 0.2;
 
-    this.setScale(0.95);
     this.scene.add.existing(this); // Add this sprite to the scene.
     this.anims.create({
       key: 'left',
@@ -71,26 +65,30 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   move(inputHandler: InputHandler) {
-    if (inputHandler.rightPressed) { // If right key is pressed,
+    if (inputHandler.rightPressed) {
       this?.anims.play('right', true);
-      if (this.body.blocked.down) { // And on ground,
-        this.setVelocityX(this.LEFTRIGHT_FLOOR_SPEED); // Move immediately
-        // [old] this.setAccelerationX(LEFTRIGHT_ACCEL_GROUNDED);
+      if (this.isOnGround()) {
+        this.setVelocityX(this.LEFTRIGHT_FLOOR_SPEED); // Immediate
         this.setAccelerationX(0);
       }
-      else { // But if in air,
-        this.setAccelerationX(this.LEFTRIGHT_INAIR_ACCEL); // Move gradually
+      else { // In air
+        if (this.body.velocity.x < this.LEFTRIGHT_INAIR_LIMIT)
+          this.setAccelerationX(this.LEFTRIGHT_INAIR_ACCEL); // Gradual
+        else
+          this.setAccelerationX(0);
       }
     }
-    else if (inputHandler.leftPressed) { // Same for left key
+    else if (inputHandler.leftPressed) {
       this?.anims.play('left', true);
-      if (this.body.blocked.down) {
-        this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED);
-        // [old] this.setAccelerationX(-LEFTRIGHT_ACCEL_GROUNDED);
+      if (this.isOnGround()) {
+        this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED); // Immediate
         this.setAccelerationX(0);
       }
-      else {
-        this.setAccelerationX(-this.LEFTRIGHT_INAIR_ACCEL);
+      else { // In air
+        if (this.body.velocity.x > -this.LEFTRIGHT_INAIR_LIMIT)
+          this.setAccelerationX(-this.LEFTRIGHT_INAIR_ACCEL); // Gradual
+        else
+          this.setAccelerationX(0);
       }
     }
     else { // If neither left or right are pressed,
@@ -114,6 +112,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         // [old] this.setAccelerationX(500);
       }
     }
+  }
+
+  isOnGround() {
+    return this.body.blocked.down;
   }
 
   damage(amount: number) {

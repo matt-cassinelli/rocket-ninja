@@ -47,6 +47,11 @@ export class LoadingScene extends Phaser.Scene {
       'spritesheets/spr_coin_strip4.png',
       { frameWidth: 16, frameHeight: 16 }
     );
+    this.load.spritesheet(
+      'jump-pad',
+      'spritesheets/jump-pad-2-16x16.png',
+      { frameWidth: 16, frameHeight: 16 }
+    );
 
     this.load.image({
       key: 'tileset',

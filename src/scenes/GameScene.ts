@@ -1,42 +1,38 @@
-import { Physics } from 'phaser';
+import PhaserRaycaster from 'phaser-raycaster';
 import { InputHandler } from '../helpers/InputHandler';
 import { Player } from '../objects/Player';
 import { Manna } from '../objects/Manna';
 import { Missile } from '../objects/Missile';
 import { MissileTurret } from '../objects/MissileTurret';
 import { Door } from '../objects/Door';
-import PhaserRaycaster from 'phaser-raycaster';
 import { Key } from '../objects/Key';
 import { HealthBar } from '../objects/HealthBar';
+import { JumpPad } from '../objects/JumpPad';
 
 export class GameScene extends Phaser.Scene {
-  private mapKey: string;
-  private map!:                Phaser.Tilemaps.Tilemap;
-  private tileset!:            Phaser.Tilemaps.Tileset;
-  tileLayerSolids!:            Phaser.Tilemaps.TilemapLayer;
-  private objectLayer!:        Phaser.Tilemaps.ObjectLayer;
-  private objectShapeLayer:    Phaser.Tilemaps.ObjectLayer;
+  mapKey: string;
+  map!: Phaser.Tilemaps.Tilemap;
+  tileset!: Phaser.Tilemaps.Tileset;
+  tileLayerSolids!: Phaser.Tilemaps.TilemapLayer;
+  objectLayer!: Phaser.Tilemaps.ObjectLayer;
+  objectShapeLayer: Phaser.Tilemaps.ObjectLayer;
+  raycasterPlugin: PhaserRaycaster;
+  inputHandler!: InputHandler;
+  player!: Player;
+  door?: Door;
+  healthBar: HealthBar | undefined;
 
-  raycasterPlugin:             PhaserRaycaster;
-  private inputHandler!:       InputHandler;
-
-  private mannaGroup!:         Phaser.Physics.Arcade.StaticGroup;
-  private missileTurretGroup!: Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
-  missileGroup!:               Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
-  private keys!:               Phaser.GameObjects.Group;
-  // [todo] private bombs?:     Phaser.Physics.Arcade.Group;
-
-  player!:                     Player;
-  private door?:               Door;
-
-  private healthBar:           HealthBar | undefined;
+  mannaGroup!:         Phaser.Physics.Arcade.StaticGroup;
+  missileTurretGroup!: Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
+  missileGroup!:       Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
+  keys!:               Phaser.GameObjects.Group;
+  jumpPads:            Phaser.Physics.Arcade.StaticGroup;
 
   constructor() {
     super('GameScene');
   }
 
   init(props: any) { // This gets called on scene.restart(). Before preload() and create().
-    //console.log("Init method props: " + props);
     const { mapKey } = props;
     if (mapKey) {
       this.mapKey = mapKey;
@@ -47,28 +43,64 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.inputHandler = new InputHandler(this);
-
-    // Load map
-    //console.log("mapKey: " + this.mapKey);
-    this.map = this.make.tilemap({ key: this.mapKey }); // [old] this.add.tilemap("map");
-    //console.log("Map: " + this.map);
-
-    // Load tileset
-    this.tileset = this.map.addTilesetImage('tileset', 'tileset');
+    this.map = this.make.tilemap({ key: this.mapKey }); // Load map
+    this.tileset = this.map.addTilesetImage('tileset', 'tileset'); // Load tileset
 
     // Load layers from map
     this.tileLayerSolids  = this.map.createLayer('tile-layer-solids', this.tileset);
     this.objectLayer      = this.map.getObjectLayer('object-layer');
     this.objectShapeLayer = this.map.getObjectLayer('object-layer-shapes');
 
-    // Create groups to hold objects (convenient for handling collisions for all objects of a certain type)
+    this.createGroups();
+    this.addObjectsToGroups();
+    this.addColliders();
+
+    this.inputHandler = new InputHandler(this);
+    this.healthBar = new HealthBar(this, this.player.health);
+
+    const healthLossRateInMs = 1000;
+    this.time.addEvent({
+      delay: healthLossRateInMs,
+      callback: () => {
+        this.player.health -= 1;
+        this.healthBar.setLevel(this.player.health);
+      },
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  update() { // This runs each frame, so keep it lightweight.
+    if (this.player?.isDead())
+      this.endGame();
+
+    this.inputHandler.update();
+    this.player.move(this.inputHandler);
+
+    this.missileGroup.getChildren().forEach(m =>
+      (m as Missile).update(this.player.x, this.player.y)
+    );
+  }
+
+  endGame() {
+    this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
+      .setOrigin(0.5, 0.5);
+    this.physics.pause();
+    this.time.addEvent({
+      delay: 2500,
+      callback: () => this.scene.restart()
+    });
+  }
+
+  createGroups() {
     this.mannaGroup = this.physics.add.staticGroup({});
-    this.missileTurretGroup = this.add.group();
+    this.jumpPads = this.physics.add.staticGroup();
+    this.missileTurretGroup = this.add.group(); // TODO: Could be static?
     this.missileGroup = this.physics.add.group();
     this.keys = this.physics.add.staticGroup();
+  }
 
-    // Instantiate objects for each coordinate in our object layer
+  addObjectsToGroups() {
     this.objectLayer.objects.forEach((object) => {
       switch (object.name) { // TODO: object.type or object.name?
         case 'manna': {
@@ -85,10 +117,6 @@ export class GameScene extends Phaser.Scene {
         }
         case 'player': {
           this.player = new Player(this, object);
-          // [todo] keep player health when change level
-          // if (this.player === undefined) ...
-          // else
-          // this.add.existing(player)
           break;
         }
         case 'door': {
@@ -101,23 +129,24 @@ export class GameScene extends Phaser.Scene {
           );
           break;
         }
+        case 'jump-pad': {
+          this.jumpPads.add(
+            new JumpPad(this, object)
+          );
+          break;
+        }
       }
     });
+  }
 
-    this.healthBar = new HealthBar(this, this.player.health);
-
-    // Add colliders
-    // This is basically ".setCollisionForAll()". Without it, only the 1st tile from tileset collides.
-    this.tileLayerSolids.setCollisionByExclusion([-1]);
-    this.physics.add.collider(this.player, this.tileLayerSolids); // Are both of these needed?
-
-    // [todo] this.physics.add.collider(this.bombs, this.platformLayer)
-    // [todo] this.physics.add.collider(this.player, this.bombs, this.player.die, undefined, this.player)
+  addColliders() {
+    this.tileLayerSolids.setCollisionByExclusion([-1]); // Without this, only the 1st tile from tileset collides.
+    this.physics.add.collider(this.player, this.tileLayerSolids);
 
     this.physics.add.collider(
-      this.missileGroup, // [old] missileGroup.missiles
+      this.missileGroup,
       this.tileLayerSolids,
-      function(missile: any, platformLayer: any) { // Anonymous function
+      function(missile: any, platformLayer: any) {
         missile.explode();
       },
       undefined,
@@ -177,38 +206,14 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
-    this.time.addEvent({
-      delay: 1000, // ms
-      callback: () => {
-        this.player.health -= 1;
-        this.healthBar.setLevel(this.player.health);
+    this.physics.add.overlap(
+      this.player,
+      this.jumpPads,
+      (p, jp): void => {
+        (jp as JumpPad).trigger(p as Player);
       },
-      callbackScope: this,
-      loop: true
-    });
-  }
-
-  // Update each frame (keep lightweight)
-  update() {
-    if (this.player?.isDead()) {
-      this.endGame();
-    }
-
-    this.inputHandler.update();
-    this.player.move(this.inputHandler);
-
-    this.missileGroup.getChildren().forEach(m =>
-      (m as Missile).update(this.player.x, this.player.y)
+      undefined,
+      this
     );
-  }
-
-  endGame(): void {
-    this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
-      .setOrigin(0.5, 0.5);
-    this.physics.pause();
-    this.time.addEvent({
-      delay: 2500,
-      callback: () => this.scene.restart()
-    });
   }
 }

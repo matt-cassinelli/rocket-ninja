@@ -21,9 +21,10 @@ https://rocket-ninja.netlify.app/
 
 
 ## TODO
+- Slide / grab walls
 - Camera follows player (bigger maps)
+- Keep player's health after changing level
 - Improve maps
-- Bounce pads
 - Sloped surfaces
 - Weapons:
   - Rocket

@@ -299,6 +299,28 @@
                  "width":0,
                  "x":592,
                  "y":422
+                }, 
+                {
+                 "height":16,
+                 "id":36,
+                 "name":"jump-pad",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":896,
+                 "y":656
+                }, 
+                {
+                 "height":16,
+                 "id":38,
+                 "name":"jump-pad",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":48,
+                 "y":608
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -307,7 +329,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":34,
+ "nextobjectid":39,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.1",
