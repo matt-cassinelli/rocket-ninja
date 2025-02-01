@@ -19,11 +19,12 @@ export class LoadingScene extends Phaser.Scene {
       progress.destroy();
     });
 
-    this.load.image('aura',           'images/aura-black.png');
+    this.load.image('aura',           'particles/aura-black.png');
     this.load.image('missile',        'images/missile.png');
     this.load.image('missile-turret', 'images/missile-turret.png');
-    this.load.image('explosion',      'images/explosion.png');
+    this.load.image('explosion',      'particles/explosion.png');
     this.load.image('key',            'images/key.svg');
+    this.load.image({ key: 'tileset', url: 'tilesets/tileset-simple-32x32.png' });
     this.load.tilemapTiledJSON(
       'map2.json',
       'maps/map2.json'
@@ -52,11 +53,7 @@ export class LoadingScene extends Phaser.Scene {
       'spritesheets/jump-pad-2-16x16.png',
       { frameWidth: 16, frameHeight: 16 }
     );
-
-    this.load.image({
-      key: 'tileset',
-      url: 'tilesets/tileset-simple-32x32.png'
-    });
+    this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');
   }
 
   create(): void {
