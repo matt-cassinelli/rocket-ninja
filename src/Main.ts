@@ -5,8 +5,8 @@ import PhaserRaycaster from 'phaser-raycaster';
 
 const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 1184, // 32px * 37 tiles
-  height: 704, // 32px * 22 tiles
+  width: 32 * 37, // px x tiles
+  height: 32 * 22, // px x tiles
   parent: 'game-container',
   backgroundColor: 0x333333,
   scale: {

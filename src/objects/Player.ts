@@ -17,7 +17,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, object.x, object.y, 'player');
     this.scene = scene;
     this.scene.physics.add.existing(this);
-    this.setCollideWorldBounds(true);
     this.setDrag(this.LEFTRIGHT_INAIR_DRAG, 0);
 
     this.trail = this.scene.add.particles(0, 0, 'aura', {

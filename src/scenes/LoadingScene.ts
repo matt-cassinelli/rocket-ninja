@@ -19,12 +19,30 @@ export class LoadingScene extends Phaser.Scene {
       progress.destroy();
     });
 
+    this.loadImages();
+    this.loadSpritesheets();
+    this.loadMaps();
+  }
+
+  create(): void {
+    this.scene.start('GameScene');
+  }
+
+  loadImages() {
     this.load.image('aura',           'particles/aura-black.png');
     this.load.image('missile',        'images/missile.png');
     this.load.image('missile-turret', 'images/missile-turret.png');
     this.load.image('explosion',      'particles/explosion.png');
     this.load.image('key',            'images/key.svg');
     this.load.image({ key: 'tileset', url: 'tilesets/tileset-simple-32x32.png' });
+    this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');
+  }
+
+  loadMaps() {
+    this.load.tilemapTiledJSON(
+      'map1.json',
+      'maps/map1.json'
+    );
     this.load.tilemapTiledJSON(
       'map2.json',
       'maps/map2.json'
@@ -33,7 +51,11 @@ export class LoadingScene extends Phaser.Scene {
       'map3.json',
       'maps/map3.json'
     );
-    this.load.spritesheet( // Spritesheets contain frames for animations.
+  }
+
+  // Spritesheets contain frames for animations.
+  loadSpritesheets() {
+    this.load.spritesheet(
       'player',
       'spritesheets/player-black-29x37.png',
       { frameWidth: 29, frameHeight: 37 }
@@ -53,10 +75,5 @@ export class LoadingScene extends Phaser.Scene {
       'spritesheets/jump-pad-2-16x16.png',
       { frameWidth: 16, frameHeight: 16 }
     );
-    this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');
-  }
-
-  create(): void {
-    this.scene.start('GameScene');
   }
 }

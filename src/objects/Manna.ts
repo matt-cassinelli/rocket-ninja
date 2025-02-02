@@ -1,5 +1,5 @@
 export class Manna extends Phaser.Physics.Arcade.Sprite {
-  worth = 5;
+  worth = 6;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'manna');

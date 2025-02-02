@@ -38,7 +38,7 @@ export class GameScene extends Phaser.Scene {
       this.mapKey = mapKey;
     }
     else {
-      this.mapKey = 'map2.json';
+      this.mapKey = 'map1.json';
     }
   }
 
@@ -54,6 +54,11 @@ export class GameScene extends Phaser.Scene {
     this.createGroups();
     this.addObjectsToGroups();
     this.addColliders();
+
+    const smoothing = 0.07;
+    const yOffset = 80;
+    this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, false);
+    this.cameras.main.startFollow(this.player, true, smoothing, smoothing, 0, yOffset);
 
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);

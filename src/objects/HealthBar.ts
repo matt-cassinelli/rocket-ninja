@@ -13,6 +13,7 @@ export class HealthBar {
     this.ratio = this.width / this.maxHealth;
     this.centerX = this.width / 2;
     this.setLevel(initialLevel);
+    this.bar.setScrollFactor(0); // Lock to camera, not scene.
     scene.add.existing(this.bar);
   }
 
@@ -52,12 +53,12 @@ export class HealthBar {
     if (health < this.maxHealth * 0.1)
       return 1;
     if (health < this.maxHealth * 0.2)
-      return 0.9;
+      return 0.85;
     if (health < this.maxHealth * 0.3)
-      return 0.8;
-    if (health < this.maxHealth * 0.4)
       return 0.65;
+    if (health < this.maxHealth * 0.4)
+      return 0.5;
 
-    return 0.5;
+    return 0.35;
   }
 }
