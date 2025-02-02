@@ -1,5 +1,4 @@
 export class InputHandler {
-  private scene: Phaser.Scene;
   private keyUp;
   private keyW;
   private keySpace;
@@ -20,7 +19,6 @@ export class InputHandler {
   constructor(scene: Phaser.Scene) {
     // [old] this.cursors = this.input.keyboard.createCursorKeys()
     // [old] this.keyboard = scene.input.keyboard
-    this.scene    = scene;
     this.keyUp    = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     this.keyW     = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.keySpace = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -37,6 +35,10 @@ export class InputHandler {
     this.leftPressed = (this.keyLeft.isDown || this.keyA.isDown);
     this.rightPressed = (this.keyRight.isDown || this.keyD.isDown);
     this.attackPressed = (this.keyZ.isDown || this.keyEnter.isDown);
+  }
+
+  noInput() {
+    return !(this.rightPressed || this.leftPressed || this.upPressed || this.attackPressed);
   }
 
   // [todo] Apply the dependency inversion principle -
