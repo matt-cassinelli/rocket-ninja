@@ -245,7 +245,7 @@
                 {
                  "height":24,
                  "id":39,
-                 "name":"",
+                 "name":"text",
                  "rotation":0,
                  "text":
                     {
@@ -262,7 +262,7 @@
                 {
                  "height":24,
                  "id":40,
-                 "name":"",
+                 "name":"text",
                  "rotation":0,
                  "text":
                     {
@@ -292,6 +292,72 @@
                  "width":88,
                  "x":1032,
                  "y":424
+                }, 
+                {
+                 "height":32,
+                 "id":50,
+                 "name":"spike",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1568,
+                 "y":1024
+                }, 
+                {
+                 "height":32,
+                 "id":56,
+                 "name":"spike",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1568,
+                 "y":448
+                }, 
+                {
+                 "height":32,
+                 "id":58,
+                 "name":"spike",
+                 "rotation":270,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1664,
+                 "y":704
+                }, 
+                {
+                 "height":32,
+                 "id":59,
+                 "name":"spike",
+                 "rotation":270,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1664,
+                 "y":736
+                }, 
+                {
+                 "height":32,
+                 "id":54,
+                 "name":"spike",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1568,
+                 "y":1056
+                }, 
+                {
+                 "height":32,
+                 "id":55,
+                 "name":"spike",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1568,
+                 "y":480
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -300,10 +366,10 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":43,
+ "nextobjectid":60,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.11.1",
+ "tiledversion":"1.11.2",
  "tileheight":32,
  "tilesets":[
         {

@@ -89,7 +89,8 @@ export class GameScene extends Phaser.Scene {
 
   endGame() {
     this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
-      .setOrigin(0.5, 0.5);
+      .setOrigin(0.5, 0.5)
+      .setScrollFactor(0);
     this.physics.pause();
     this.time.addEvent({
       delay: 2500,
@@ -140,6 +141,11 @@ export class GameScene extends Phaser.Scene {
           );
           break;
         }
+        case 'text': {
+          this.add.text(object.x, object.y, object.text.text, { fontSize: '18px' })
+            .setDepth(-1);
+          break;
+        }
       }
     });
   }
@@ -178,7 +184,6 @@ export class GameScene extends Phaser.Scene {
         (manna as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy();
         this.player.health += (manna as Manna).worth;
         this.healthBar.setLevel(this.player.health);
-        // TODO: Add sound fx.
       },
       undefined,
       this
