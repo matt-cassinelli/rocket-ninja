@@ -34,6 +34,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image('missile-turret', 'images/missile-turret.png');
     this.load.image('explosion',      'particles/explosion.png');
     this.load.image('key',            'images/key.svg');
+    this.load.image('spike',          'images/spike.png');
     this.load.image({ key: 'tileset', url: 'tilesets/tileset-simple-32x32.png' });
     this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');
   }

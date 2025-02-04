@@ -182,7 +182,7 @@
                  "visible":true,
                  "width":0,
                  "x":272,
-                 "y":624
+                 "y":632
                 }, 
                 {
                  "height":0,
@@ -257,7 +257,7 @@
                  "visible":true,
                  "width":216,
                  "x":168,
-                 "y":520
+                 "y":544
                 }, 
                 {
                  "height":24,
@@ -279,7 +279,7 @@
                 {
                  "height":24,
                  "id":42,
-                 "name":"",
+                 "name":"text",
                  "rotation":0,
                  "text":
                     {
@@ -294,70 +294,109 @@
                  "y":424
                 }, 
                 {
-                 "height":32,
-                 "id":50,
-                 "name":"spike",
-                 "rotation":90,
+                 "height":24,
+                 "id":68,
+                 "name":"text",
+                 "rotation":0,
+                 "text":
+                    {
+                     "color":"#ffffff",
+                     "text":"Press against a wall to slide.",
+                     "wrap":true
+                    },
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":1568,
-                 "y":1024
+                 "width":216,
+                 "x":1440,
+                 "y":248
                 }, 
                 {
-                 "height":32,
-                 "id":56,
-                 "name":"spike",
-                 "rotation":90,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":1568,
-                 "y":448
-                }, 
-                {
-                 "height":32,
-                 "id":58,
+                 "height":16,
+                 "id":60,
                  "name":"spike",
                  "rotation":270,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1664,
-                 "y":704
+                 "x":1680,
+                 "y":640
                 }, 
                 {
-                 "height":32,
-                 "id":59,
+                 "height":16,
+                 "id":64,
                  "name":"spike",
                  "rotation":270,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1664,
-                 "y":736
+                 "x":1680,
+                 "y":672
                 }, 
                 {
-                 "height":32,
-                 "id":54,
+                 "height":16,
+                 "id":62,
                  "name":"spike",
-                 "rotation":90,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1536,
+                 "y":1360
+                }, 
+                {
+                 "height":16,
+                 "id":65,
+                 "name":"spike",
+                 "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
                  "x":1568,
-                 "y":1056
+                 "y":1360
                 }, 
                 {
-                 "height":32,
+                 "height":16,
                  "id":55,
                  "name":"spike",
                  "rotation":90,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1568,
+                 "x":1552,
+                 "y":448
+                }, 
+                {
+                 "height":16,
+                 "id":63,
+                 "name":"spike",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1552,
                  "y":480
+                }, 
+                {
+                 "height":16,
+                 "id":66,
+                 "name":"spike",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1552,
+                 "y":864
+                }, 
+                {
+                 "height":16,
+                 "id":67,
+                 "name":"spike",
+                 "rotation":90,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1552,
+                 "y":896
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -366,7 +405,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":60,
+ "nextobjectid":69,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

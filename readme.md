@@ -22,7 +22,7 @@ https://rocket-ninja.netlify.app/
 
 ## Design notes
 
-I've tried to use OOP, although some of Phaser 3's methods are not the cleanest to work with.
+I've tried to use OOP, although some items sometimes need access to the global state.
 
 Where possible, complex code has been seperated into its own classes/files/methods in order to improve readability.
 
@@ -30,15 +30,14 @@ To wrap your head around Phaser-specific things such as *Scenes* I would recomme
 
 
 ## TODO
-- Spikes
+- Take damage if fall hard
 - Keep player's health after changing level
 - Improve maps
-- Player should not be able to hold jump
+- Player should not be able to infinitely jump up wall
 - Win screen
 - Sounds
 - Music
 - Falling animation
-- Take damage if fall hard
 
 
 ## TODO: Future
@@ -58,3 +57,4 @@ To wrap your head around Phaser-specific things such as *Scenes* I would recomme
 - Release an executable
 - Responsive music
 - Bosses / AI
+- Allow multiple doors on one map

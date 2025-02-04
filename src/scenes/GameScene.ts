@@ -8,6 +8,7 @@ import { Door } from '../objects/Door';
 import { Key } from '../objects/Key';
 import { HealthBar } from '../objects/HealthBar';
 import { JumpPad } from '../objects/JumpPad';
+import { Spike } from '../objects/Spike';
 
 export class GameScene extends Phaser.Scene {
   mapKey: string;
@@ -27,6 +28,7 @@ export class GameScene extends Phaser.Scene {
   missileGroup!:       Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
   keys!:               Phaser.GameObjects.Group;
   jumpPads:            Phaser.Physics.Arcade.StaticGroup;
+  spikes:              Phaser.Physics.Arcade.StaticGroup;
 
   constructor() {
     super('GameScene');
@@ -104,6 +106,7 @@ export class GameScene extends Phaser.Scene {
     this.missileTurretGroup = this.add.group(); // TODO: Could be static?
     this.missileGroup = this.physics.add.group();
     this.keys = this.physics.add.staticGroup();
+    this.spikes = this.physics.add.staticGroup();
   }
 
   addObjectsToGroups() {
@@ -144,6 +147,12 @@ export class GameScene extends Phaser.Scene {
         case 'text': {
           this.add.text(object.x, object.y, object.text.text, { fontSize: '18px' })
             .setDepth(-1);
+          break;
+        }
+        case 'spike': {
+          this.spikes.add(
+            new Spike(this, object)
+          );
           break;
         }
       }
@@ -221,6 +230,16 @@ export class GameScene extends Phaser.Scene {
       this.jumpPads,
       (p, jp): void => {
         (jp as JumpPad).trigger(p as Player);
+      },
+      undefined,
+      this
+    );
+
+    this.physics.add.overlap(
+      this.player,
+      this.spikes,
+      (p, s): void => {
+        (p as Player).damage((s as Spike).damage);
       },
       undefined,
       this
