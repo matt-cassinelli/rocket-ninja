@@ -1,7 +1,7 @@
 export class HealthBar {
   bar: Phaser.GameObjects.Graphics;
   width: number;
-  maxHealth = 190;
+  maxHealth = 150;
   ratio: number;
   centerX: number;
   height = 32;

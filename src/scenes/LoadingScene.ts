@@ -52,6 +52,10 @@ export class LoadingScene extends Phaser.Scene {
       'map3.json',
       'maps/map3.json'
     );
+    this.load.tilemapTiledJSON(
+      'map4.json',
+      'maps/map4.json'
+    );
   }
 
   // Spritesheets contain frames for animations.

@@ -97,7 +97,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.pause();
     this.time.addEvent({
       delay: 2500,
-      callback: () => this.scene.restart()
+      callback: () => this.scene.restart({ mapKey: 'map1.json' })
     });
   }
 

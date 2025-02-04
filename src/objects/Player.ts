@@ -1,15 +1,15 @@
 import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  health: integer = 170;
+  health: integer = 150;
   scene: Phaser.Scene;
   trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
-  private LEFTRIGHT_FLOOR_SPEED = 300;
-  private LEFTRIGHT_INAIR_LIMIT = 300;
-  private LEFTRIGHT_INAIR_ACCEL = 1400;
+  private LEFTRIGHT_FLOOR_SPEED = 290;
+  private LEFTRIGHT_INAIR_LIMIT = 290;
+  private LEFTRIGHT_INAIR_ACCEL = 1300;
   private LEFTRIGHT_INAIR_DRAG = 400;
-  private GROUND_JUMP_SPEED = 350;
+  private GROUND_JUMP_SPEED = 320;
   private WALL_JUMP_UP_SPEED = 220;
   private WALL_JUMP_AWAY_SPEED = 300;
   private WALL_SLIDE_SPEED = 25;

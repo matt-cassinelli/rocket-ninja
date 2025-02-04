@@ -1,7 +1,7 @@
 import { Player } from './Player';
 
 export class JumpPad extends Phaser.Physics.Arcade.Sprite {
-  force = 550;
+  force = 560;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'jump-pad');
