@@ -92,7 +92,8 @@ export class GameScene extends Phaser.Scene {
   endGame() {
     this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
       .setOrigin(0.5, 0.5)
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setDepth(10);
     this.physics.pause();
     this.time.addEvent({
       delay: 2500,
@@ -103,7 +104,7 @@ export class GameScene extends Phaser.Scene {
   createGroups() {
     this.mannaGroup = this.physics.add.staticGroup({});
     this.jumpPads = this.physics.add.staticGroup();
-    this.missileTurretGroup = this.add.group(); // TODO: Could be static?
+    this.missileTurretGroup = this.add.group();
     this.missileGroup = this.physics.add.group();
     this.keys = this.physics.add.staticGroup();
     this.spikes = this.physics.add.staticGroup();
@@ -111,7 +112,7 @@ export class GameScene extends Phaser.Scene {
 
   addObjectsToGroups() {
     this.objectLayer.objects.forEach((object) => {
-      switch (object.name) { // TODO: object.type or object.name?
+      switch (object.name) {
         case 'manna': {
           this.mannaGroup.add(
             new Manna(this, object)
@@ -145,7 +146,8 @@ export class GameScene extends Phaser.Scene {
           break;
         }
         case 'text': {
-          this.add.text(object.x, object.y, object.text.text, { fontSize: '18px' })
+          this.add.text(object.x, object.y, object.text.text, { fontSize: '16px', // TODO: Dynamic?
+            wordWrap: { width: object.width, useAdvancedWrap: true } })
             .setDepth(-1);
           break;
         }
@@ -215,7 +217,7 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.add.overlap(
       this.player,
-      this.door, // TODO: Door group
+      this.door,
       (player, door): void => {
         if ((door as Door).isOpen) {
           this.scene.restart({ mapKey: (door as Door).leadsTo });

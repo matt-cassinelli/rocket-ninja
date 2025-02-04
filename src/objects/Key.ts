@@ -1,10 +1,12 @@
+import { getCustomProperty } from '../helpers/Helpers';
+
 export class Key extends Phaser.GameObjects.Image {
   public readonly forDoor: integer;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'key');
     // TODO: Is there a cleaner way to get property?
-    this.forDoor = object.properties.find((x: Phaser.Types.Tilemaps.TiledObject) => x.name === 'ForDoor')?.value;
+    this.forDoor = getCustomProperty(object, 'ForDoor');
     this.setDisplaySize(28, 28);
 
     const hoverIntensity = 4;

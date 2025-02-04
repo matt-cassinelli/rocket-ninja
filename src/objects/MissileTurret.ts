@@ -15,8 +15,6 @@ export class MissileTurret extends Phaser.GameObjects.Image {
     super(scene, object.x, object.y, 'missile-turret');
 
     scene.add.existing(this);
-    // [old] scene.physics.add.existing(this) // Physics not needed
-    this.scene = scene; // needed?
     this.setDisplaySize(this.SIZE, this.SIZE);
 
     // [todo] Delay firing to match sound

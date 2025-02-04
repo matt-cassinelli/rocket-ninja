@@ -12,6 +12,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private GROUND_JUMP_SPEED = 350;
   private WALL_JUMP_UP_SPEED = 220;
   private WALL_JUMP_AWAY_SPEED = 300;
+  private WALL_SLIDE_SPEED = 25;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
@@ -21,7 +22,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.trail = this.scene.add.particles(0, 0, 'aura', {
       scale: { start: 0.25, end: 0.1 },
-      speed: { min: 10, max: 18 },
+      angle: { min: 0, max: 360 },
+      speed: { min: 9, max: 18 },
       alpha: { start: 0.3, end: 0 },
       frequency: 10,
       advance: 2000,
@@ -68,7 +70,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       else { // In air
         if (this.body.blocked.right) {
           this.anims.play('wallslide-right', true);
-          this.setVelocityY(20);
+          this.setVelocityY(this.WALL_SLIDE_SPEED);
         }
         else {
           this?.anims.play('right', true);
@@ -88,7 +90,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       else { // In air
         if (this.body.blocked.left) {
           this.anims.play('wallslide-left', true);
-          this.setVelocityY(20);
+          this.setVelocityY(this.WALL_SLIDE_SPEED);
         }
         else {
           this?.anims.play('left', true);
@@ -127,7 +129,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   isMovingSignificantly() {
-    return Math.abs(this.body.velocity.x) > 21 || Math.abs(this.body.velocity.y) > 21;
+    return Math.abs(this.body.velocity.x) > this.WALL_SLIDE_SPEED
+      || Math.abs(this.body.velocity.y) > this.WALL_SLIDE_SPEED;
   }
 
   damage(amount: number) {

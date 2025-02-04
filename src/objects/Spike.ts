@@ -25,15 +25,15 @@ export class Spike extends Phaser.Physics.Arcade.Image {
         this.setOffset(object.height, object.height);
         break;
       }
+      case 180:
+      case -180: {
+        this.setBodySize(object.width, object.height);
+        break;
+      }
       case 270:
       case -90: {
         this.setBodySize(object.height, object.width);
         this.setOffset(object.width, -object.height);
-        break;
-      }
-      case 180:
-      case -180: {
-        this.setBodySize(object.width, object.height);
         break;
       }
     }

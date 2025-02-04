@@ -40,7 +40,4 @@ export class InputHandler {
   noInput() {
     return !(this.rightPressed || this.leftPressed || this.upPressed || this.attackPressed);
   }
-
-  // [todo] Apply the dependency inversion principle -
-  // The InputHandler should not know about the Scene, but the Scene should know about the InputHandler.
 }

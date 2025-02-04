@@ -1,3 +1,5 @@
+import { getCustomProperty } from '../helpers/Helpers';
+
 export class Door extends Phaser.Physics.Arcade.Sprite {
   public isOpen: boolean;
   public leadsTo: string;
@@ -8,8 +10,9 @@ export class Door extends Phaser.Physics.Arcade.Sprite {
     //console.log('Creating a Door with these properties:');
     //console.log(object.properties);
 
-    this.leadsTo = object.properties.find((x: Phaser.Types.Tilemaps.TiledObject) => x.name === 'LeadsTo')?.value;
-    this.id = object.properties.find((x: Phaser.Types.Tilemaps.TiledObject) => x.name === 'DoorId')?.value;
+    this.setOrigin(0.5, 1); // Point is at bottom center of door.
+    this.leadsTo = getCustomProperty(object, 'LeadsTo');
+    this.id = getCustomProperty(object, 'DoorId');
 
     this.anims.create({
       key: 'open',
@@ -17,9 +20,9 @@ export class Door extends Phaser.Physics.Arcade.Sprite {
       frameRate: 5
     });
 
-    if (object.properties.find((x: Phaser.Types.Tilemaps.TiledObject) => x.name === 'IsOpen')?.value === true) {
+    if (getCustomProperty<boolean>(object, 'IsOpen') === true)
       this.open();
-    }
+
     scene.physics.add.existing(this, true);
     scene.add.existing(this);
   }
@@ -27,10 +30,6 @@ export class Door extends Phaser.Physics.Arcade.Sprite {
   public open(): void {
     this.isOpen = true;
     this.anims.play('open');
-    // TODO: Change graphics
-  }
-
-  public enter(): void {
     // this.scene.load('');
   }
 }
