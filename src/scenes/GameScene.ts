@@ -48,6 +48,11 @@ export class GameScene extends Phaser.Scene {
     this.map = this.make.tilemap({ key: this.mapKey }); // Load map
     this.tileset = this.map.addTilesetImage('tileset', 'tileset'); // Load tileset
 
+    this.add.tileSprite(0, 0, this.map.widthInPixels * 2, this.map.heightInPixels * 2, 'background')
+      .setTileScale(1)
+      .setBlendMode('MULTIPLY')
+      .setAlpha(0.18);
+
     // Load layers from map
     this.tileLayerSolids  = this.map.createLayer('tile-layer-solids', this.tileset);
     this.objectLayer      = this.map.getObjectLayer('object-layer');
@@ -60,6 +65,7 @@ export class GameScene extends Phaser.Scene {
     const yOffset = 70;
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, false);
     this.cameras.main.startFollow(this.player, true, smoothing, smoothing * 2, 0, yOffset);
+    //this.cameras.main.setBackgroundColor('#444444');
 
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);
@@ -75,7 +81,7 @@ export class GameScene extends Phaser.Scene {
       loop: true
     });
 
-    this.cameras.main.fadeFrom(2000, 0, 0, 0, true);
+    this.cameras.main.fadeIn(1500);
   }
 
   update() { // This runs each frame, so keep it lightweight.
@@ -240,8 +246,12 @@ export class GameScene extends Phaser.Scene {
       this.player,
       this.door,
       (player: Player, door: Door) => {
-        if (door.isOpen)
-          this.scene.restart({ mapKey: door.leadsTo });
+        if (!door.isOpen)
+          return;
+
+        this.scene.pause();
+        this.cameras.main.fadeOut(1000); // TODO: Not working
+        this.scene.restart({ mapKey: door.leadsTo });
       },
       undefined,
       this

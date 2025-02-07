@@ -5,10 +5,10 @@ import PhaserRaycaster from 'phaser-raycaster';
 
 const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 32 * 37, // px x tiles
-  height: 32 * 22, // px x tiles
+  width: 32 * 37, // px x tiles.
+  height: 32 * 22, // px x tiles // All maps must be at least this big.
   parent: 'game-container',
-  backgroundColor: 0x333333,
+  backgroundColor: '#6e787a',
   scale: {
     mode: Phaser.Scale.MAX_ZOOM, // [old] Phaser.Scale.FIT
     autoCenter: Phaser.Scale.CENTER_BOTH

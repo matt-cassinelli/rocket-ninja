@@ -26,6 +26,8 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 ## TODO
 - After death, should start back at same level.
+- Enforce minimum map size
+- Level 3? is too hard
 - Better colours
 - Falling animation
 - Player should not be able to infinitely jump up wall
