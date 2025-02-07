@@ -42,7 +42,7 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   loadMaps() {
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 6; i++) {
       this.load.tilemapTiledJSON(
         `map${i}.json`,
         `maps/map${i}.json`
