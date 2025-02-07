@@ -1,6 +1,6 @@
 import { getCustomProperty } from '../helpers/Helpers';
 
-export class Key extends Phaser.GameObjects.Image {
+export class Key extends Phaser.Physics.Arcade.Image {
   public readonly forDoor: integer;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {

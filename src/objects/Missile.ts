@@ -4,14 +4,13 @@ export class Missile extends Phaser.Physics.Arcade.Image {
   turnDegreesPerFrameLimit = 1.18;
   imageSize = 0.14;
   hitBoxSize = 70;
+  damage = 70;
   // [old] originatingTurret? : MissileTurret;
 
   constructor(scene: Phaser.Scene, x: number, y: number, initialTargetX?: number, initialTargetY?: number) {
-    // Ideally I would keep a reference of our Player in this class. Using update() method for now instead
     super(scene, x, y, 'missile');
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    this.scene = scene;
     this.addToDisplayList();
     this.scale = this.imageSize;
     this.body.setCircle(

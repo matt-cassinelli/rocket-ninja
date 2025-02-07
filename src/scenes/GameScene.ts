@@ -168,7 +168,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(
       this.missileGroup,
       this.tileLayerSolids,
-      function(missile: any, platformLayer: any) {
+      (missile: Missile, platformLayer: any) => {
         missile.explode();
       },
       undefined,
@@ -178,11 +178,10 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(
       this.player,
       this.missileGroup,
-      function(player: Player, missile: Missile): void {
+      (player: Player, missile: Missile) => {
         missile.explode();
-        player.damage(70);
+        player.damage(missile.damage);
         this.healthBar.setLevel(player.health);
-        return;
       },
       undefined,
       this
@@ -191,10 +190,10 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.player,
       this.mannaGroup,
-      (player, manna): void => {
-        (manna as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy();
-        this.player.health += (manna as Manna).worth;
-        this.healthBar.setLevel(this.player.health);
+      (player: Player, manna: Manna) => {
+        player.health += manna.worth;
+        this.healthBar.setLevel(player.health);
+        manna.destroy();
       },
       undefined,
       this
@@ -203,13 +202,12 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.player,
       this.keys,
-      (player, key): void => {
+      (player: Player, key: Key) => {
         const door = this.door;
-        if ((key as Key).forDoor === door.id) {
+        if (key.forDoor === door.id)
           door.open();
-          // TODO: Is this still the standard way?
-          (key as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody).destroy();
-        }
+
+        key.destroy();
       },
       undefined,
       this
@@ -218,10 +216,9 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.player,
       this.door,
-      (player, door): void => {
-        if ((door as Door).isOpen) {
-          this.scene.restart({ mapKey: (door as Door).leadsTo });
-        }
+      (player: Player, door: Door) => {
+        if (door.isOpen)
+          this.scene.restart({ mapKey: door.leadsTo });
       },
       undefined,
       this
@@ -230,8 +227,8 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.player,
       this.jumpPads,
-      (p, jp): void => {
-        (jp as JumpPad).trigger(p as Player);
+      (player: Player, jumpPad: JumpPad) => {
+        jumpPad.trigger(player);
       },
       undefined,
       this
@@ -240,8 +237,8 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.player,
       this.spikes,
-      (p, s): void => {
-        (p as Player).damage((s as Spike).damage);
+      (player: Player, spike: Spike) => {
+        player.damage(spike.damage);
       },
       undefined,
       this
