@@ -40,22 +40,13 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   loadMaps() {
-    this.load.tilemapTiledJSON(
-      'map1.json',
-      'maps/map1.json'
-    );
-    this.load.tilemapTiledJSON(
-      'map2.json',
-      'maps/map2.json'
-    );
-    this.load.tilemapTiledJSON(
-      'map3.json',
-      'maps/map3.json'
-    );
-    this.load.tilemapTiledJSON(
-      'map4.json',
-      'maps/map4.json'
-    );
+    for (let i = 1; i <= 5; i++) {
+      this.load.tilemapTiledJSON(
+        `map${i}.json`,
+        `maps/map${i}.json`
+      );
+    }
+    // TODO: Use node or something to inspect maps folder.
   }
 
   // Spritesheets contain frames for animations.

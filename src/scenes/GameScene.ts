@@ -16,7 +16,6 @@ export class GameScene extends Phaser.Scene {
   tileset!: Phaser.Tilemaps.Tileset;
   tileLayerSolids!: Phaser.Tilemaps.TilemapLayer;
   objectLayer!: Phaser.Tilemaps.ObjectLayer;
-  objectShapeLayer: Phaser.Tilemaps.ObjectLayer;
   raycasterPlugin: PhaserRaycaster;
   inputHandler!: InputHandler;
   player!: Player;
@@ -40,6 +39,7 @@ export class GameScene extends Phaser.Scene {
       this.mapKey = mapKey;
     }
     else {
+      // To debug a specific level, change it here.
       this.mapKey = 'map1.json';
     }
   }
@@ -51,16 +51,15 @@ export class GameScene extends Phaser.Scene {
     // Load layers from map
     this.tileLayerSolids  = this.map.createLayer('tile-layer-solids', this.tileset);
     this.objectLayer      = this.map.getObjectLayer('object-layer');
-    this.objectShapeLayer = this.map.getObjectLayer('object-layer-shapes');
 
     this.createGroups();
     this.addObjectsToGroups();
     this.addColliders();
 
     const smoothing = 0.07;
-    const yOffset = 80;
+    const yOffset = 70;
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, false);
-    this.cameras.main.startFollow(this.player, true, smoothing, smoothing, 0, yOffset);
+    this.cameras.main.startFollow(this.player, true, smoothing, smoothing * 2, 0, yOffset);
 
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);
@@ -168,7 +167,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(
       this.missileGroup,
       this.tileLayerSolids,
-      (missile: Missile, platformLayer: any) => {
+      (missile: Missile, solid) => {
         missile.explode();
       },
       undefined,

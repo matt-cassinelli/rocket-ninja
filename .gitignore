@@ -1,6 +1,4 @@
 /dist
-*.tmj
-*.tmx
 .cache
 /private
 /node_modules

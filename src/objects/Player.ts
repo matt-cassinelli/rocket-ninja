@@ -18,7 +18,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, object.x, object.y, 'player');
     this.scene = scene;
     this.scene.physics.add.existing(this);
-    this.setDrag(this.LEFTRIGHT_INAIR_DRAG, 0);
+    this.setDragX(this.LEFTRIGHT_INAIR_DRAG);
+    //this.setMass
+    //this.setFriction
+    //this.setBounceX(0); // -1
 
     this.trail = this.scene.add.particles(0, 0, 'aura', {
       scale: { start: 0.25, end: 0.1 },
@@ -70,7 +73,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       else { // In air
         if (this.body.blocked.right) {
           this.anims.play('wallslide-right', true);
-          this.setVelocityY(this.WALL_SLIDE_SPEED);
+          if (this.body.velocity.y >= this.WALL_SLIDE_SPEED)
+            this.setVelocityY(this.WALL_SLIDE_SPEED);
         }
         else {
           this?.anims.play('right', true);
@@ -90,7 +94,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       else { // In air
         if (this.body.blocked.left) {
           this.anims.play('wallslide-left', true);
-          this.setVelocityY(this.WALL_SLIDE_SPEED);
+          if (this.body.velocity.y >= this.WALL_SLIDE_SPEED)
+            this.setVelocityY(this.WALL_SLIDE_SPEED);
         }
         else {
           this?.anims.play('left', true);
@@ -114,12 +119,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityY(-this.GROUND_JUMP_SPEED); // Jump
       }
       else if (this.body.blocked.right) { // If player is by right wall
-        this.setVelocity(-this.WALL_JUMP_AWAY_SPEED, -this.WALL_JUMP_UP_SPEED); // Jump up and away from wall
+        const upSpeed = this.body.velocity.y < -this.WALL_JUMP_UP_SPEED ? this.body.velocity.y - 50 : -this.WALL_JUMP_UP_SPEED;
+        this.setVelocity(-this.WALL_JUMP_AWAY_SPEED, upSpeed); // Jump up and away from wall
       }
       else if (this.body.blocked.left) { // Same for left wall
-        this.setVelocity(this.WALL_JUMP_AWAY_SPEED, -this.WALL_JUMP_UP_SPEED);
+        const upSpeed = this.body.velocity.y < -this.WALL_JUMP_UP_SPEED ? this.body.velocity.y - 50 : -this.WALL_JUMP_UP_SPEED;
+        this.setVelocity(this.WALL_JUMP_AWAY_SPEED, upSpeed);
       }
     }
+
+    // if (this.body.touching.left)
+    //   this.setVelocityX(-1); // Hack to prevent restitution / seperation
 
     this.trail.lifespan = this.isMovingSignificantly() ? 3500 : 0;
   }
