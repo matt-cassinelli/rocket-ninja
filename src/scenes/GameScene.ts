@@ -21,6 +21,7 @@ export class GameScene extends Phaser.Scene {
   player!: Player;
   door?: Door;
   healthBar: HealthBar | undefined;
+  isPaused: boolean;
 
   mannaGroup!:         Phaser.Physics.Arcade.StaticGroup;
   missileTurretGroup!: Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
@@ -45,6 +46,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.isPaused = false;
     this.map = this.make.tilemap({ key: this.mapKey }); // Load map
     this.tileset = this.map.addTilesetImage('tileset', 'tileset'); // Load tileset
 
@@ -81,12 +83,15 @@ export class GameScene extends Phaser.Scene {
       loop: true
     });
 
-    this.cameras.main.fadeIn(1500);
+    this.cameras.main.fadeIn(850);
   }
 
   update() { // This runs each frame, so keep it lightweight.
+    if (this.isPaused == true)
+      return;
+
     if (this.player?.isDead())
-      this.endGame();
+      this.endMap();
 
     this.inputHandler.update();
     this.player.move(this.inputHandler);
@@ -96,16 +101,28 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  endGame() {
-    this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '48px' })
-      .setOrigin(0.5, 0.5)
-      .setScrollFactor(0)
-      .setDepth(10);
+  endMap(newMap?: string) {
+    this.isPaused = true;
     this.physics.pause();
-    this.time.addEvent({
-      delay: 2500,
-      callback: () => this.scene.restart({ mapKey: 'map1.json' })
-    });
+    //this.scene.pause();
+
+    if (this.player?.isDead())
+      this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '56px' })
+        .setOrigin(0.5, 0.5)
+        .setScrollFactor(0)
+        .setDepth(10);
+
+    const delay = this.player?.isDead() ? 1200 : 0;
+    const duration = this.player?.isDead() ? 1300 : 700;
+    this.time.delayedCall(
+      delay,
+      () => this.cameras.main.fadeOut(duration)
+    );
+
+    this.cameras.main.once(
+      Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+      () => this.scene.restart({ mapKey: newMap })
+    );
   }
 
   createGroups() {
@@ -241,9 +258,7 @@ export class GameScene extends Phaser.Scene {
         if (!door.isOpen)
           return;
 
-        this.scene.pause();
-        this.cameras.main.fadeOut(1000); // TODO: Not working
-        this.scene.restart({ mapKey: door.leadsTo });
+        this.endMap(door.leadsTo);
       }
     );
 

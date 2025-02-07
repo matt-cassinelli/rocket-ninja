@@ -34,6 +34,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image('missile-turret', 'images/missile-turret.png');
     this.load.image('key',            'images/key.svg');
     this.load.image('spike',          'images/spike.png');
+    // Note: Backgrounds should have POT dimensions.
     this.load.image('background',     'images/chromatic-camouflage (5).png');
     this.load.image('explosion',      'particles/explosion.png');
     this.load.image('aura',           'particles/aura-black.png');
