@@ -15,8 +15,8 @@ export class JumpPad extends Phaser.Physics.Arcade.Sprite {
       frameRate: 10
     });
 
-    this.setDisplaySize(object.width, object.height);
-    this.setOrigin(0, 0);
+    this.setOrigin(0, 0.5);
+    this.setDisplaySize(object.width, object.height * 2);
     this.setAngle(object.rotation);
 
     // Disgusting hack to fake rotation of the physics body (they can't be rotated).
