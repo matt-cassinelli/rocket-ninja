@@ -25,17 +25,19 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 
 ## TODO
+- After death, should start back at same level.
+- Better colours
 - Falling animation
 - Player should not be able to infinitely jump up wall
-- On changed map, fade in from black
-- Better colours
-- Sounds
-- Music
 - Wall slide should be faster
 - Wall jump seems hard for beginners
 
 
 ## TODO: Future
+- Migrate to Matter Physics
+- Timer instead of health?
+- Sounds
+- Music
 - Persist health/time after changing map?
 - Sloped surfaces
 - Full screen
@@ -55,4 +57,3 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - Grenade
   - Grappling hook
   - EMP
-- Migrate to Matter Physics

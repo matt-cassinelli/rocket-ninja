@@ -74,6 +74,8 @@ export class GameScene extends Phaser.Scene {
       callbackScope: this,
       loop: true
     });
+
+    this.cameras.main.fadeFrom(2000, 0, 0, 0, true);
   }
 
   update() { // This runs each frame, so keep it lightweight.
