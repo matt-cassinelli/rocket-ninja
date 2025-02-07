@@ -58,7 +58,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       frames: [{ key: 'player', frame: 9 }]
     });
 
-    this.depth = 1;
+    this.setDepth(2);
+    this.trail.setDepth(1);
   }
 
   move(inputHandler: InputHandler) {

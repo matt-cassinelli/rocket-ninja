@@ -25,6 +25,8 @@ export class Door extends Phaser.Physics.Arcade.Sprite {
 
     scene.physics.add.existing(this, true);
     scene.add.existing(this);
+
+    this.setDepth(0);
   }
 
   public open(): void {
