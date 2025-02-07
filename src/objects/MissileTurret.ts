@@ -53,6 +53,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
     if (this.missile?.active !== true) {
       this.missile = new Missile(this.scene, this.x, this.y, initialtargetX, initialTargetY);
       missileGroup.add(this.missile);
+      this.scene.sound.play('missile-launch', { volume: 0.8 });
     }
     // [dbg] console.log("firing missile")
     // [todo] play sound, then wait a bit before firing

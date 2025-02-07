@@ -25,6 +25,11 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 
 ## TODO
+- Sounds:
+  - Walk
+  - Wallslide
+  - Jump
+  - Music
 - After death, should start back at same level.
 - Level 3 and 4 are too hard for beginners
 - Better colours
@@ -33,6 +38,7 @@ Where possible, complex code has been seperated into its own classes/files/metho
 - Wall slide should be faster
 - Wall jump seems hard for beginners
 - Allow falling off map (sky-based maps)
+
 
 
 ## TODO: Future

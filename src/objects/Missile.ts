@@ -85,6 +85,7 @@ export class Missile extends Phaser.Physics.Arcade.Image {
       alpha: { start: 1, end: 0 }
     });
     particles.explode(30);
+    this.scene.sound.play('explosion', { volume: 0.6 }); // TODO: Different explosion for hitting surface vs player
     this.trail.destroy();
     this.destroy();
   }

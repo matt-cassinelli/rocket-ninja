@@ -22,6 +22,7 @@ export class LoadingScene extends Phaser.Scene {
     this.loadImages();
     this.loadSpritesheets();
     this.loadMaps();
+    this.loadSounds();
   }
 
   create(): void {
@@ -73,5 +74,13 @@ export class LoadingScene extends Phaser.Scene {
       'spritesheets/jump-pad-2-16x16.png',
       { frameWidth: 16, frameHeight: 16 }
     );
+  }
+
+  loadSounds() {
+    this.load.audio('missile-launch', 'sounds/missile-launch.mp3');
+    this.load.audio('explosion', 'sounds/explosion.mp3');
+    this.load.audio('door-open', 'sounds/door-open.mp3');
+    this.load.audio('manna', 'sounds/crystal-glass.mp3');
+    this.load.audio('jump-pad', 'sounds/jump-pad.mp3');
   }
 }

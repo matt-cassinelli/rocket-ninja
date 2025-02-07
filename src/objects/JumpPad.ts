@@ -50,5 +50,6 @@ export class JumpPad extends Phaser.Physics.Arcade.Sprite {
     this.anims.play('trigger', false);
     const rotatedVelocity = this.scene.physics.velocityFromRotation(this.rotation, this.force);
     player.setVelocity(rotatedVelocity.y, -rotatedVelocity.x);
+    this.scene.sound.play('jump-pad', { volume: 0.7 });
   }
 }

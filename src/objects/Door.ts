@@ -32,6 +32,7 @@ export class Door extends Phaser.Physics.Arcade.Sprite {
   public open(): void {
     this.isOpen = true;
     this.anims.play('open');
+    this.scene.sound.play('door-open', { volume: 0.7 });
     // this.scene.load('');
   }
 }

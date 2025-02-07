@@ -71,7 +71,7 @@ export class GameScene extends Phaser.Scene {
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);
 
-    const healthLossRateInMs = 1000;
+    const healthLossRateInMs = 500;
     this.time.addEvent({
       delay: healthLossRateInMs,
       callback: () => {
@@ -232,9 +232,7 @@ export class GameScene extends Phaser.Scene {
       this.player,
       this.mannaGroup,
       (player: Player, manna: Manna) => {
-        player.health += manna.worth;
-        this.healthBar.setLevel(player.health);
-        manna.destroy();
+        manna.collect(player, this.healthBar);
       }
     );
 
