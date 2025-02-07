@@ -42,6 +42,7 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   loadMaps() {
+    // Note: Maps must be at least the minimum size defined in Main.ts.
     for (let i = 1; i <= 5; i++) {
       this.load.tilemapTiledJSON(
         `map${i}.json`,

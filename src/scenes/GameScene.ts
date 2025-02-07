@@ -12,23 +12,23 @@ import { Spike } from '../objects/Spike';
 
 export class GameScene extends Phaser.Scene {
   mapKey: string;
-  map!: Phaser.Tilemaps.Tilemap;
-  tileset!: Phaser.Tilemaps.Tileset;
-  tileLayerSolids!: Phaser.Tilemaps.TilemapLayer;
-  objectLayer!: Phaser.Tilemaps.ObjectLayer;
+  map: Phaser.Tilemaps.Tilemap;
+  tileset: Phaser.Tilemaps.Tileset;
+  solidLayer: Phaser.Tilemaps.TilemapLayer;
+  objectLayer: Phaser.Tilemaps.ObjectLayer;
   raycasterPlugin: PhaserRaycaster;
-  inputHandler!: InputHandler;
-  player!: Player;
-  door?: Door;
+  inputHandler: InputHandler;
+  player: Player;
+  door: Door;
   healthBar: HealthBar | undefined;
   isPaused: boolean;
 
-  mannaGroup!:         Phaser.Physics.Arcade.StaticGroup;
-  missileTurretGroup!: Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
-  missileGroup!:       Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
-  keys!:               Phaser.GameObjects.Group;
-  jumpPads:            Phaser.Physics.Arcade.StaticGroup;
-  spikes:              Phaser.Physics.Arcade.StaticGroup;
+  mannaGroup:         Phaser.Physics.Arcade.StaticGroup;
+  missileTurretGroup: Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
+  missileGroup:       Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
+  keys:               Phaser.GameObjects.Group;
+  jumpPads:           Phaser.Physics.Arcade.StaticGroup;
+  spikes:             Phaser.Physics.Arcade.StaticGroup;
 
   constructor() {
     super('GameScene');
@@ -56,7 +56,7 @@ export class GameScene extends Phaser.Scene {
       .setAlpha(0.18);
 
     // Load layers from map
-    this.tileLayerSolids  = this.map.createLayer('tile-layer-solids', this.tileset);
+    this.solidLayer  = this.map.createLayer('tile-layer-solids', this.tileset);
     this.objectLayer      = this.map.getObjectLayer('object-layer');
 
     this.createGroups();
@@ -67,7 +67,6 @@ export class GameScene extends Phaser.Scene {
     const yOffset = 70;
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, false);
     this.cameras.main.startFollow(this.player, true, smoothing, smoothing * 2, 0, yOffset);
-    //this.cameras.main.setBackgroundColor('#444444');
 
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);
@@ -186,12 +185,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   addColliders() {
-    this.tileLayerSolids.setCollisionByExclusion([-1]); // Without this, only the 1st tile from tileset collides.
+    this.solidLayer.setCollisionByExclusion([-1]); // Without this, only the 1st tile from tileset collides.
 
     // Fall damage
     this.physics.add.collider(
       this.player,
-      this.tileLayerSolids,
+      this.solidLayer,
       (player: Player, solid) => {
         if (!player.isOnGround())
           return;
@@ -201,19 +200,19 @@ export class GameScene extends Phaser.Scene {
       },
       // Only process the above fn if falling fast.
       (player: Player, solid) => {
-        return player.body.velocity.y > 500;
+        return player.body.velocity.y > 510;
       }
     );
 
     // Walking / normal collision.
     this.physics.add.collider(
       this.player,
-      this.tileLayerSolids
+      this.solidLayer
     );
 
     this.physics.add.collider(
       this.missileGroup,
-      this.tileLayerSolids,
+      this.solidLayer,
       (missile: Missile, solid) => {
         missile.explode();
       }

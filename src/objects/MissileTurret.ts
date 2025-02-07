@@ -27,7 +27,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
 
     this.raycaster = scene.raycasterPlugin.createRaycaster({ debug: false });
     this.raycaster.mapGameObjects(scene.player, true);
-    this.raycaster.mapGameObjects(scene.tileLayerSolids, false, { collisionTiles: [-1] });
+    this.raycaster.mapGameObjects(scene.solidLayer, false, { collisionTiles: [-1] });
 
     this.ray = this.raycaster.createRay({
       origin: { x: object.x, y: object.y },
