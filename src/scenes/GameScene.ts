@@ -199,9 +199,7 @@ export class GameScene extends Phaser.Scene {
       this.tileLayerSolids,
       (missile: Missile, solid) => {
         missile.explode();
-      },
-      undefined,
-      this
+      }
     );
 
     this.physics.add.collider(
@@ -211,9 +209,7 @@ export class GameScene extends Phaser.Scene {
         missile.explode();
         player.damage(missile.damage);
         this.healthBar.setLevel(player.health);
-      },
-      undefined,
-      this
+      }
     );
 
     this.physics.add.overlap(
@@ -223,9 +219,7 @@ export class GameScene extends Phaser.Scene {
         player.health += manna.worth;
         this.healthBar.setLevel(player.health);
         manna.destroy();
-      },
-      undefined,
-      this
+      }
     );
 
     this.physics.add.overlap(
@@ -237,9 +231,7 @@ export class GameScene extends Phaser.Scene {
           door.open();
 
         key.destroy();
-      },
-      undefined,
-      this
+      }
     );
 
     this.physics.add.overlap(
@@ -252,9 +244,7 @@ export class GameScene extends Phaser.Scene {
         this.scene.pause();
         this.cameras.main.fadeOut(1000); // TODO: Not working
         this.scene.restart({ mapKey: door.leadsTo });
-      },
-      undefined,
-      this
+      }
     );
 
     this.physics.add.overlap(
@@ -262,9 +252,7 @@ export class GameScene extends Phaser.Scene {
       this.jumpPads,
       (player: Player, jumpPad: JumpPad) => {
         jumpPad.trigger(player);
-      },
-      undefined,
-      this
+      }
     );
 
     this.physics.add.overlap(
@@ -272,9 +260,7 @@ export class GameScene extends Phaser.Scene {
       this.spikes,
       (player: Player, spike: Spike) => {
         player.damage(spike.damage);
-      },
-      undefined,
-      this
+      }
     );
   }
 }
