@@ -25,21 +25,22 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 
 ## TODO
-- Take damage if fall hard
-- Persist health/time after changing map
+- Falling animation
 - Player should not be able to infinitely jump up wall
+- On changed map, fade in from black
+- Better colours
 - Sounds
 - Music
-- Falling animation
 - Wall slide should be faster
 - Wall jump seems hard for beginners
 
 
 ## TODO: Future
+- Persist health/time after changing map?
 - Sloped surfaces
+- Full screen
 - Knockback
   - Use knockback to reach areas
-- When turret sees player, it moves and plays sound
 - Animation on death
 - Side doors
 - Door color should match key color
@@ -54,6 +55,4 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - Grenade
   - Grappling hook
   - EMP
-- Win screen
-- Check jump pad physics body is correct when rotated
 - Migrate to Matter Physics

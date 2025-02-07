@@ -2,7 +2,6 @@ import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health: integer = 150;
-  scene: Phaser.Scene;
   trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
   private LEFTRIGHT_FLOOR_SPEED = 290;
@@ -16,7 +15,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
-    this.scene = scene;
     this.scene.physics.add.existing(this);
     this.setDragX(this.LEFTRIGHT_INAIR_DRAG);
     //this.setMass

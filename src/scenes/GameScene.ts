@@ -162,7 +162,29 @@ export class GameScene extends Phaser.Scene {
 
   addColliders() {
     this.tileLayerSolids.setCollisionByExclusion([-1]); // Without this, only the 1st tile from tileset collides.
-    this.physics.add.collider(this.player, this.tileLayerSolids);
+
+    // Fall damage
+    this.physics.add.collider(
+      this.player,
+      this.tileLayerSolids,
+      (player: Player, solid) => {
+        if (!player.isOnGround())
+          return;
+
+        player.damage(200);
+        this.healthBar.setLevel(player.health);
+      },
+      // Only process the above fn if falling fast.
+      (player: Player, solid) => {
+        return player.body.velocity.y > 500;
+      }
+    );
+
+    // Walking / normal collision.
+    this.physics.add.collider(
+      this.player,
+      this.tileLayerSolids
+    );
 
     this.physics.add.collider(
       this.missileGroup,
