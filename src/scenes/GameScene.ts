@@ -192,7 +192,7 @@ export class GameScene extends Phaser.Scene {
       this.player,
       this.solidLayer,
       (player: Player, solid) => {
-        if (!player.isOnGround())
+        if (!player.body.blocked.down) // On ground
           return;
 
         player.damage(200);

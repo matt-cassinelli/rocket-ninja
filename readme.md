@@ -30,6 +30,7 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - Wallslide
   - Jump
   - Music
+  - Enter door
 - After death, should start back at same level.
 - Level 3 and 4 are too hard for beginners
 - Better colours

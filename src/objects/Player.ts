@@ -63,8 +63,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   move(inputHandler: InputHandler) {
+    if (this.body.blocked.down && (inputHandler.rightPressed || inputHandler.leftPressed)) {
+      if (!this.scene.sound.isPlaying('running')) {
+        const stepCount = 19;
+        const stepLengthMs = 294;
+        const randomStep = Math.floor(Math.random() * stepCount); // 0 - 18
+        const randomStartTimeSeconds = randomStep * stepLengthMs / 1000;
+        this.scene.sound.play('running', { volume: 0.6, loop: true, seek: randomStartTimeSeconds });
+      }
+    }
+    else {
+      // TODO: Stop abrupt cut off
+      this.scene.sound.stopByKey('running');
+    }
+
     if (inputHandler.rightPressed) {
-      if (this.isOnGround()) {
+      if (this.body.blocked.down) { // On ground
         this.setVelocityX(this.LEFTRIGHT_FLOOR_SPEED); // Immediate
         this.setAccelerationX(0);
         this?.anims.play('right', true);
@@ -85,7 +99,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       }
     }
     else if (inputHandler.leftPressed) {
-      if (this.isOnGround()) {
+      if (this.body.blocked.down) { // On ground
         this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED); // Immediate
         this.setAccelerationX(0);
         this?.anims.play('left', true);
@@ -108,13 +122,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     else { // Neither left or right are pressed
       this?.anims.play('turn', true);
       this.setAccelerationX(0);
-      if (this.isOnGround()) { // If on ground,
+      if (this.body.blocked.down) { // If on ground,
         this?.setVelocityX(0); // Immediately halt.
       }
     }
 
     if (inputHandler.upPressed) { // If Jump is pressed,
-      if (this.isOnGround()) { // And player is on ground,
+      if (this.body.blocked.down) { // And player is on ground,
         this.setVelocityY(-this.GROUND_JUMP_SPEED); // Jump
       }
       else if (this.body.blocked.right) { // If player is by right wall
@@ -131,10 +145,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     //   this.setVelocityX(-1); // Hack to prevent restitution / seperation
 
     this.trail.lifespan = this.isMovingSignificantly() ? 3500 : 0;
-  }
-
-  isOnGround() {
-    return this.body.blocked.down;
   }
 
   isMovingSignificantly() {
