@@ -1,4 +1,4 @@
-import { random } from '../helpers/Helpers';
+import { randomItem } from '../helpers/Helpers';
 import { HealthBar } from './HealthBar';
 import { Player } from './Player';
 
@@ -33,7 +33,7 @@ export class Manna extends Phaser.Physics.Arcade.Sprite {
 
   collect(player: Player, healthBar: HealthBar) {
     const tunings = [-500, -100, 0, 200, 400, 700, 1100];
-    this.scene.sound.play('manna', { detune: random(tunings), volume: 0.4 });
+    this.scene.sound.play('manna', { detune: randomItem(tunings), volume: 0.4 });
     player.health += this.worth;
     healthBar.setLevel(player.health);
     this.destroy();

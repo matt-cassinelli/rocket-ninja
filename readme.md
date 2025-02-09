@@ -26,11 +26,10 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 ## TODO
 - Sounds:
-  - Walk
   - Wallslide
-  - Jump
   - Music
   - Enter door
+- Bug: Walk sound keeps playing after death.
 - After death, should start back at same level.
 - Level 3 and 4 are too hard for beginners
 - Better colours

@@ -1,3 +1,4 @@
+import { randomInRange } from '../helpers/Helpers';
 import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
@@ -139,6 +140,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         const upSpeed = this.body.velocity.y < -this.WALL_JUMP_UP_SPEED ? this.body.velocity.y - 50 : -this.WALL_JUMP_UP_SPEED;
         this.setVelocity(this.WALL_JUMP_AWAY_SPEED, upSpeed);
       }
+
+      if (this.body.blocked.down || this.body.blocked.right || this.body.blocked.left)
+        this.scene.sound.play('jump', { volume: randomInRange(8, 10) / 10, detune: randomInRange(-100, 200) });
     }
 
     // if (this.body.touching.left)
