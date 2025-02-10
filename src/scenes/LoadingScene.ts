@@ -9,10 +9,16 @@ export class LoadingScene extends Phaser.Scene {
     const progress = this.add.graphics();
 
     this.load.on('progress', (value: number) => {
-      const padding = 300;
+      // value is from 0..1
       progress.clear();
       progress.fillStyle(0x15cc1a, 1);
-      progress.fillRect(0 + padding, this.scale.height / 2, (this.scale.width * value) - (padding * 2), 18);
+
+      const padding = this.scale.width / 6;
+      const height = this.scale.height / 21;
+      const x = 0 + padding;
+      const y = (this.scale.height / 2) - (height / 2);
+      const width = (this.scale.width - padding * 2) * value;
+      progress.fillRect(x, y, width, height);
     });
 
     this.load.on('complete', () => {
