@@ -1,3 +1,5 @@
+import { ProgressBar } from '../objects/ProgressBar';
+
 export class LoadingScene extends Phaser.Scene {
   constructor() {
     super({
@@ -5,33 +7,23 @@ export class LoadingScene extends Phaser.Scene {
     });
   }
 
-  preload(): void {
-    const progress = this.add.graphics();
-
+  preload() {
+    const progressBar = new ProgressBar(this);
     this.load.on('progress', (value: number) => {
-      // value is from 0..1
-      progress.clear();
-      progress.fillStyle(0x15cc1a, 1);
-
-      const padding = this.scale.width / 6;
-      const height = this.scale.height / 21;
-      const x = 0 + padding;
-      const y = (this.scale.height / 2) - (height / 2);
-      const width = (this.scale.width - padding * 2) * value;
-      progress.fillRect(x, y, width, height);
+      progressBar.progress(value);
     });
 
     this.load.on('complete', () => {
-      progress.destroy();
+      progressBar.complete();
     });
 
-    this.loadImages();
-    this.loadSpritesheets();
     this.loadMaps();
     this.loadSounds();
+    this.loadImages();
+    this.loadSpritesheets();
   }
 
-  create(): void {
+  create() {
     this.scene.start('GameScene');
   }
 
@@ -41,8 +33,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image('missile-turret', 'images/missile-turret.png');
     this.load.image('key',            'images/key.svg');
     this.load.image('spike',          'images/spike.png');
-    // Note: Backgrounds should have POT dimensions.
-    this.load.image('background',     'images/chromatic-camouflage (5).png');
+    this.load.image('background',     'images/chromatic-camouflage (5).png'); // Note: Backgrounds should have POT dimensions.
     this.load.image('explosion',      'particles/explosion.png');
     this.load.image('aura',           'particles/aura-black.png');
     this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');
@@ -55,7 +46,6 @@ export class LoadingScene extends Phaser.Scene {
         `maps/map${i}.json`
       );
     }
-    // TODO: Use node or something to inspect maps folder.
   }
 
   // Spritesheets contain frames for animations.
