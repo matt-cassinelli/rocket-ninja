@@ -1,3 +1,6 @@
+import { HealthBar } from './HealthBar';
+import { Player } from './Player';
+
 export class Missile extends Phaser.Physics.Arcade.Image {
   trail: Phaser.GameObjects.Particles.ParticleEmitter;
   speed = 119;
@@ -49,6 +52,35 @@ export class Missile extends Phaser.Physics.Arcade.Image {
     this.moveForwards(this.speed);
   }
 
+  hitSolid() {
+    const particles = this.scene.add.particles(this.x, this.y, 'explosion', {
+      lifespan: { min: 50, max: 300 },
+      speed: { min: 100, max: 600 },
+      scale: { start: 0.4, end: 0 },
+      alpha: { start: 1, end: 0 }
+    });
+    particles.explode(30);
+    this.scene.sound.play('explosion', { volume: 0.55 });
+    this.trail.destroy();
+    this.destroy();
+  }
+
+  hitPlayer(player: Player, healthBar: HealthBar) {
+    // TODO: Different explosion
+    player.damage(this.damage);
+    healthBar.setLevel(player.health);
+    const particles = this.scene.add.particles(this.x, this.y, 'explosion', {
+      lifespan: { min: 50, max: 300 },
+      speed: { min: 100, max: 600 },
+      scale: { start: 0.4, end: 0 },
+      alpha: { start: 1, end: 0 }
+    });
+    particles.explode(30);
+    this.scene.sound.play('explosion', { volume: 0.65 });
+    this.trail.destroy();
+    this.destroy();
+  }
+
   private getTargetRotation(targetX: number, targetY: number) {
     return Phaser.Math.Angle.Between(
       this.x, this.y,
@@ -75,18 +107,5 @@ export class Missile extends Phaser.Physics.Arcade.Image {
         this.setAngle(this.angle - limit); // Rotate anticlockwise
       }
     }
-  }
-
-  explode() {
-    const particles = this.scene.add.particles(this.x, this.y, 'explosion', {
-      lifespan: { min: 50, max: 300 },
-      speed: { min: 100, max: 600 },
-      scale: { start: 0.4, end: 0 },
-      alpha: { start: 1, end: 0 }
-    });
-    particles.explode(30);
-    this.scene.sound.play('explosion', { volume: 0.6 }); // TODO: Different explosion for hitting surface vs player
-    this.trail.destroy();
-    this.destroy();
   }
 }

@@ -198,7 +198,7 @@ export class GameScene extends Phaser.Scene {
         player.damage(200);
         this.healthBar.setLevel(player.health);
       },
-      // Only process the above fn if falling fast.
+      // Only process collision if was falling fast.
       (player: Player, solid) => {
         return player.body.velocity.y > 510;
       }
@@ -214,7 +214,7 @@ export class GameScene extends Phaser.Scene {
       this.missileGroup,
       this.solidLayer,
       (missile: Missile, solid) => {
-        missile.explode();
+        missile.hitSolid();
       }
     );
 
@@ -222,9 +222,7 @@ export class GameScene extends Phaser.Scene {
       this.player,
       this.missileGroup,
       (player: Player, missile: Missile) => {
-        missile.explode();
-        player.damage(missile.damage);
-        this.healthBar.setLevel(player.health);
+        missile.hitPlayer(player, this.healthBar);
       }
     );
 
@@ -240,11 +238,7 @@ export class GameScene extends Phaser.Scene {
       this.player,
       this.keys,
       (player: Player, key: Key) => {
-        const door = this.door;
-        if (key.forDoor === door.id)
-          door.open();
-
-        key.destroy();
+        key.collect(this.door);
       }
     );
 

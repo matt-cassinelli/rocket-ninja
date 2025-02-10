@@ -8,7 +8,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
   ray: Raycaster.Ray;
   id: number;
   intersections: Phaser.Geom.Point[];
-  delay = 100; // ms
+  delayMs = 100;
   size = 50;
 
   constructor(scene: GameScene, object: Phaser.Types.Tilemaps.TiledObject) {
@@ -55,11 +55,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
       missileGroup.add(this.missile);
       this.scene.sound.play('missile-launch', { volume: 0.8 });
     }
-    // [dbg] console.log("firing missile")
-    // [todo] play sound, then wait a bit before firing
     // [idea] this.missiles.push(...
     // [old] return this.missile
   }
-
-  // [idea] canSeePlayer(player) {}
 }

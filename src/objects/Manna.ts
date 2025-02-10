@@ -1,4 +1,4 @@
-import { randomItem } from '../helpers/Helpers';
+import { randomInRange, randomItem } from '../helpers/Helpers';
 import { HealthBar } from './HealthBar';
 import { Player } from './Player';
 
@@ -19,8 +19,8 @@ export class Manna extends Phaser.Physics.Arcade.Sprite {
     scene.tweens.add({
       targets: this,
       y: this.y - hoverIntensity,
-      duration: Phaser.Math.Between(950, 1300),
-      delay: Phaser.Math.Between(0, 500),
+      duration: randomInRange(950, 1300),
+      delay: randomInRange(0, 500),
       ease: 'Sine.easeInOut',
       yoyo: true,
       loop: -1
@@ -33,7 +33,7 @@ export class Manna extends Phaser.Physics.Arcade.Sprite {
 
   collect(player: Player, healthBar: HealthBar) {
     const tunings = [-500, -100, 0, 200, 400, 700, 1100];
-    this.scene.sound.play('manna', { detune: randomItem(tunings), volume: 0.4 });
+    this.scene.sound.play('manna', { detune: randomItem(tunings), volume: 0.4, delay: randomInRange(0, 50) / 1000 });
     player.health += this.worth;
     healthBar.setLevel(player.health);
     this.destroy();

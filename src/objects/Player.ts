@@ -3,21 +3,29 @@ import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health: integer = 150;
-  trail: Phaser.GameObjects.Particles.ParticleEmitter;
+  private trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
-  private LEFTRIGHT_FLOOR_SPEED = 290;
-  private LEFTRIGHT_INAIR_LIMIT = 290;
-  private LEFTRIGHT_INAIR_ACCEL = 1300;
-  private LEFTRIGHT_INAIR_DRAG = 400;
-  private GROUND_JUMP_SPEED = 320;
-  private WALL_JUMP_UP_SPEED = 220;
-  private WALL_JUMP_AWAY_SPEED = 300;
-  private WALL_SLIDE_SPEED = 25;
+  private config = {
+    floor: {
+      sidewaysSpeed: 290,
+      jumpSpeed: 320
+    },
+    air: {
+      accel: 1300,
+      drag: 400,
+      limit: 290
+    },
+    wall: {
+      jumpUpSpeed: 220,
+      jumpAwaySpeed: 300,
+      slideSpeed: 30
+    }
+  };
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
     this.scene.physics.add.existing(this);
-    this.setDragX(this.LEFTRIGHT_INAIR_DRAG);
+    this.setDragX(this.config.air.drag);
     //this.setMass
     //this.setFriction
     //this.setBounceX(0); // -1
@@ -80,42 +88,42 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (inputHandler.rightPressed) {
       if (this.body.blocked.down) { // On ground
-        this.setVelocityX(this.LEFTRIGHT_FLOOR_SPEED); // Immediate
+        this.setVelocityX(this.config.floor.sidewaysSpeed); // Immediate
         this.setAccelerationX(0);
         this?.anims.play('right', true);
       }
       else { // In air
         if (this.body.blocked.right) {
           this.anims.play('wallslide-right', true);
-          if (this.body.velocity.y >= this.WALL_SLIDE_SPEED)
-            this.setVelocityY(this.WALL_SLIDE_SPEED);
+          if (this.body.velocity.y >= this.config.wall.slideSpeed)
+            this.setVelocityY(this.config.wall.slideSpeed);
         }
         else {
           this?.anims.play('right', true);
         }
-        if (this.body.velocity.x < this.LEFTRIGHT_INAIR_LIMIT)
-          this.setAccelerationX(this.LEFTRIGHT_INAIR_ACCEL); // Gradual
+        if (this.body.velocity.x < this.config.air.limit)
+          this.setAccelerationX(this.config.air.accel); // Gradual
         else
           this.setAccelerationX(0); // TODO: Could this be removed?
       }
     }
     else if (inputHandler.leftPressed) {
       if (this.body.blocked.down) { // On ground
-        this.setVelocityX(-this.LEFTRIGHT_FLOOR_SPEED); // Immediate
+        this.setVelocityX(-this.config.floor.sidewaysSpeed); // Immediate
         this.setAccelerationX(0);
         this?.anims.play('left', true);
       }
       else { // In air
         if (this.body.blocked.left) {
           this.anims.play('wallslide-left', true);
-          if (this.body.velocity.y >= this.WALL_SLIDE_SPEED)
-            this.setVelocityY(this.WALL_SLIDE_SPEED);
+          if (this.body.velocity.y >= this.config.wall.slideSpeed)
+            this.setVelocityY(this.config.wall.slideSpeed);
         }
         else {
           this?.anims.play('left', true);
         }
-        if (this.body.velocity.x > -this.LEFTRIGHT_INAIR_LIMIT)
-          this.setAccelerationX(-this.LEFTRIGHT_INAIR_ACCEL); // Gradual
+        if (this.body.velocity.x > -this.config.air.limit)
+          this.setAccelerationX(-this.config.air.accel); // Gradual
         else
           this.setAccelerationX(0);
       }
@@ -130,15 +138,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (inputHandler.upPressed) { // If Jump is pressed,
       if (this.body.blocked.down) { // And player is on ground,
-        this.setVelocityY(-this.GROUND_JUMP_SPEED); // Jump
+        this.setVelocityY(-this.config.floor.jumpSpeed); // Jump
       }
       else if (this.body.blocked.right) { // If player is by right wall
-        const upSpeed = this.body.velocity.y < -this.WALL_JUMP_UP_SPEED ? this.body.velocity.y - 50 : -this.WALL_JUMP_UP_SPEED;
-        this.setVelocity(-this.WALL_JUMP_AWAY_SPEED, upSpeed); // Jump up and away from wall
+        const upSpeed = this.body.velocity.y < -this.config.wall.jumpUpSpeed ? this.body.velocity.y - 50 : -this.config.wall.jumpUpSpeed;
+        this.setVelocity(-this.config.wall.jumpAwaySpeed, upSpeed); // Jump up and away from wall
       }
       else if (this.body.blocked.left) { // Same for left wall
-        const upSpeed = this.body.velocity.y < -this.WALL_JUMP_UP_SPEED ? this.body.velocity.y - 50 : -this.WALL_JUMP_UP_SPEED;
-        this.setVelocity(this.WALL_JUMP_AWAY_SPEED, upSpeed);
+        const upSpeed = this.body.velocity.y < -this.config.wall.jumpUpSpeed ? this.body.velocity.y - 50 : -this.config.wall.jumpUpSpeed;
+        this.setVelocity(this.config.wall.jumpAwaySpeed, upSpeed);
       }
 
       if (this.body.blocked.down || this.body.blocked.right || this.body.blocked.left)
@@ -152,8 +160,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   isMovingSignificantly() {
-    return Math.abs(this.body.velocity.x) > this.WALL_SLIDE_SPEED
-      || Math.abs(this.body.velocity.y) > this.WALL_SLIDE_SPEED;
+    return Math.abs(this.body.velocity.x) > this.config.wall.slideSpeed
+      || Math.abs(this.body.velocity.y) > this.config.wall.slideSpeed;
   }
 
   damage(amount: number) {

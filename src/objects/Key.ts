@@ -1,11 +1,12 @@
-import { getCustomProperty } from '../helpers/Helpers';
+import { getCustomProperty, randomInRange } from '../helpers/Helpers';
+import { Door } from './Door';
 
 export class Key extends Phaser.Physics.Arcade.Image {
   public readonly forDoor: integer;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'key');
-    // TODO: Is there a cleaner way to get property?
+
     this.forDoor = getCustomProperty(object, 'ForDoor');
     this.setDisplaySize(28, 28);
 
@@ -13,8 +14,8 @@ export class Key extends Phaser.Physics.Arcade.Image {
     scene.tweens.add({
       targets: this,
       y: this.y - hoverIntensity,
-      duration: Phaser.Math.Between(950, 1300),
-      delay: Phaser.Math.Between(0, 500),
+      duration: randomInRange(950, 1300),
+      delay: randomInRange(0, 500),
       ease: 'Sine.easeInOut',
       yoyo: true,
       loop: -1
@@ -23,7 +24,10 @@ export class Key extends Phaser.Physics.Arcade.Image {
     scene.add.existing(this);
   }
 
-  public pickUp(): void {
-    //
+  collect(door: Door) {
+    if (this.forDoor === door.id)
+      door.open();
+
+    this.destroy();
   }
 }
