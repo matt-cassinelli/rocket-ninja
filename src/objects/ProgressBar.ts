@@ -1,33 +1,25 @@
-export class ProgressBar {
-  private scene: Phaser.Scene;
-  private bar: Phaser.GameObjects.Graphics;
-  private x: number;
-  private y: number;
+export class ProgressBar extends Phaser.GameObjects.Graphics {
   private padding: number;
   private height: number;
+  private roundness = 15;
 
   constructor(scene: Phaser.Scene) {
-    this.scene = scene;
-    this.x = 0 + this.padding;
-    this.y = (scene.scale.height / 2) - (this.height / 2);
+    super(scene, { fillStyle: { color: 0x15cc1a, alpha: 1 } });
     this.padding = scene.scale.width / 6;
     this.height = scene.scale.height / 21;
-    this.bar = this.scene.add.graphics();
-
-    // this.scene.add.graphics()
-    //   .fillRect(this.x, this.y, (this.scene.scale.width - this.padding * 2), this.height)
-    //   .fillStyle(0x000000, 1);
+    this.displayOriginX = 0 + this.padding;
+    this.displayOriginY = (scene.scale.height / 2) - (this.height / 2);
+    scene.add.existing(this);
   }
 
   // Value is from 0..1
   progress(value: number) {
-    this.bar.clear();
-    this.bar.fillStyle(0x15cc1a, 1);
+    this.clear();
     const width = (this.scene.scale.width - this.padding * 2) * value;
-    this.bar.fillRect(this.x, this.y, width, this.height);
+    this.fillRoundedRect(this.displayOriginX, this.displayOriginY, width, this.height, this.roundness);
   }
 
   complete() {
-    this.bar.destroy();
+    this.destroy();
   }
 }

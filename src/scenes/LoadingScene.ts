@@ -8,6 +8,8 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   preload() {
+    this.cameras.main.setBackgroundColor(0x222222);
+
     const progressBar = new ProgressBar(this);
     this.load.on('progress', (value: number) => {
       progressBar.progress(value);
@@ -17,10 +19,10 @@ export class LoadingScene extends Phaser.Scene {
       progressBar.complete();
     });
 
-    this.loadMaps();
-    this.loadSounds();
-    this.loadImages();
     this.loadSpritesheets();
+    this.loadSounds();
+    this.loadMaps();
+    this.loadImages();
   }
 
   create() {
