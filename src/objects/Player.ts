@@ -2,7 +2,7 @@ import { randomInRange } from '../helpers/Helpers';
 import { InputHandler } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  health: integer = 150;
+  health = 150;
   private trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
   private config = {
@@ -24,11 +24,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
+    this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
+    this.setOrigin(0.5, 1); // Map object represents bottom center of player.
     this.setDragX(this.config.air.drag);
-    //this.setMass
-    //this.setFriction
-    //this.setBounceX(0); // -1
 
     this.trail = this.scene.add.particles(0, 0, 'aura', {
       scale: { start: 0.25, end: 0.1 },
@@ -38,10 +37,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       frequency: 10,
       advance: 2000,
       blendMode: 'OVERLAY',
-      follow: this
+      follow: this,
+      followOffset: { x: 0, y: -16 }
     });
 
-    this.scene.add.existing(this);
     this.anims.create({
       key: 'left',
       frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
