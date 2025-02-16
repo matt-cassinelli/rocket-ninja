@@ -168,7 +168,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.health -= amount;
   }
 
-  isDead(): boolean {
-    return this.health <= 0;
+  kill() {
+    this.anims.pause();
+    this.scene.sound.stopByKey('running');
+    this.trail.lifespan = 0;
+    // this.disableBody(true, true)
   }
 }

@@ -34,15 +34,10 @@ export class GameScene extends Phaser.Scene {
     super('GameScene');
   }
 
-  init(props: any) { // This gets called on scene.restart(). Before preload() and create().
-    const { mapKey } = props;
-    if (mapKey) {
-      this.mapKey = mapKey;
-    }
-    else {
-      // To debug a specific level, change it here.
-      this.mapKey = 'map1.json';
-    }
+  // This gets called on scene.restart(). Before preload() and create().
+  init(props: { mapKey?: string }) {
+    // To debug a specific level, change this.
+    this.mapKey = props.mapKey ?? 'map1.json';
   }
 
   create() {
@@ -57,7 +52,7 @@ export class GameScene extends Phaser.Scene {
 
     // Load layers from map
     this.solidLayer  = this.map.createLayer('tile-layer-solids', this.tileset);
-    this.objectLayer      = this.map.getObjectLayer('object-layer');
+    this.objectLayer = this.map.getObjectLayer('object-layer');
 
     this.createGroups();
     this.addObjectsToGroups();
@@ -85,12 +80,15 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeIn(850);
   }
 
-  update() { // This runs each frame, so keep it lightweight.
+  // This runs each frame, so keep it lightweight.
+  update() {
     if (this.isPaused == true)
       return;
 
-    if (this.player?.isDead())
-      this.endMap();
+    if (this.player?.health <= 0) {
+      this.killPlayer();
+      return;
+    }
 
     this.inputHandler.update();
     this.player.move(this.inputHandler);
@@ -100,19 +98,23 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+  killPlayer() {
+    // TODO: Why is * 2 needed?
+    this.add.rectangle(0, 0, this.cameras.main.width * 2, this.cameras.main.height * 2, 0xbb0000, 0.2)
+      .setBlendMode(Phaser.BlendModes.OVERLAY)
+      .setScrollFactor(0);
+
+    this.player.kill();
+    this.endMap();
+  }
+
   endMap(newMap?: string) {
     this.isPaused = true;
     this.physics.pause();
     //this.scene.pause();
 
-    if (this.player?.isDead())
-      this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'GAME OVER', { fontSize: '56px' })
-        .setOrigin(0.5, 0.5)
-        .setScrollFactor(0)
-        .setDepth(10);
-
-    const delay = this.player?.isDead() ? 1200 : 0;
-    const duration = this.player?.isDead() ? 1300 : 700;
+    const delay = this.player?.health <= 0 ? 1200 : 0;
+    const duration = this.player?.health <= 0 ? 2500 : 1000;
     this.time.delayedCall(
       delay,
       () => this.cameras.main.fadeOut(duration)

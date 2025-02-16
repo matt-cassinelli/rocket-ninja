@@ -25,23 +25,30 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 
 ## TODO
+- Level select scene
+- Save unlocked level progress to localstorage
+- Save best times
 - Sounds:
   - Wallslide
   - Music
   - Enter door
-- Bug: Walk sound keeps playing after death.
+  - Hit ground
 - After death, should start back at same level.
 - Level 3 and 4 are too hard for beginners
 - Better colours
-- Falling animation
+- Animations:
+  - Falling
+  - Death
 - Player should not be able to infinitely jump up wall
 - Wall slide should be faster
-- Wall jump seems hard for beginners
+- Wall jump seems hard for beginnersd
 - Allow falling off map (sky-based maps)
 
 
 
 ## TODO: Future
+- Create accounts
+  - Save level progress to API
 - Migrate to Matter Physics
 - Timer instead of health?
 - Sounds
@@ -51,7 +58,6 @@ Where possible, complex code has been seperated into its own classes/files/metho
 - Full screen
 - Knockback
   - Use knockback to reach areas
-- Animation on death
 - Side doors
 - Door color should match key color
 - Release an executable
