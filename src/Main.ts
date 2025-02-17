@@ -1,7 +1,8 @@
 import { Game, Types } from 'phaser';
-import { GameScene } from './scenes/GameScene';
-import { LoadingScene } from './scenes/LoadingScene';
 import PhaserRaycaster from 'phaser-raycaster';
+import { LoadingScene } from './scenes/LoadingScene';
+import { MenuScene } from './scenes/MenuScene';
+import { GameScene } from './scenes/GameScene';
 
 const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -13,7 +14,7 @@ const config: Types.Core.GameConfig = {
     mode: Phaser.Scale.MAX_ZOOM, // [old] Phaser.Scale.FIT
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
-  scene: [LoadingScene, GameScene],
+  scene: [LoadingScene, MenuScene, GameScene],
   physics: {
     default: 'arcade',
     arcade: {

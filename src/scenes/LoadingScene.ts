@@ -2,9 +2,7 @@ import { ProgressBar } from '../objects/ProgressBar';
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
-    super({
-      key: 'LoadingScene'
-    });
+    super('LoadingScene');
   }
 
   preload() {
@@ -26,7 +24,7 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   create() {
-    this.scene.start('GameScene');
+    this.scene.start('MenuScene');
   }
 
   loadImages() {

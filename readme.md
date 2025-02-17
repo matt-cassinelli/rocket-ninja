@@ -25,9 +25,16 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 
 ## TODO
-- Level select scene
-- Save unlocked level progress to localstorage
-- Save best times
+- Menu / level select
+  - Store progress (disable levels not reached yet)
+  - Return to menu button (& ESC)
+  - After complete level, move to next or return to menu? Or configure in settings?
+  - After death, restart level or return to menu? Or configure in settings?
+  - Buttons should be rounded
+  - Make responsive to device size
+  - Swipe / paginate to see more levels
+    - https://rexrainbow.github.io/phaser3-rex-notes/docs/site/ui-gridtable/
+- Store best times
 - Sounds:
   - Wallslide
   - Music
@@ -41,7 +48,7 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - Death
 - Player should not be able to infinitely jump up wall
 - Wall slide should be faster
-- Wall jump seems hard for beginnersd
+- Wall jump seems hard for beginners
 - Allow falling off map (sky-based maps)
 
 
