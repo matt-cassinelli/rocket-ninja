@@ -1,7 +1,7 @@
 export class ProgressBar extends Phaser.GameObjects.Graphics {
   private padding: number;
   private height: number;
-  private roundness = 15;
+  private roundness = 12;
 
   constructor(scene: Phaser.Scene) {
     super(scene, { fillStyle: { color: 0x15cc1a, alpha: 1 } });

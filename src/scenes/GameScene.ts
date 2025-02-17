@@ -62,6 +62,7 @@ export class GameScene extends Phaser.Scene {
     const yOffset = 70;
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, false);
     this.cameras.main.startFollow(this.player, true, smoothing, smoothing * 2, 0, yOffset);
+    //this.cameras.main.postFX.addVignette(0.5, 0.5, 0.5, 0.5);
 
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);
@@ -171,8 +172,8 @@ export class GameScene extends Phaser.Scene {
           break;
         }
         case 'text': {
-          this.add.text(object.x, object.y, object.text.text, { fontSize: '16px', // TODO: Dynamic?
-            wordWrap: { width: object.width, useAdvancedWrap: true } })
+          this.add.text(object.x, object.y, object.text.text, { fontFamily: 'flower',
+            fontSize: 22, wordWrap: { width: object.width, useAdvancedWrap: true } })
             .setDepth(-1);
           break;
         }

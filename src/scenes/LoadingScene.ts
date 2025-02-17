@@ -21,6 +21,7 @@ export class LoadingScene extends Phaser.Scene {
     this.loadSounds();
     this.loadMaps();
     this.loadImages();
+    this.loadFonts();
   }
 
   create() {
@@ -80,5 +81,9 @@ export class LoadingScene extends Phaser.Scene {
     this.load.audio('jump-pad', 'sounds/jump-pad.mp3');
     this.load.audio('running', 'sounds/running.mp3');
     this.load.audio('jump', 'sounds/jump.mp3');
+  }
+
+  loadFonts() {
+    this.load.font('flower', 'fonts/indie-flower/IndieFlower-Regular.ttf', 'truetype');
   }
 }

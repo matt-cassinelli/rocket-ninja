@@ -2,20 +2,21 @@ export default class LevelButton extends Phaser.GameObjects.Container {
   private rectangle: Phaser.GameObjects.Rectangle;
   private text: Phaser.GameObjects.Text;
   private color = {
-    normal: { fg: '#ffffff', bg: 0x333333, border: 0x888888 },
-    disabled: { fg: '#888888', bg: 0x333333, border: 0x888888 },
-    hover: { fg: '#ffffff', bg: 0x335555, border: 0x88aaaa },
-    down: { fg: '#ffffff', bg: 0x77aaaa, border: 0x99cccc }
+    normal: { fg: '#ffffff', bg: 0x282828, border: 0x3399ff },
+    disabled: { fg: '#888888', bg: 0x282828, border: 0x888888 },
+    hover: { fg: '#ffffff', bg: 0x285577, border: 0x3399ff },
+    down: { fg: '#ffffff', bg: 0x5599ff, border: 0x55bbff }
   };
 
   constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, text: string, onClick: () => void, disabled: boolean = false) {
     super(scene, x, y);
     this.setSize(width, height);
 
-    const fontSize = 22;
-    this.text = scene.add.text(0, 0, text, { fontSize: fontSize, fixedWidth: width, fixedHeight: height, align: 'center' })
+    const fontSize = 28;
+    const fontYBias = -3;
+    this.text = scene.add.text(0, 0, text, { fontFamily: 'flower', fontSize: fontSize, fixedWidth: width, fixedHeight: height, align: 'center' })
       .setOrigin(0)
-      .setY(this.height / 2 - fontSize / 2);
+      .setY(this.height / 2 - fontSize / 2 + fontYBias);
 
     this.rectangle = new Phaser.GameObjects.Rectangle(scene, 0, 0, width, height, 0xaaaaaa, 0.8)
       .setOrigin(0)

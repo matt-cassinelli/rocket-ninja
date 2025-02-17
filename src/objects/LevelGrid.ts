@@ -6,14 +6,14 @@ export class LevelGrid extends Phaser.GameObjects.Container {
     super(scene, x, y);
     this.setSize(width, height);
 
-    const bgRect = scene.add.rectangle(0, 0, this.width, this.height, 0x000000, 0.2)
+    const bgRect = scene.add.rectangle(0, 0, this.width, this.height, 0x000000, 0)
       .setOrigin(0)
-      .setStrokeStyle(2, 0x888888);
+      .setStrokeStyle(2, 0x666666);
     this.add(bgRect);
 
     const btnWidth = 140;
     const btnHeight = 80;
-    const itemsPerRow = 6;
+    const itemsPerRow = 5;
     const rowCount = Math.ceil(levels.length / itemsPerRow);
     const cellWidth = width / itemsPerRow;
     const cellHeight  = height / rowCount;
