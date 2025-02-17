@@ -29,6 +29,7 @@ export class Missile extends Phaser.Physics.Arcade.Image {
     }
 
     // TODO: Position to back of missile, not center
+    // https://docs.phaser.io/phaser/concepts/gameobjects/container
     this.trail = this.scene.add.particles(50, 50, 'flares', {
       //radial: false,
       frame: 'white',

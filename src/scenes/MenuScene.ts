@@ -10,7 +10,7 @@ export class MenuScene extends Phaser.Scene {
     const xPad = this.scale.width / 50;
     const yPad = this.scale.height / 30;
 
-    this.add.text(0 + xPad, 0 + yPad, 'Menu', { fontFamily: 'flower', fontSize: 56, color: '#ffffff' });
+    this.add.text(0 + xPad, 0 + yPad, 'Menu', { fontFamily: 'flower', fontSize: 60, fontStyle: 'bold', color: '#ffffff' });
 
     // Level grid
     const x = 0 + xPad;
