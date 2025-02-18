@@ -1,4 +1,4 @@
-export default class DB {
+export class DB {
   private static localStorageKey = 'profile';
 
   public static unlockLevel(key: string) {

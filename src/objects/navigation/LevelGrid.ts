@@ -1,6 +1,6 @@
-import DB from '../../helpers/Database';
 import levels from '../../data/levels';
-import LevelButton from './LevelButton';
+import { DB } from '../../helpers/Database';
+import { LevelButton } from './LevelButton';
 
 export class LevelGrid extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number) {

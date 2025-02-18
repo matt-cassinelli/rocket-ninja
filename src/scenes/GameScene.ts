@@ -1,5 +1,5 @@
 import PhaserRaycaster from 'phaser-raycaster';
-import DB from '../helpers/Database';
+import { DB } from '../helpers/Database';
 import { InputHandler } from '../helpers/InputHandler';
 import { Player } from '../objects/Player';
 import { Manna } from '../objects/Manna';
@@ -10,7 +10,7 @@ import { Key } from '../objects/Key';
 import { HealthBar } from '../objects/HealthBar';
 import { JumpPad } from '../objects/JumpPad';
 import { Spike } from '../objects/Spike';
-import ExitButton from '../objects/navigation/ExitButton';
+import { ExitButton } from '../objects/navigation/ExitButton';
 
 export class GameScene extends Phaser.Scene {
   mapKey: string;
