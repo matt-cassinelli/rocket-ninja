@@ -1,34 +1,48 @@
 import { ButtonState } from './ButtonState';
 
-export default class LevelButton extends Phaser.GameObjects.Container {
+export class LevelButton extends Phaser.GameObjects.Container {
   private rectangle: Phaser.GameObjects.Rectangle;
-  private text: Phaser.GameObjects.Text;
+  private text?: Phaser.GameObjects.Text;
   private color = {
-    normal: { fg: '#ffffff', bg: 0x282828, border: 0x3399ff },
-    disabled: { fg: '#777777', bg: 0x282828, border: 0x777777 },
-    hover: { fg: '#ffffff', bg: 0x285577, border: 0x3399ff },
-    down: { fg: '#ffffff', bg: 0x5599ff, border: 0x66aaff }
+    normal: { fg: '#ffffff', bg: 0x282828, border: 0xcccccc },
+    disabled: { fg: 0x666666, bg: 0x282828, border: 0x777777 },
+    hover: { fg: '#ffffff', bg: 0x285577, border: 0xcccccc },
+    down: { fg: '#ffffff', bg: 0x55bbff, border: 0x55bbff }
   };
 
-  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, text: string, onClick: () => void, disabled: boolean) {
+  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number,
+    text: string, onClick: () => void, disabled: boolean) {
     super(scene, x, y);
+
     this.setSize(width, height);
 
-    const fontSize = 28;
-    const fontYBias = -3;
-    this.text = scene.add.text(0, 0, text, { fontFamily: 'flower', fontSize: fontSize, fixedWidth: width, fixedHeight: height, align: 'center' })
-      .setOrigin(0)
-      .setY(this.height / 2 - fontSize / 2 + fontYBias);
-
-    this.rectangle = new Phaser.GameObjects.Rectangle(scene, 0, 0, width, height, 0xaaaaaa, 0.8)
+    this.rectangle = new Phaser.GameObjects.Rectangle(scene, 0, 0, width, height, null, 1)
       .setOrigin(0)
       .setStrokeStyle(2);
+    this.add(this.rectangle);
 
-    if (disabled) {
+    if (disabled === true) {
+      const lock = scene.add.image(this.width / 2, this.height / 2, 'lock')
+        .setOrigin(0.5)
+        .setDisplaySize(this.height * 0.6, this.height * 0.6)
+        .setTintFill(this.color.disabled.fg);
+      this.add(lock);
       this.draw(ButtonState.Disabled);
       this.disableInteractive();
     }
     else {
+      const fontSize = 28;
+      const fontYBias = -3;
+      this.text = scene.add.text(0, 0, text, {
+        fontFamily: 'flower',
+        fontSize: fontSize,
+        fixedWidth: width,
+        fixedHeight: height,
+        align: 'center'
+      })
+        .setOrigin(0)
+        .setY(this.height / 2 - fontSize / 2 + fontYBias);
+      this.add(this.text);
       this.draw(ButtonState.Normal);
       // Unfortunately Phaser can't calculate the hit area automatically.
       const hitArea = new Phaser.Geom.Rectangle(width / 2, height / 2, width, height);
@@ -41,9 +55,6 @@ export default class LevelButton extends Phaser.GameObjects.Container {
           onClick();
         });
     }
-
-    this.add(this.rectangle);
-    this.add(this.text);
   }
 
   private draw(state: ButtonState) {
@@ -67,7 +78,6 @@ export default class LevelButton extends Phaser.GameObjects.Container {
         break;
       }
       case ButtonState.Disabled: {
-        this.text.setColor(this.color.disabled.fg);
         this.rectangle.fillColor = this.color.disabled.bg;
         this.rectangle.strokeColor = this.color.disabled.border;
         break;

@@ -7,16 +7,20 @@ export class MenuScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setBackgroundColor(0x282828);
-    const xPad = this.scale.width / 50;
-    const yPad = this.scale.height / 30;
 
-    this.add.text(0 + xPad, 0 + yPad, 'Menu', { fontFamily: 'flower', fontSize: 60, fontStyle: 'bold', color: '#ffffff' });
+    // Title
+    const titleXPad = this.scale.width / 20;
+    const titleYPad = this.scale.height / 20;
+    this.add.text(0 + titleXPad, 0 + titleYPad, 'Menu', {
+      fontFamily: 'flower', fontSize: 64, fontStyle: 'bold', color: '#ffffff'
+    });
 
     // Level grid
-    const x = 0 + xPad;
-    const y = this.scale.height / 6;
-    const width = this.scale.width - (xPad * 2);
-    const height = (this.scale.height - y) - (yPad);
+    const gridXPad = this.scale.width / 30;
+    const x = 0 + gridXPad;
+    const y = this.scale.height / 5;
+    const width = this.scale.width - (gridXPad * 2);
+    const height = this.scale.height / 2;
     const levelGrid = new LevelGrid(this, x, y, width, height);
     this.add.existing(levelGrid);
   }
