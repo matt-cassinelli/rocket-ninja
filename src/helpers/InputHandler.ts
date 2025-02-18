@@ -6,13 +6,13 @@ export class InputHandler {
   private keyA;
   private keyRight;
   private keyD;
-  private keyZ;
-  private keyEnter;
+  private keyEsc;
 
   rightPressed = false;
   leftPressed = false;
   upPressed = false;
   attackPressed = false;
+  escPressed = false;
   // [old] private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
   // [old] private keyboard //: Phaser.Types.Input.Keyboard
 
@@ -26,18 +26,17 @@ export class InputHandler {
     this.keyA     = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     this.keyD     = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    this.keyZ     = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-    this.keyEnter = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    this.keyEsc   = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
   }
 
   update() {
     this.upPressed = (this.keyUp.isDown || this.keyW.isDown || this.keySpace.isDown);
     this.leftPressed = (this.keyLeft.isDown || this.keyA.isDown);
     this.rightPressed = (this.keyRight.isDown || this.keyD.isDown);
-    this.attackPressed = (this.keyZ.isDown || this.keyEnter.isDown);
+    this.escPressed = this.keyEsc.isDown;
   }
 
   noInput() {
-    return !(this.rightPressed || this.leftPressed || this.upPressed || this.attackPressed);
+    return !(this.rightPressed || this.leftPressed || this.upPressed || this.attackPressed || this.escPressed);
   }
 }

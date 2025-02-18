@@ -26,15 +26,11 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 ## TODO
 - Menu / level select
-  - Store progress (disable levels not reached yet)
-  - Return to menu button (& ESC)
-  - After complete level, move to next or return to menu? Or configure in settings?
-  - After death, restart level or return to menu? Or configure in settings?
   - Buttons should be rounded
   - Make responsive to device size
   - Swipe / paginate to see more levels
     - https://rexrainbow.github.io/phaser3-rex-notes/docs/site/ui-gridtable/
-- Store best times
+- Record best times
 - Sounds:
   - Wallslide
   - Music
@@ -52,10 +48,12 @@ Where possible, complex code has been seperated into its own classes/files/metho
 - Allow falling off map (sky-based maps)
 
 
-
 ## TODO: Future
 - Create accounts
-  - Save level progress to API
+  - Save progress to API
+- Settings section
+  - After completing level, move to next or return to menu?
+  - After death, restart level or return to menu?
 - Migrate to Matter Physics
 - Timer instead of health?
 - Sounds
@@ -78,3 +76,7 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - Grenade
   - Grappling hook
   - EMP
+- Other fonts to try:
+  - https://fonts.google.com/specimen/Gloria+Hallelujah
+  - https://fonts.google.com/specimen/Annie+Use+Your+Telescope
+  - https://fonts.google.com/specimen/Londrina+Shadow

@@ -1,5 +1,8 @@
 Copyright (C) Matt Cassinelli - All Rights Reserved
 
+PREAMBLE
+This software may be used only for non-commercial purposes, with attribution.
+
 DEFINITIONS
 "Source Code" means any files in this folder or subfolders.
 "Software" means any computer instructions created by using the Source Code.
@@ -8,7 +11,8 @@ PERMISSION & CONDITIONS
 The Source Code is protected under international copyright law.
 All rights reserved and protected by the copyright holder/s.
 Copying of the Source Code is permitted for educational purposes only.
-Use of the Source Code for any commercial purpose is strictly prohibited unless authorized with permission from the copyright holder/s.
+Use of the Source Code for any commercial purpose is strictly prohibited unless
+authorized with permission from the copyright holder/s.
 Sale and/or sublicensing of the Software or Source Code is strictly prohibited.
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Source Code.

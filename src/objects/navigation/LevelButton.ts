@@ -1,14 +1,16 @@
+import { ButtonState } from './ButtonState';
+
 export default class LevelButton extends Phaser.GameObjects.Container {
   private rectangle: Phaser.GameObjects.Rectangle;
   private text: Phaser.GameObjects.Text;
   private color = {
     normal: { fg: '#ffffff', bg: 0x282828, border: 0x3399ff },
-    disabled: { fg: '#888888', bg: 0x282828, border: 0x888888 },
+    disabled: { fg: '#777777', bg: 0x282828, border: 0x777777 },
     hover: { fg: '#ffffff', bg: 0x285577, border: 0x3399ff },
-    down: { fg: '#ffffff', bg: 0x5599ff, border: 0x55bbff }
+    down: { fg: '#ffffff', bg: 0x5599ff, border: 0x66aaff }
   };
 
-  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, text: string, onClick: () => void, disabled: boolean = false) {
+  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, text: string, onClick: () => void, disabled: boolean) {
     super(scene, x, y);
     this.setSize(width, height);
 
@@ -22,20 +24,20 @@ export default class LevelButton extends Phaser.GameObjects.Container {
       .setOrigin(0)
       .setStrokeStyle(2);
 
-    this.draw(State.Normal);
-
     if (disabled) {
+      this.draw(ButtonState.Disabled);
       this.disableInteractive();
     }
     else {
+      this.draw(ButtonState.Normal);
       // Unfortunately Phaser can't calculate the hit area automatically.
       const hitArea = new Phaser.Geom.Rectangle(width / 2, height / 2, width, height);
       this.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => this.draw(State.Normal))
-        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => this.draw(State.Hover))
-        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => this.draw(State.Down))
+        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => this.draw(ButtonState.Normal))
+        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => this.draw(ButtonState.Hover))
+        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => this.draw(ButtonState.Down))
         .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
-          this.draw(State.Hover);
+          this.draw(ButtonState.Hover);
           onClick();
         });
     }
@@ -44,27 +46,27 @@ export default class LevelButton extends Phaser.GameObjects.Container {
     this.add(this.text);
   }
 
-  private draw(state: State) {
+  private draw(state: ButtonState) {
     switch (state) {
-      case State.Normal: {
+      case ButtonState.Normal: {
         this.text.setColor(this.color.normal.fg);
         this.rectangle.fillColor = this.color.normal.bg;
         this.rectangle.strokeColor = this.color.normal.border;
         break;
       }
-      case State.Hover: {
+      case ButtonState.Hover: {
         this.text.setColor(this.color.hover.fg);
         this.rectangle.fillColor = this.color.hover.bg;
         this.rectangle.strokeColor = this.color.hover.border;
         break;
       }
-      case State.Down: {
+      case ButtonState.Down: {
         this.text.setColor(this.color.down.fg);
         this.rectangle.fillColor = this.color.down.bg;
         this.rectangle.strokeColor = this.color.down.border;
         break;
       }
-      case State.Disabled: {
+      case ButtonState.Disabled: {
         this.text.setColor(this.color.disabled.fg);
         this.rectangle.fillColor = this.color.disabled.bg;
         this.rectangle.strokeColor = this.color.disabled.border;
@@ -76,11 +78,4 @@ export default class LevelButton extends Phaser.GameObjects.Container {
     //this.shape.fillRoundedRect(0, 0, this.width, this.height, roundness);
     //this.shape.strokeRoundedRect(0, 0, this.width, this.height, roundness);
   }
-}
-
-enum State {
-  Normal,
-  Hover,
-  Down,
-  Disabled
 }

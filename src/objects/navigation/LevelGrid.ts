@@ -1,4 +1,5 @@
-import levels from '../data/levels';
+import DB from '../../helpers/Database';
+import levels from '../../data/levels';
 import LevelButton from './LevelButton';
 
 export class LevelGrid extends Phaser.GameObjects.Container {
@@ -13,12 +14,14 @@ export class LevelGrid extends Phaser.GameObjects.Container {
 
     const btnWidth = 140;
     const btnHeight = 80;
-    const itemsPerRow = 5;
+    const itemsPerRow = 6;
     const rowCount = Math.ceil(levels.length / itemsPerRow);
     const cellWidth = width / itemsPerRow;
     const cellHeight  = height / rowCount;
     const cellXOffset = (cellWidth - btnWidth) / 2;   // Place in center of cell - equivalent to CSS 'space-evenly'.
     const cellYOffset = (cellHeight - btnHeight) / 2; //
+
+    const unlocked = DB.getUnlockedLevels();
 
     for (let i = 0; i < levels.length; i++) {
       const row = Math.floor(i / itemsPerRow);
@@ -26,7 +29,8 @@ export class LevelGrid extends Phaser.GameObjects.Container {
       const btnX = (column * cellWidth) + cellXOffset;
       const btnY = (row * cellHeight) + cellYOffset;
       const onClick = () => scene.scene.start('GameScene', { mapKey: levels[i].file });
-      const button = new LevelButton(scene, btnX, btnY, btnWidth, btnHeight, levels[i].name, onClick);
+      const isDisabled = !unlocked.includes(levels[i].file);
+      const button = new LevelButton(scene, btnX, btnY, btnWidth, btnHeight, levels[i].name, onClick, isDisabled);
       this.add(button);
     }
   }

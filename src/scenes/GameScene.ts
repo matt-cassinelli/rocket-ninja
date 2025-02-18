@@ -1,4 +1,5 @@
 import PhaserRaycaster from 'phaser-raycaster';
+import DB from '../helpers/Database';
 import { InputHandler } from '../helpers/InputHandler';
 import { Player } from '../objects/Player';
 import { Manna } from '../objects/Manna';
@@ -9,6 +10,7 @@ import { Key } from '../objects/Key';
 import { HealthBar } from '../objects/HealthBar';
 import { JumpPad } from '../objects/JumpPad';
 import { Spike } from '../objects/Spike';
+import ExitButton from '../objects/navigation/ExitButton';
 
 export class GameScene extends Phaser.Scene {
   mapKey: string;
@@ -36,7 +38,7 @@ export class GameScene extends Phaser.Scene {
 
   // This gets called on scene.restart(). Before preload() and create().
   init(props: { mapKey?: string }) {
-    // To debug a specific level, change this.
+    // Change this if you want to debug a specific level.
     this.mapKey = props.mapKey ?? 'map1.json';
   }
 
@@ -53,6 +55,9 @@ export class GameScene extends Phaser.Scene {
     // Load layers from map
     this.solidLayer  = this.map.createLayer('tile-layer-solids', this.tileset);
     this.objectLayer = this.map.getObjectLayer('object-layer');
+
+    const exitButton = new ExitButton(this, 10, 10);
+    this.add.existing(exitButton);
 
     this.createGroups();
     this.addObjectsToGroups();
@@ -92,6 +97,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.inputHandler.update();
+    if (this.inputHandler.escPressed) {
+      this.scene.start('MenuScene');
+    }
     this.player.move(this.inputHandler);
 
     this.missileGroup.getChildren().forEach(m =>
@@ -113,6 +121,8 @@ export class GameScene extends Phaser.Scene {
     this.isPaused = true;
     this.physics.pause();
     //this.scene.pause();
+
+    DB.unlockLevel(newMap);
 
     const delay = this.player?.health <= 0 ? 1200 : 0;
     const duration = this.player?.health <= 0 ? 2500 : 1000;
