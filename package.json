@@ -19,7 +19,7 @@
     "clean-unix": "rm -rf dist",
     "clean-win": "if exist dist ( rmdir /s /q dist )",
     "dev": "vite --config vite/config.dev.mjs",
-    "build": "npm run clean-win && tsc && vite build",
+    "build": "npm run clean-win && vite build --config vite/config.prod.mjs",
     "lint": "eslint"
   }
 }
