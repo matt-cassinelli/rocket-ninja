@@ -25,10 +25,28 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 
 ## TODO
-- Menu / level select
+- Dash / double-jump
+  - Shorter normal jump
+- Fast rocket
+- Be more forgiving - player intention matters more than mechanical skill
+  - Coyote timer
+  - Smaller spikes
+  - Level 3 and 4 are too hard for beginners
+- Better colours
+- Player should not be able to infinitely jump up wall
+
+
+## TODO: Future
+- Block that falls
+- Block that moves
+- Enemy that walks and switches direction when hit wall
+- Enemy that can walk upside down, sideways etc
+- Mobile
+  - All items should be responsive
+  - Game control overlay
+- Improve menu
   - Buttons should be rounded
-  - Make responsive to device size
-  - Swipe / paginate to see more levels
+  - Swipe or paginate to see more levels
     - https://rexrainbow.github.io/phaser3-rex-notes/docs/site/ui-gridtable/
 - Record best times
 - Sounds:
@@ -36,19 +54,6 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - Music
   - Enter door
   - Hit ground
-- After death, should start back at same level.
-- Level 3 and 4 are too hard for beginners
-- Better colours
-- Animations:
-  - Falling
-  - Death
-- Player should not be able to infinitely jump up wall
-- Wall slide should be faster
-- Wall jump seems hard for beginners
-- Allow falling off map (sky-based maps)
-
-
-## TODO: Future
 - Create accounts
   - Save progress to API
 - Settings section
@@ -76,6 +81,15 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - Grenade
   - Grappling hook
   - EMP
+- Animations:
+  - Falling
+  - Wallslide
+  - Waiting
+  - Death
+- Wall slide should be faster
+- Wall jump seems hard for beginners
+- Allow falling off map (sky-based maps)
+- Each map should have its own starting health
 - Other fonts to try:
   - https://fonts.google.com/specimen/Gloria+Hallelujah
   - https://fonts.google.com/specimen/Annie+Use+Your+Telescope

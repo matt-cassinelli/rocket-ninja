@@ -38,8 +38,7 @@ export class GameScene extends Phaser.Scene {
 
   // This gets called on scene.restart(). Before preload() and create().
   init(props: { mapKey?: string }) {
-    // Change this if you want to debug a specific level.
-    this.mapKey = props.mapKey ?? 'map1.json';
+    this.mapKey = props.mapKey ?? 'map1.json'; // Change this to debug a specific level.
   }
 
   create() {
@@ -114,10 +113,10 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0);
 
     this.player.kill();
-    this.endMap();
+    this.endMap(this.mapKey);
   }
 
-  endMap(newMap?: string) {
+  endMap(newMap: string) {
     this.isPaused = true;
     this.physics.pause();
     //this.scene.pause();

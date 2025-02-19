@@ -1,9 +1,11 @@
+import './Extensions';
+
 export class DB {
   private static localStorageKey = 'profile';
 
-  public static unlockLevel(key: string) {
+  public static unlockLevel(key?: string) {
     const profile = this.getProfile();
-    profile.unlocked.push(key);
+    profile.unlocked.pushUnique(key);
     this.updateProfile(profile);
   }
 
