@@ -12,7 +12,7 @@ export class JumpPad extends Phaser.Physics.Arcade.Sprite {
     this.anims.create({
       key: 'trigger',
       frames: scene.anims.generateFrameNumbers('jump-pad', { start: 0, end: 9 }),
-      frameRate: 10
+      frameRate: 12
     });
 
     this.setOrigin(0, 0.5);
@@ -47,10 +47,12 @@ export class JumpPad extends Phaser.Physics.Arcade.Sprite {
   }
 
   public trigger(player: Player) {
-    this.anims.play('trigger', false);
+    if (this.anims.isPlaying) {
+      return;
+    }
+    this.anims.play('trigger');
     const rotatedVelocity = this.scene.physics.velocityFromRotation(this.rotation, this.force);
     player.setVelocity(rotatedVelocity.y, -rotatedVelocity.x);
     this.scene.sound.play('jump-pad', { volume: 0.5 });
-    // TODO: This is being called multiple times quickly.
   }
 }
