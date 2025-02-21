@@ -21,8 +21,8 @@ export class DB {
     const serialized = localStorage.getItem(this.localStorageKey);
 
     if (serialized !== null) {
-      const deserialied: Profile = JSON.parse(serialized);
-      return deserialied;
+      const deserialized: Profile = JSON.parse(serialized);
+      return deserialized;
     }
     else {
       return {

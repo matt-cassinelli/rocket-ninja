@@ -1,24 +1,15 @@
 export class InputHandler {
-  private keyUp;
-  private keyW;
-  private keySpace;
-  private keyLeft;
-  private keyA;
-  private keyRight;
-  private keyD;
-  private keyEsc;
-
-  rightPressed = false;
-  leftPressed = false;
-  upPressed = false;
-  attackPressed = false;
-  escPressed = false;
-  // [old] private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
-  // [old] private keyboard //: Phaser.Types.Input.Keyboard
+  private keyUp:    Phaser.Input.Keyboard.Key;
+  private keyW:     Phaser.Input.Keyboard.Key;
+  private keySpace: Phaser.Input.Keyboard.Key;
+  private keyLeft:  Phaser.Input.Keyboard.Key;
+  private keyA:     Phaser.Input.Keyboard.Key;
+  private keyRight: Phaser.Input.Keyboard.Key;
+  private keyD:     Phaser.Input.Keyboard.Key;
+  private keyEsc:   Phaser.Input.Keyboard.Key;
 
   constructor(scene: Phaser.Scene) {
-    // [old] this.cursors = this.input.keyboard.createCursorKeys()
-    // [old] this.keyboard = scene.input.keyboard
+    // TODO: Loop e.g. upKeys, rightKeys...
     this.keyUp    = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     this.keyW     = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.keySpace = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -29,14 +20,38 @@ export class InputHandler {
     this.keyEsc   = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
   }
 
-  update() {
-    this.upPressed = (this.keyUp.isDown || this.keyW.isDown || this.keySpace.isDown);
-    this.leftPressed = (this.keyLeft.isDown || this.keyA.isDown);
-    this.rightPressed = (this.keyRight.isDown || this.keyD.isDown);
-    this.escPressed = this.keyEsc.isDown;
+  getXDirection(): XDirection {
+    if (this.leftPressed() && this.rightPressed()) {
+      const leftDuration = Math.max(this.keyA.getDuration(), this.keyLeft.getDuration());
+      const rightDuration = Math.max(this.keyD.getDuration(), this.keyRight.getDuration());
+      return leftDuration < rightDuration ? XDirection.Left : XDirection.Right;
+    }
+
+    if (this.leftPressed()) return XDirection.Left;
+    if (this.rightPressed()) return XDirection.Right;
+    return XDirection.None;
   }
 
-  noInput() {
-    return !(this.rightPressed || this.leftPressed || this.upPressed || this.attackPressed || this.escPressed);
+  jumpPressed() {
+    // Phaser.Input.Keyboard.JustDown(...)
+    return this.keySpace.isDown || this.keyW.isDown || this.keyUp.isDown;
   }
+
+  escPressed() {
+    return Phaser.Input.Keyboard.JustDown(this.keyEsc);
+  }
+
+  private leftPressed() {
+    return this.keyLeft.isDown || this.keyA.isDown;
+  }
+
+  private rightPressed() {
+    return this.keyRight.isDown || this.keyD.isDown;
+  }
+}
+
+export enum XDirection {
+  None = 0,
+  Left = -1,
+  Right = 1
 }

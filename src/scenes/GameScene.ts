@@ -95,8 +95,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.inputHandler.update();
-    if (this.inputHandler.escPressed) {
+    if (this.inputHandler.escPressed()) {
       this.scene.start('MenuScene');
     }
     this.player.move(this.inputHandler);
@@ -118,9 +117,9 @@ export class GameScene extends Phaser.Scene {
 
   endMap(newMap: string) {
     this.isPaused = true;
+    this.sound.stopAll();
     this.physics.pause();
     //this.scene.pause();
-
     DB.unlockLevel(newMap);
 
     const delay = this.player?.health <= 0 ? 1200 : 0;
