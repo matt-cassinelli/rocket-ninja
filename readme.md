@@ -25,15 +25,17 @@ Where possible, complex code has been seperated into its own classes/files/metho
 
 
 ## TODO
-- Dash / double-jump
-  - Shorter normal jump
+- Maybe we shouldn't have double jump
+  - It makes level 5 too easy
+  - Dash instead of double jump?
+    - Maybe W should be 'up', not jump
 - Fast rocket
 - Be more forgiving - player intention matters more than mechanical skill
   - Coyote timer
   - Smaller spikes
   - Level 3 and 4 are too hard for beginners
 - Better colours
-- Player should not be able to infinitely jump up wall
+- Faster gravity when falling?
 
 
 ## TODO: Future
@@ -94,3 +96,6 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - https://fonts.google.com/specimen/Gloria+Hallelujah
   - https://fonts.google.com/specimen/Annie+Use+Your+Telescope
   - https://fonts.google.com/specimen/Londrina+Shadow
+- Store user control preferences
+- Player should not be able to infinitely jump up wall
+- System to collect feedback

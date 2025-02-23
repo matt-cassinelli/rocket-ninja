@@ -1,4 +1,4 @@
-import { getCustomProperty } from '../helpers/Helpers';
+import { getCustomProperty } from '../helpers/Phaser';
 
 export class Door extends Phaser.Physics.Arcade.Sprite {
   public isOpen: boolean;

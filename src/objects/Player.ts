@@ -1,28 +1,29 @@
-import { clamp, randomInRange, createRangeMapper } from '../helpers/Helpers';
+import { randomInRange, createRangeMapper } from '../helpers/Math';
 import { InputHandler, XDirection } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health = 150;
+  jumpsRemaining: number;
+  private trail: Phaser.GameObjects.Particles.ParticleEmitter;
   private speed = {
     x: {
       floor: 290,
       air: {
         accel: 1370,
         drag: 450,
-        limit: 290
+        limit: 290,
+        jump: 290
       },
       wallJump: 345
     },
     y: {
       floorJump: 310,
+      airJump: 260,
       wallJump: 220,
       wallSlide: 30
     },
     thresholdForIntenseTrail: 590
   };
-
-  private canDoubleJump: boolean; // TODO
-  private trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
@@ -51,6 +52,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const xDir = input.getXDirection();
     const isOnFloor = this.body.blocked.down;
     const isInAir = !isOnFloor;
+    const nearWall = this.body.blocked.right ? XDirection.Right : this.body.blocked.left ? XDirection.Left : null;
+    const isPressingAgainstWall = xDir == nearWall;
+
+    if (xDir == XDirection.None) {
+      this.scene.sound.stopByKey('running');
+      this.anims.play('turn', true);
+      this.setAccelerationX(0);
+      if (isOnFloor) {
+        this?.setVelocityX(0);
+        this.jumpsRemaining = 2;
+      }
+    }
 
     if (xDir === XDirection.Left || xDir === XDirection.Right) {
       const xDirLabel = XDirection[xDir].toLowerCase();
@@ -58,67 +71,66 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (isOnFloor) {
         this.setVelocityX(this.speed.x.floor * xDir);
         this.setAccelerationX(0);
-        this?.anims.play(xDirLabel, true);
+        this.anims.play(xDirLabel, true);
         if (!this.scene.sound.isPlaying('running')) {
           this.playRunningSound();
         }
+        this.jumpsRemaining = 2;
       }
 
       if (isInAir) {
         this.scene.sound.stopByKey('running');
         this.moveThroughAir(this.speed.x.air.accel * xDir);
-        const isBumpingIntoWall =
-          xDir == XDirection.Left ? this.body.blocked.left :
-          xDir == XDirection.Right ? this.body.blocked.right :
-          false;
 
-        if (isBumpingIntoWall) {
+        if (isPressingAgainstWall) {
           this.anims.play(`wallslide-${xDirLabel}`, true);
           if (this.body.velocity.y >= this.speed.y.wallSlide)
             this.setVelocityY(this.speed.y.wallSlide);
+          this.jumpsRemaining = 1;
+        }
+        else {
+          this.anims.play(xDirLabel, true);
         }
 
-        if (!isBumpingIntoWall)
-          this?.anims.play(xDirLabel, true);
+        this.jumpsRemaining = Math.min(this.jumpsRemaining, 1);
       }
     }
 
-    if (xDir == XDirection.None) {
-      this.scene.sound.stopByKey('running');
-      this?.anims.play('turn', true);
-      this.setAccelerationX(0);
-      if (isOnFloor)
-        this?.setVelocityX(0);
+    if (input.jumpIsFreshlyPressed() && isInAir && !isPressingAgainstWall && this.jumpsRemaining > 0) {
+      this.setVelocityY(-this.speed.y.airJump);
+      this.scene.sound.play('jump', {
+        volume: randomInRange(7, 9) / 10, detune: randomInRange(210, 380)
+      });
+      this.scene.cameras.main.shake(80, 0.007);
+      this.jumpsRemaining = 0;
     }
 
-    if (input.jumpPressed()) {
-      if (isOnFloor)
+    if (input.jumpIsPressed()) {
+      if (isOnFloor) {
         this.setVelocityY(-this.speed.y.floorJump);
-
-      const nextToWall =
-        this.body.blocked.right ? XDirection.Right :
-        this.body.blocked.left ? XDirection.Left :
-        null;
-
-      if (isInAir && nextToWall) {
-        const upSpeed = this.body.velocity.y < -this.speed.y.wallJump ?
-          this.body.velocity.y - 50 : -this.speed.y.wallJump;
-        const awaySpeed = -this.speed.x.wallJump * nextToWall;
-        this.setVelocity(awaySpeed, upSpeed);
-      }
-
-      if (isOnFloor || (isInAir && nextToWall))
         this.scene.sound.play('jump', {
-          volume: randomInRange(8, 10) / 10, detune: randomInRange(-100, 200)
+          volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
         });
+        this.jumpsRemaining = 1;
+      }
+      if (isInAir && nearWall) {
+        const upSpeed = this.body.velocity.y < -this.speed.y.wallJump
+          ? this.body.velocity.y - 50
+          : -this.speed.y.wallJump;
+        const awaySpeed = -this.speed.x.wallJump * nearWall;
+        this.setVelocity(awaySpeed, upSpeed);
+        this.scene.sound.play('jump', {
+          volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
+        });
+        this.jumpsRemaining = 1;
+      }
     }
 
     // TODO: Prevent restitution / seperation
     // if (this.body.touching.left) this.setVelocityX(-1);
 
     const currentSpeed = Math.max(Math.abs(this.body.velocity.x), Math.abs(this.body.velocity.y));
-    const clampedSpeed = clamp(currentSpeed, 0, this.speed.thresholdForIntenseTrail);
-    const trailIntensity = this.mapSpeedToTrailIntensity(clampedSpeed);
+    const trailIntensity = this.mapSpeedToTrailIntensity(currentSpeed);
     this.trail.setFrequency(trailIntensity);
   }
 
@@ -127,10 +139,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.health -= amount;
   }
 
-  kill() {
+  cleanUpOnMapEnd() {
     this.anims.pause();
+    this.trail.emitting = false;
     this.scene.sound.stopByKey('running');
-    this.trail.lifespan = 0;
     // this.disableBody(true, true)
   }
 
@@ -144,7 +156,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private playRunningSound() {
     const stepCount = 19;
     const stepLengthMs = 294;
-    const randomStep = Math.floor(Math.random() * stepCount); // 0 - 18
+    const randomStep = randomInRange(0, stepCount - 1);
     const randomStartTimeSeconds = randomStep * stepLengthMs / 1000;
     this.scene.sound.play('running', { volume: 0.6, loop: true, seek: randomStartTimeSeconds });
   }
@@ -153,8 +165,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     { min: 0, max: this.speed.thresholdForIntenseTrail },
     { min: 17, max: 1 } // Lower = more intense.
   );
-
-  //cleanUpOnMapEnd
 
   private initAnims() {
     this.anims.create({

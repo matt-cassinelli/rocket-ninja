@@ -1,4 +1,4 @@
-import { randomInRange, randomItem } from '../helpers/Helpers';
+import { randomInRange, randomItem } from '../helpers/Math';
 import { HealthBar } from './HealthBar';
 import { Player } from './Player';
 

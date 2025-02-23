@@ -91,13 +91,17 @@ export class GameScene extends Phaser.Scene {
       return;
 
     if (this.player?.health <= 0) {
-      this.killPlayer();
+      // TODO: Why is * 2 needed?
+      this.add.rectangle(0, 0, this.cameras.main.width * 2, this.cameras.main.height * 2, 0xbb0000, 0.2)
+        .setBlendMode(Phaser.BlendModes.OVERLAY)
+        .setScrollFactor(0);
+      this.endMap(this.mapKey);
       return;
     }
 
-    if (this.inputHandler.escPressed()) {
+    if (this.inputHandler.escIsFreshlyPressed())
       this.scene.start('MenuScene');
-    }
+
     this.player.move(this.inputHandler);
 
     this.missileGroup.getChildren().forEach(m =>
@@ -105,19 +109,10 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  killPlayer() {
-    // TODO: Why is * 2 needed?
-    this.add.rectangle(0, 0, this.cameras.main.width * 2, this.cameras.main.height * 2, 0xbb0000, 0.2)
-      .setBlendMode(Phaser.BlendModes.OVERLAY)
-      .setScrollFactor(0);
-
-    this.player.kill();
-    this.endMap(this.mapKey);
-  }
-
   endMap(newMap: string) {
     this.isPaused = true;
     this.sound.stopAll();
+    this.player.cleanUpOnMapEnd();
     this.physics.pause();
     //this.scene.pause();
     DB.unlockLevel(newMap);
