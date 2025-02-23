@@ -1,27 +1,28 @@
-import { randomInRange } from '../helpers/Helpers';
+import { clamp, randomInRange, createRangeMapper } from '../helpers/Helpers';
 import { InputHandler, XDirection } from '../helpers/InputHandler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health = 150;
-  // TODO private canDoubleJump: boolean;
-  private trail: Phaser.GameObjects.Particles.ParticleEmitter;
-
   private speed = {
     x: {
       floor: 290,
       air: {
         accel: 1370,
         drag: 450,
-        limit: 290,
+        limit: 290
       },
-      wallJump: 345,
+      wallJump: 345
     },
     y: {
       floorJump: 310,
       wallJump: 220,
       wallSlide: 30
-    }
-  }
+    },
+    thresholdForIntenseTrail: 590
+  };
+
+  private canDoubleJump: boolean; // TODO
+  private trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
@@ -31,42 +32,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setDragX(this.speed.x.air.drag);
 
     this.trail = this.scene.add.particles(0, 0, 'aura', {
-      scale: { start: 0.25, end: 0.1 },
-      angle: { min: 0, max: 360 },
-      speed: { min: 9, max: 18 },
-      alpha: { start: 0.3, end: 0 },
-      frequency: 12,
-      advance: 2000,
-      blendMode: 'OVERLAY',
+      scale: { start: 0.29, end: 0.15 },
+      rotate: { min: 0, max: 360 },
+      speed: { min: 7, max: 30 },
+      alpha: { start: 0.09, end: 0, ease: 'quint.out' },
+      lifespan: { min: 4000, max: 4200 },
+      frequency: 6,
+      blendMode: Phaser.BlendModes.OVERLAY,
       follow: this,
-      followOffset: { x: 0, y: -16 }
+      followOffset: { x: 0, y: -14 }
     });
 
-    this.anims.create({
-      key: 'left',
-      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
-      frameRate: 8,
-      repeat: -1
-    });
-    this.anims.create({
-      key: 'right',
-      frames: this.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
-      frameRate: 8,
-      repeat: -1
-    });
-    this.anims.create({
-      key: 'turn',
-      frames: [{ key: 'player', frame: 4 }]
-    });
-    this.anims.create({
-      key: 'wallslide-left',
-      frames: [{ key: 'player', frame: 10 }]
-    });
-    this.anims.create({
-      key: 'wallslide-right',
-      frames: [{ key: 'player', frame: 9 }]
-    });
-
+    this.initAnims();
     this.setDepth(2);
     this.trail.setDepth(1);
   }
@@ -102,7 +79,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this.setVelocityY(this.speed.y.wallSlide);
         }
 
-        if (!isBumpingIntoWall) 
+        if (!isBumpingIntoWall)
           this?.anims.play(xDirLabel, true);
       }
     }
@@ -140,7 +117,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // TODO: Prevent restitution / seperation
     // if (this.body.touching.left) this.setVelocityX(-1);
 
-    this.trail.emitting = this.isMovingSignificantly();
+    const currentVel = Math.max(Math.abs(this.body.velocity.x), Math.abs(this.body.velocity.y));
+    const currentClampedVel = clamp(currentVel, 0, this.speed.thresholdForIntenseTrail);
+    const trailIntensity = this.mapSpeedToTrailIntensity(currentClampedVel);
+    this.trail.setFrequency(trailIntensity);
   }
 
   damage(amount: number) {
@@ -162,16 +142,43 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.setAccelerationX(0); // TODO: Could this be removed?
   }
 
-  private isMovingSignificantly() {
-    return Math.abs(this.body.velocity.x) > this.speed.y.wallSlide
-      || Math.abs(this.body.velocity.y) > this.speed.y.wallSlide;
-  }
-
   private playRunningSound() {
     const stepCount = 19;
     const stepLengthMs = 294;
     const randomStep = Math.floor(Math.random() * stepCount); // 0 - 18
     const randomStartTimeSeconds = randomStep * stepLengthMs / 1000;
     this.scene.sound.play('running', { volume: 0.6, loop: true, seek: randomStartTimeSeconds });
+  }
+
+  private mapSpeedToTrailIntensity = createRangeMapper(
+    { min: 0, max: this.speed.thresholdForIntenseTrail },
+    { min: 17, max: 1 } // Lower = more intense.
+  );
+
+  private initAnims() {
+    this.anims.create({
+      key: 'left',
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+      frameRate: 8,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'right',
+      frames: this.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
+      frameRate: 8,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'turn',
+      frames: [{ key: 'player', frame: 4 }]
+    });
+    this.anims.create({
+      key: 'wallslide-left',
+      frames: [{ key: 'player', frame: 10 }]
+    });
+    this.anims.create({
+      key: 'wallslide-right',
+      frames: [{ key: 'player', frame: 9 }]
+    });
   }
 }

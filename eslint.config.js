@@ -40,7 +40,16 @@ module.exports = [
       '@stylistic/no-multi-spaces': ['off'],
       '@stylistic/spaced-comment': ['off'],
       '@stylistic/key-spacing': ['warn', { mode: 'minimum' }],
-      '@stylistic/member-delimiter-style': ['warn', 'semi'],
+      '@stylistic/member-delimiter-style': ['warn', {
+        multiline: {
+          delimiter: 'semi',
+          requireLast: true
+        },
+        singleline: {
+          delimiter: 'semi',
+          requireLast: true
+        }
+      }],
       '@stylistic/space-before-function-paren': ['warn', {
         anonymous: 'never',
         named: 'never',
