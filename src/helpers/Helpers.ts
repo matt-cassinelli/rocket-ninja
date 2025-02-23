@@ -8,7 +8,8 @@ export function randomItem(array: number[]) {
   return array[index];
 }
 
-export function randomInRange(min: number, max: number) { // min and max included
+// Min and max included.
+export function randomInRange(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
@@ -18,7 +19,7 @@ export function clamp(value: number, min: number, max: number) {
 
 // This function returns a function which can be used to map a value in one range to another range.
 // For example, for an old range of 0..5 and a new range of 0..10, the input '1' would become '2'.
-// Negative and reversed ranges are supported. Input and output ranges must be > 0.
+// Negative and reversed ranges are supported. Min and max must not be the same.
 export function createRangeMapper(
   oldRange: { min: number; max: number; },
   newRange: { min: number; max: number; }

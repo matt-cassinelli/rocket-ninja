@@ -37,7 +37,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       speed: { min: 7, max: 30 },
       alpha: { start: 0.09, end: 0, ease: 'quint.out' },
       lifespan: { min: 4000, max: 4200 },
-      frequency: 6,
       blendMode: Phaser.BlendModes.OVERLAY,
       follow: this,
       followOffset: { x: 0, y: -14 }
@@ -117,9 +116,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // TODO: Prevent restitution / seperation
     // if (this.body.touching.left) this.setVelocityX(-1);
 
-    const currentVel = Math.max(Math.abs(this.body.velocity.x), Math.abs(this.body.velocity.y));
-    const currentClampedVel = clamp(currentVel, 0, this.speed.thresholdForIntenseTrail);
-    const trailIntensity = this.mapSpeedToTrailIntensity(currentClampedVel);
+    const currentSpeed = Math.max(Math.abs(this.body.velocity.x), Math.abs(this.body.velocity.y));
+    const clampedSpeed = clamp(currentSpeed, 0, this.speed.thresholdForIntenseTrail);
+    const trailIntensity = this.mapSpeedToTrailIntensity(clampedSpeed);
     this.trail.setFrequency(trailIntensity);
   }
 
@@ -154,6 +153,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     { min: 0, max: this.speed.thresholdForIntenseTrail },
     { min: 17, max: 1 } // Lower = more intense.
   );
+
+  //cleanUpOnMapEnd
 
   private initAnims() {
     this.anims.create({
