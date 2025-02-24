@@ -1,5 +1,5 @@
-import { HealthBar } from './HealthBar';
-import { Player } from './Player';
+import { HealthBar } from './health-bar';
+import { Player } from './player';
 
 export class Missile extends Phaser.Physics.Arcade.Image {
   trail: Phaser.GameObjects.Particles.ParticleEmitter;

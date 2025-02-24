@@ -1,6 +1,6 @@
-import { randomInRange, randomItem } from '../helpers/Math';
-import { HealthBar } from './HealthBar';
-import { Player } from './Player';
+import { randomInRange, randomItem } from '../helpers/math';
+import { HealthBar } from './health-bar';
+import { Player } from './player';
 
 export class Manna extends Phaser.Physics.Arcade.Sprite {
   worth = 8;

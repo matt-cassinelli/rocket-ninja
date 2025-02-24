@@ -1,4 +1,4 @@
-import { ButtonState } from './ButtonState';
+import { ButtonState } from './button-state';
 
 export class LevelButton extends Phaser.GameObjects.Container {
   private rectangle: Phaser.GameObjects.Rectangle;

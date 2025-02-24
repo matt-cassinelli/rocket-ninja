@@ -1,4 +1,4 @@
-import { ProgressBar } from '../objects/ProgressBar';
+import { ProgressBar } from '../objects/progress-bar';
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {

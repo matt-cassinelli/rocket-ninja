@@ -1,16 +1,16 @@
 import PhaserRaycaster from 'phaser-raycaster';
-import { DB } from '../helpers/Database';
-import { InputHandler } from '../helpers/InputHandler';
-import { Player } from '../objects/Player';
-import { Manna } from '../objects/Manna';
-import { Missile } from '../objects/Missile';
-import { MissileTurret } from '../objects/MissileTurret';
-import { Door } from '../objects/Door';
-import { Key } from '../objects/Key';
-import { HealthBar } from '../objects/HealthBar';
-import { JumpPad } from '../objects/JumpPad';
-import { Spike } from '../objects/Spike';
-import { ExitButton } from '../objects/navigation/ExitButton';
+import { DB } from '../helpers/database';
+import { InputHandler } from '../helpers/input-handler';
+import { Player } from '../objects/player';
+import { Manna } from '../objects/manna';
+import { Missile } from '../objects/missile';
+import { MissileTurret } from '../objects/missile-turret';
+import { Door } from '../objects/door';
+import { Key } from '../objects/key';
+import { HealthBar } from '../objects/health-bar';
+import { JumpPad } from '../objects/jump-pad';
+import { Spike } from '../objects/spike';
+import { ExitButton } from '../objects/navigation/exit-button';
 
 export class GameScene extends Phaser.Scene {
   mapKey: string;

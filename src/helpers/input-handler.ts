@@ -1,4 +1,4 @@
-import { getMaxDuration } from './Phaser';
+import { getMaxDuration } from './phaser';
 
 export class InputHandler {
   private leftKeys:  Phaser.Input.Keyboard.Key[];

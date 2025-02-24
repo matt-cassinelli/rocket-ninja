@@ -1,8 +1,8 @@
 import { Game, Types } from 'phaser';
 import PhaserRaycaster from 'phaser-raycaster';
-import { LoadingScene } from './scenes/LoadingScene';
-import { MenuScene } from './scenes/MenuScene';
-import { GameScene } from './scenes/GameScene';
+import { LoadingScene } from './scenes/loading-scene';
+import { MenuScene } from './scenes/menu-scene';
+import { GameScene } from './scenes/game-scene';
 
 const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,

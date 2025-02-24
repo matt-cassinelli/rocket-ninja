@@ -1,4 +1,4 @@
-import { Player } from './Player';
+import { Player } from './player';
 
 export class JumpPad extends Phaser.Physics.Arcade.Sprite {
   force = 560;

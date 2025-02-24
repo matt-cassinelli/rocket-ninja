@@ -1,5 +1,5 @@
-import { randomInRange, createRangeMapper } from '../helpers/Math';
-import { InputHandler, XDirection } from '../helpers/InputHandler';
+import { randomInRange, createRangeMapper } from '../helpers/math';
+import { InputHandler, XDirection } from '../helpers/input-handler';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health = 150;

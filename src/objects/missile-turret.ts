@@ -1,6 +1,6 @@
-import { Missile } from './Missile';
-import { GameScene } from '../scenes/GameScene';
-import { Player } from './Player';
+import { Missile } from './missile';
+import { GameScene } from '../scenes/game-scene';
+import { Player } from './player';
 
 export class MissileTurret extends Phaser.GameObjects.Image {
   missile?: Missile;

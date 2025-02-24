@@ -1,4 +1,4 @@
-import { LevelGrid } from '../objects/navigation/LevelGrid';
+import { LevelGrid } from '../objects/navigation/level-grid';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {

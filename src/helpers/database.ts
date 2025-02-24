@@ -1,4 +1,4 @@
-import './Extensions';
+import './extensions';
 
 export class DB {
   private static localStorageKey = 'profile';

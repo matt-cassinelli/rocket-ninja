@@ -1,6 +1,6 @@
-import { randomInRange } from '../helpers/Math';
-import { getCustomProperty } from '../helpers/Phaser';
-import { Door } from './Door';
+import { randomInRange } from '../helpers/math';
+import { getCustomProperty } from '../helpers/phaser';
+import { Door } from './door';
 
 export class Key extends Phaser.Physics.Arcade.Image {
   public readonly forDoor: integer;
