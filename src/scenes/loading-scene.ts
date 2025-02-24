@@ -83,6 +83,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.audio('jump-pad', 'sounds/jump-pad.mp3');
     this.load.audio('running', 'sounds/running.mp3');
     this.load.audio('jump', 'sounds/jump.mp3');
+    this.load.audio('wall-slide', 'sounds/wall-slide.mp3');
   }
 
   loadFonts() {

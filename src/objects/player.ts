@@ -1,10 +1,12 @@
 import { randomInRange, createRangeMapper } from '../helpers/math';
 import { InputHandler, XDirection } from '../helpers/input-handler';
+import { SoundFader } from '../helpers/sound-fader';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health = 150;
   jumpsRemaining: number;
   private trail: Phaser.GameObjects.Particles.ParticleEmitter;
+  private wallSlideSound: SoundFader;
   private speed = {
     x: {
       floor: 290,
@@ -29,8 +31,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, object.x, object.y, 'player');
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
+    this.wallSlideSound = new SoundFader(scene, 'wall-slide', 0.2);
     this.setOrigin(0.5, 1); // The map object represents the bottom center of player.
     this.setDragX(this.speed.x.air.drag);
+    this.initAnims();
+    this.setDepth(2);
 
     this.trail = this.scene.add.particles(0, 0, 'aura', {
       scale: { start: 0.29, end: 0.15 },
@@ -43,57 +48,53 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       followOffset: { x: 0, y: -14 }
     });
 
-    this.initAnims();
-    this.setDepth(2);
     this.trail.setDepth(1);
   }
 
   move(input: InputHandler) {
     const xDir = input.getXDirection();
+    const leftOrRightIsPressed = xDir !== XDirection.None;
+    const xDirLabel = leftOrRightIsPressed ? XDirection[xDir].toLowerCase() : null;
     const isOnFloor = this.body.blocked.down;
     const isInAir = !isOnFloor;
     const nearWall = this.body.blocked.right ? XDirection.Right : this.body.blocked.left ? XDirection.Left : null;
     const isPressingAgainstWall = xDir == nearWall;
 
-    if (xDir == XDirection.None) {
-      this.scene.sound.stopByKey('running');
+    if (!leftOrRightIsPressed) {
       this.anims.play('turn', true);
       this.setAccelerationX(0);
       if (isOnFloor) {
-        this?.setVelocityX(0);
+        this.setVelocityX(0);
         this.jumpsRemaining = 2;
       }
     }
 
-    if (xDir === XDirection.Left || xDir === XDirection.Right) {
-      const xDirLabel = XDirection[xDir].toLowerCase();
+    if (leftOrRightIsPressed && isOnFloor) {
+      this.setVelocityX(this.speed.x.floor * xDir);
+      this.setAccelerationX(0);
+      this.anims.play(xDirLabel, true);
+      this.playRunningSound();
+      this.jumpsRemaining = 2;
+    }
+    else {
+      this.scene.sound.stopByKey('running');
+    }
 
-      if (isOnFloor) {
-        this.setVelocityX(this.speed.x.floor * xDir);
-        this.setAccelerationX(0);
-        this.anims.play(xDirLabel, true);
-        if (!this.scene.sound.isPlaying('running')) {
-          this.playRunningSound();
-        }
-        this.jumpsRemaining = 2;
-      }
+    if (leftOrRightIsPressed && isInAir) {
+      this.moveThroughAir(this.speed.x.air.accel * xDir);
+      this.jumpsRemaining = Math.min(this.jumpsRemaining, 1);
+      this.anims.play(xDirLabel, true);
+    }
 
-      if (isInAir) {
-        this.scene.sound.stopByKey('running');
-        this.moveThroughAir(this.speed.x.air.accel * xDir);
-
-        if (isPressingAgainstWall) {
-          this.anims.play(`wallslide-${xDirLabel}`, true);
-          if (this.body.velocity.y >= this.speed.y.wallSlide)
-            this.setVelocityY(this.speed.y.wallSlide);
-          this.jumpsRemaining = 1;
-        }
-        else {
-          this.anims.play(xDirLabel, true);
-        }
-
-        this.jumpsRemaining = Math.min(this.jumpsRemaining, 1);
-      }
+    if (leftOrRightIsPressed && isInAir && isPressingAgainstWall) {
+      if (this.body.velocity.y >= this.speed.y.wallSlide)
+        this.setVelocityY(this.speed.y.wallSlide);
+      this.jumpsRemaining = 1;
+      this.anims.play(`wallslide-${xDirLabel}`, true);
+      this.wallSlideSound.fadeInIfNotPlaying(300);
+    }
+    else {
+      this.wallSlideSound.fadeOut(200);
     }
 
     if (input.jumpIsFreshlyPressed() && isInAir && !isPressingAgainstWall && this.jumpsRemaining > 0) {
@@ -105,25 +106,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.jumpsRemaining = 0;
     }
 
-    if (input.jumpIsPressed()) {
-      if (isOnFloor) {
-        this.setVelocityY(-this.speed.y.floorJump);
-        this.scene.sound.play('jump', {
-          volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
-        });
-        this.jumpsRemaining = 1;
-      }
-      if (isInAir && nearWall) {
-        const upSpeed = this.body.velocity.y < -this.speed.y.wallJump
-          ? this.body.velocity.y - 50
-          : -this.speed.y.wallJump;
-        const awaySpeed = -this.speed.x.wallJump * nearWall;
-        this.setVelocity(awaySpeed, upSpeed);
-        this.scene.sound.play('jump', {
-          volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
-        });
-        this.jumpsRemaining = 1;
-      }
+    if (input.jumpIsPressed() && isOnFloor) {
+      this.setVelocityY(-this.speed.y.floorJump);
+      this.scene.sound.play('jump', {
+        volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
+      });
+      this.jumpsRemaining = 1;
+    }
+
+    if (input.jumpIsPressed() && isInAir && nearWall) {
+      const upSpeed = this.body.velocity.y < -this.speed.y.wallJump
+        ? this.body.velocity.y - 50
+        : -this.speed.y.wallJump;
+      const awaySpeed = -this.speed.x.wallJump * nearWall;
+      this.setVelocity(awaySpeed, upSpeed);
+      this.scene.sound.play('jump', {
+        volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
+      });
+      this.jumpsRemaining = 1;
     }
 
     // TODO: Prevent restitution / seperation
@@ -154,6 +154,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   private playRunningSound() {
+    if (this.scene.sound.isPlaying('running')) return;
     const stepCount = 19;
     const stepLengthMs = 294;
     const randomStep = randomInRange(0, stepCount - 1);
