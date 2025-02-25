@@ -198,15 +198,12 @@ export class GameScene extends Phaser.Scene {
       this.player,
       this.solidLayer,
       (player: Player, solid) => {
-        if (!player.body.blocked.down) // On ground
-          return;
-
+        if (!player.body.blocked.down) return; // Only process ground coll, not walls etc.
         player.damage(200);
         this.healthBar.setLevel(player.health);
       },
-      // Only process collision if was falling fast.
-      (player: Player, solid) => {
-        return player.body.velocity.y > 510;
+      (player: Player, solid) => { // Only process coll if was falling fast.
+        return player.body.velocity.y > 587;
       }
     );
 

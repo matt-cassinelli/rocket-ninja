@@ -12,28 +12,34 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       floor: 290,
       air: {
         accel: 1370,
-        drag: 450,
+        drag: 0.1, // 1 = none, 0 = complete stop.
         limit: 290,
         jump: 290
       },
-      wallJump: 345
+      wallJump: 350
     },
     y: {
-      floorJump: 310,
-      airJump: 260,
-      wallJump: 220,
-      wallSlide: 30
+      floorJump: 450,
+      air: {
+        jump: 350,
+        drag: 0.92,
+        fallThresholdForHardDrag: 500,
+        hardDrag: 0.4
+      },
+      wallJump: 300,
+      wallSlide: 35
     },
-    thresholdForIntenseTrail: 590
+    thresholdForIntenseTrail: 740
   };
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'player');
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
-    this.wallSlideSound = new SoundFader(scene, 'wall-slide', 0.2);
+    this.wallSlideSound = new SoundFader(scene, 'wall-slide', 0.3);
     this.setOrigin(0.5, 1); // The map object represents the bottom center of player.
-    this.setDragX(this.speed.x.air.drag);
+    this.setDamping(true);
+    this.setDrag(this.speed.x.air.drag, this.speed.y.air.drag);
     this.initAnims();
     this.setDepth(2);
 
@@ -98,13 +104,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (input.jumpIsFreshlyPressed() && isInAir && !isPressingAgainstWall && this.jumpsRemaining > 0) {
-      this.setVelocityY(-this.speed.y.airJump);
+      this.setVelocityY(-this.speed.y.air.jump);
       this.scene.sound.play('jump', {
         volume: randomInRange(7, 9) / 10, detune: randomInRange(210, 380)
       });
       this.scene.cameras.main.shake(80, 0.007);
       this.jumpsRemaining = 0;
     }
+
+    if (isInAir && this.body.velocity.y > this.speed.y.air.fallThresholdForHardDrag)
+      this.setDragY(this.speed.y.air.hardDrag);
+    else
+      this.setDragY(this.speed.y.air.drag);
+    //console.log(`Fall speed: ${this.body.velocity.y}`);
 
     if (input.jumpIsPressed() && isOnFloor) {
       this.setVelocityY(-this.speed.y.floorJump);
