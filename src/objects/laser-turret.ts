@@ -17,17 +17,18 @@ export class LaserTurret extends Phaser.GameObjects.Container {
   constructor(scene: GameScene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y);
     scene.add.existing(this);
+    const worldBounds = new Phaser.Geom.Rectangle(0, 0, scene.map.width, scene.map.height);
 
     this.base = scene.add.image(this.x, this.y, 'laser-turret-base')
       .setDisplaySize(54, 54);
 
-    const raycaster = scene.raycasterPlugin.createRaycaster();
-    raycaster.mapGameObjects(scene.player, true);
-    raycaster.mapGameObjects(scene.solidLayer, false, { collisionTiles: [-1] });
-    this.detectionRay = raycaster.createRay({
+    const detectionRaycaster = scene.raycasterPlugin.createRaycaster({ boundingBox: worldBounds });
+    detectionRaycaster.mapGameObjects(scene.player, true);
+    detectionRaycaster.mapGameObjects(scene.solidLayer, false, { collisionTiles: [-1] });
+    this.detectionRay = detectionRaycaster.createRay({
       origin: { x: object.x, y: object.y },
-      autoSlice: true,
-      enablePhysics: 'arcade'
+      enablePhysics: 'arcade',
+      autoSlice: true
     });
     this.detectionRay.castCircle();
 
@@ -38,11 +39,12 @@ export class LaserTurret extends Phaser.GameObjects.Container {
       this.detectionRay.processOverlap.bind(this.detectionRay)
     );
 
-    raycaster.removeMappedObjects(scene.player);
-    raycaster.mapGameObjects(scene.solidLayer, false, { collisionTiles: [-1] });
-    this.laserRay = raycaster.createRay({
+    const laserRaycaster = scene.raycasterPlugin.createRaycaster({ boundingBox: worldBounds });
+    laserRaycaster.mapGameObjects(scene.solidLayer, false, { collisionTiles: [-1] });
+    this.laserRay = laserRaycaster.createRay({
       origin: { x: object.x, y: object.y },
-      enablePhysics: 'arcade'
+      enablePhysics: 'arcade',
+      autoSlice: true
     });
     this.laserRay.cast();
     this.laser = scene.add.line();
@@ -126,7 +128,7 @@ export class LaserTurret extends Phaser.GameObjects.Container {
       const angle = GetAngleRadians(this.laserRay.origin.x, this.laserRay.origin.y, player.x, player.y);
       this.top.setRotation(angle + Phaser.Math.DegToRad(90));
       this.laserRay.setAngle(angle);
-      this.laserIntersections = this.laserRay.cast({ target: new Phaser.Geom.Point(player.x, player.y) });
+      this.laserIntersections = this.laserRay.cast();
       this.laser.setTo(this.laserRay.origin.x, this.laserRay.origin.y, this.laserIntersections.x, this.laserIntersections.y);
     }
 

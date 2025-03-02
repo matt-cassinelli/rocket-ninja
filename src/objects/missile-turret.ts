@@ -9,7 +9,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
   id: number;
   intersections: Phaser.Geom.Point[];
   delayMs = 100;
-  size = 50;
+  size = 54;
 
   constructor(scene: GameScene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'missile-turret');

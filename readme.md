@@ -18,34 +18,25 @@ https://rocket-ninja.netlify.app/
 5. Compile a production release with `npm run build`
 
 
-## Design notes
-
-I've tried to use OOP, although sometimes objects need access to the global state.  
-Where possible, complex code has been seperated into its own classes/files/methods for cohesion.
-
-
 ## TODO
-- Maybe we shouldn't have double jump
-  - It makes level 5 too easy
-  - Dash instead of double jump?
-    - Maybe W should be 'up', not jump
-  - Maybe collecting a gem gives you a double jump
-- Be more forgiving - player intention matters more than mechanical skill
+- New player design / story
+  - Increase player size
+- Better player movement
+  - Dash instead of double jump
+    - Have another button for this
+    - Crystal refills this
   - Coyote timer
-  - Smaller spikes
-  - Level 3 and 4 are too hard for beginners
   - Variable jump
-- Better colours
-- Funner mechanics
-  - Each tile should be a quarter of a current tile
-  - Normal jump should be only 2 or 3 tiles
+  - Normal jump should be only 3 tiles
   - Fall faster when jump is descending
-- Floor particles when jump & land
-- Gibs on death
-- Increase size of player
+- Easier maps
 
 
 ## TODO: Future
+- Better colours
+- Floor particles when jump & land
+- Gibs on death
+- Each tile should be a quarter of a current tile
 - Fast rocket
 - Block that falls
 - Block that moves

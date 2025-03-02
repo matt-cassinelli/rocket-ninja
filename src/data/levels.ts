@@ -1,4 +1,4 @@
-// List of all levels with associated data. Could add all sorts of data points in here. The map is just an example.
+// TODO: Could add other data points in here e.g. startingHealth.
 export default [
   { name: 'Level 1', file: 'map1.json' },
   { name: 'Level 2', file: 'map2.json' },

@@ -37,7 +37,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, object.x, object.y, 'player');
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
-    this.wallSlideSound = new SoundFader(scene, 'wall-slide', 0.3);
+    this.wallSlideSound = new SoundFader(scene, 'wall-slide', 0.25);
     this.setY(this.y - this.height / 2); // The map object represents the bottom center of player.
     this.setDamping(true);
     this.setDrag(this.speed.x.air.drag, this.speed.y.air.drag);
@@ -51,8 +51,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       alpha: { start: 0.09, end: 0, ease: 'quint.out' },
       lifespan: { min: 4000, max: 4200 },
       blendMode: Phaser.BlendModes.OVERLAY,
-      follow: this,
-      followOffset: { x: 0, y: -14 }
+      follow: this
     });
 
     this.trail.setDepth(1);
