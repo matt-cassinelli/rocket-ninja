@@ -66,10 +66,9 @@ export class Missile extends Phaser.Physics.Arcade.Image {
     this.destroy();
   }
 
-  hitPlayer(player: Player, healthBar: HealthBar) {
+  hitPlayer(player: Player) {
     // TODO: Different explosion
     player.damage(this.damage);
-    healthBar.setLevel(player.health);
     const particles = this.scene.add.particles(this.x, this.y, 'explosion', {
       lifespan: { min: 50, max: 300 },
       speed: { min: 100, max: 600 },

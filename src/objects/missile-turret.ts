@@ -13,18 +13,9 @@ export class MissileTurret extends Phaser.GameObjects.Image {
 
   constructor(scene: GameScene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'missile-turret');
-    this.id = object.id;
     scene.add.existing(this);
     this.setDisplaySize(this.size, this.size);
-
-    // [todo] Delay firing to match sound
-    // new Phaser.Time.TimerEvent(
-    //     {delay: 100, repeat: 20}
-    // )
-
-    // [idea] Allow multiple missiles
-    // this.missiles = [];
-
+    this.id = object.id;
     this.raycaster = scene.raycasterPlugin.createRaycaster({ debug: false });
     this.raycaster.mapGameObjects(scene.player, true);
     this.raycaster.mapGameObjects(scene.solidLayer, false, { collisionTiles: [-1] });
@@ -33,7 +24,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
       origin: { x: object.x, y: object.y },
       autoSlice: true,
       enablePhysics: true
-      //collisionRange: TODO: field of view
+      // TODO: Limit field of detection with 'collisionRange' ?
     });
 
     this.intersections = this.ray.castCircle();
@@ -42,20 +33,22 @@ export class MissileTurret extends Phaser.GameObjects.Image {
       this.ray as any,
       scene.player,
       (ray, player: Player) => {
-        this.fire(scene.player.x, scene.player.y, scene.missileGroup);
+        this.fire(scene.player.x, scene.player.y, scene.missiles);
       },
       this.ray.processOverlap.bind(this.ray),
       this
     );
+
+    // TODO: Delay firing to match sound with TimerEvent
+    // TODO: Delay firing if player nearby
+    // TODO: Allow multiple missiles?
+    // this.missiles = [];
   }
 
   fire(initialtargetX: number, initialTargetY: number, missileGroup: Phaser.GameObjects.Group) {
-    if (this.missile?.active !== true) {
-      this.missile = new Missile(this.scene, this.x, this.y, initialtargetX, initialTargetY);
-      missileGroup.add(this.missile);
-      this.scene.sound.play('missile-launch', { volume: 0.8 });
-    }
-    // [idea] this.missiles.push(...
-    // [old] return this.missile
+    if (this.missile?.active == true) return;
+    this.missile = new Missile(this.scene, this.x, this.y, initialtargetX, initialTargetY);
+    missileGroup.add(this.missile);
+    this.scene.sound.play('missile-launch', { volume: 0.8 });
   }
 }

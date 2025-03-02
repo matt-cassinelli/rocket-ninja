@@ -29,16 +29,24 @@ Where possible, complex code has been seperated into its own classes/files/metho
   - It makes level 5 too easy
   - Dash instead of double jump?
     - Maybe W should be 'up', not jump
-- Fast rocket
+  - Maybe collecting a gem gives you a double jump
 - Be more forgiving - player intention matters more than mechanical skill
   - Coyote timer
   - Smaller spikes
   - Level 3 and 4 are too hard for beginners
+  - Variable jump
 - Better colours
-- Faster gravity when falling?
+- Funner mechanics
+  - Each tile should be a quarter of a current tile
+  - Normal jump should be only 2 or 3 tiles
+  - Fall faster when jump is descending
+- Floor particles when jump & land
+- Gibs on death
+- Increase size of player
 
 
 ## TODO: Future
+- Fast rocket
 - Block that falls
 - Block that moves
 - Enemy that walks and switches direction when hit wall
@@ -52,19 +60,18 @@ Where possible, complex code has been seperated into its own classes/files/metho
     - https://rexrainbow.github.io/phaser3-rex-notes/docs/site/ui-gridtable/
 - Record best times
 - Sounds:
-  - Wallslide
   - Music
-  - Enter door
   - Hit ground
+  - Laser
 - Create accounts
   - Save progress to API
 - Settings section
+  - Controls
   - After completing level, move to next or return to menu?
   - After death, restart level or return to menu?
+  - Music & SFX volume
 - Migrate to Matter Physics
 - Timer instead of health?
-- Sounds
-- Music
 - Persist health/time after changing map?
 - Sloped surfaces
 - Full screen
@@ -99,3 +106,5 @@ Where possible, complex code has been seperated into its own classes/files/metho
 - Store user control preferences
 - Player should not be able to infinitely jump up wall
 - System to collect feedback
+- Button to temporarily turn off turrets
+- Connect string of lights / electricity to unlock new areas

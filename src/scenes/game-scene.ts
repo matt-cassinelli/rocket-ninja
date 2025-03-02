@@ -11,6 +11,7 @@ import { HealthBar } from '../objects/health-bar';
 import { JumpPad } from '../objects/jump-pad';
 import { Spike } from '../objects/spike';
 import { ExitButton } from '../objects/navigation/exit-button';
+import { LaserTurret } from '../objects/laser-turret';
 
 export class GameScene extends Phaser.Scene {
   mapKey: string;
@@ -25,12 +26,13 @@ export class GameScene extends Phaser.Scene {
   healthBar: HealthBar | undefined;
   isPaused: boolean;
 
-  mannaGroup:         Phaser.Physics.Arcade.StaticGroup;
-  missileTurretGroup: Phaser.GameObjects.Group; // [old] private missileTurrets?: MissileTurret[];
-  missileGroup:       Phaser.GameObjects.Group; // [old] Phaser.Physics.Arcade.Group;
-  keys:               Phaser.GameObjects.Group;
-  jumpPads:           Phaser.Physics.Arcade.StaticGroup;
-  spikes:             Phaser.Physics.Arcade.StaticGroup;
+  mannaGroup:     Phaser.Physics.Arcade.StaticGroup;
+  laserTurrets:   Phaser.GameObjects.Group;
+  missileTurrets: Phaser.GameObjects.Group;
+  missiles:       Phaser.GameObjects.Group;
+  keys:           Phaser.GameObjects.Group;
+  jumpPads:       Phaser.Physics.Arcade.StaticGroup;
+  spikes:         Phaser.Physics.Arcade.StaticGroup;
 
   constructor() {
     super('GameScene');
@@ -75,8 +77,7 @@ export class GameScene extends Phaser.Scene {
     this.time.addEvent({
       delay: healthLossRateInMs,
       callback: () => {
-        this.player.health -= 1;
-        this.healthBar.setLevel(this.player.health);
+        this.player.damage(1);
       },
       callbackScope: this,
       loop: true
@@ -104,9 +105,11 @@ export class GameScene extends Phaser.Scene {
 
     this.player.move(this.inputHandler);
 
-    this.missileGroup.getChildren().forEach(m =>
-      (m as Missile).update(this.player.x, this.player.y)
-    );
+    this.missiles.getChildren().forEach(m =>
+      (m as Missile).update(this.player.x, this.player.y));
+
+    this.laserTurrets.getChildren().forEach(lt =>
+      (lt as LaserTurret).update(this.player));
   }
 
   endMap(newMap: string) {
@@ -133,8 +136,9 @@ export class GameScene extends Phaser.Scene {
   createGroups() {
     this.mannaGroup = this.physics.add.staticGroup({});
     this.jumpPads = this.physics.add.staticGroup();
-    this.missileTurretGroup = this.add.group();
-    this.missileGroup = this.physics.add.group();
+    this.missileTurrets = this.add.group();
+    this.laserTurrets = this.add.group(); // TODO: Can be static?
+    this.missiles = this.physics.add.group();
     this.keys = this.physics.add.staticGroup();
     this.spikes = this.physics.add.staticGroup();
   }
@@ -142,6 +146,10 @@ export class GameScene extends Phaser.Scene {
   addObjectsToGroups() {
     this.objectLayer.objects.forEach((object) => {
       switch (object.name) {
+        case 'player': {
+          this.player = new Player(this, object);
+          break;
+        }
         case 'manna': {
           this.mannaGroup.add(
             new Manna(this, object)
@@ -149,13 +157,15 @@ export class GameScene extends Phaser.Scene {
           break;
         }
         case 'missile-turret': {
-          this.missileTurretGroup.add(
+          this.missileTurrets.add(
             new MissileTurret(this, object)
           );
           break;
         }
-        case 'player': {
-          this.player = new Player(this, object);
+        case 'laser-turret': {
+          this.laserTurrets.add(
+            new LaserTurret(this, object)
+          );
           break;
         }
         case 'door': {
@@ -200,7 +210,6 @@ export class GameScene extends Phaser.Scene {
       (player: Player, solid) => {
         if (!player.body.blocked.down) return; // Only process ground coll, not walls etc.
         player.damage(200);
-        this.healthBar.setLevel(player.health);
       },
       (player: Player, solid) => { // Only process coll if was falling fast.
         return player.body.velocity.y > 587;
@@ -214,7 +223,7 @@ export class GameScene extends Phaser.Scene {
     );
 
     this.physics.add.collider(
-      this.missileGroup,
+      this.missiles,
       this.solidLayer,
       (missile: Missile, solid) => {
         missile.hitSolid();
@@ -223,9 +232,9 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(
       this.player,
-      this.missileGroup,
+      this.missiles,
       (player: Player, missile: Missile) => {
-        missile.hitPlayer(player, this.healthBar);
+        missile.hitPlayer(player);
       }
     );
 

@@ -29,16 +29,17 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   loadImages() {
-    this.load.image('tileset',        'tilesets/tileset-simple-32x32.png');
-    this.load.image('missile',        'images/missile.png');
-    this.load.image('missile-turret', 'images/missile-turret.png');
-    this.load.image('key',            'images/key.svg');
-    this.load.image('spike',          'images/spike.png');
-    this.load.image('exit-icon',      'images/box-arrow-left.svg');
-    this.load.image('lock',           'images/lock.svg');
-    this.load.image('background',     'images/chromatic-camouflage (5).png'); // Note: Backgrounds should have POT dimensions.
-    this.load.image('explosion',      'particles/explosion.png');
-    this.load.image('aura',           'particles/aura-black.png');
+    this.load.image('tileset',           'tilesets/tileset-simple-32x32.png');
+    this.load.image('missile',           'images/missile.png');
+    this.load.image('missile-turret',    'images/missile-turret.png');
+    this.load.image('laser-turret-base', 'images/laser-turret-base.png');
+    this.load.image('key',               'images/key.svg');
+    this.load.image('spike',             'images/spike.png');
+    this.load.image('exit-icon',         'images/box-arrow-left.svg');
+    this.load.image('lock',              'images/lock.svg');
+    this.load.image('background',        'images/chromatic-camouflage (5).png'); // Note: Backgrounds should have POT dimensions.
+    this.load.image('explosion',         'particles/explosion.png');
+    this.load.image('aura',              'particles/aura-black.png');
     this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');
   }
 
@@ -72,6 +73,11 @@ export class LoadingScene extends Phaser.Scene {
       'jump-pad',
       'spritesheets/jump-pad-2-16x16.png',
       { frameWidth: 16, frameHeight: 16 }
+    );
+    this.load.spritesheet(
+      'laser-turret-top',
+      'spritesheets/turret-02-mk2-128.png',
+      { frameWidth: 128, frameHeight: 128 }
     );
   }
 

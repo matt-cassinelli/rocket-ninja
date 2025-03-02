@@ -1,6 +1,7 @@
 import { randomInRange, createRangeMapper } from '../helpers/math';
 import { InputHandler, XDirection } from '../helpers/input-handler';
 import { SoundFader } from '../helpers/sound-fader';
+import { GameScene } from '../scenes/game-scene';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health = 150;
@@ -37,7 +38,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
     this.wallSlideSound = new SoundFader(scene, 'wall-slide', 0.3);
-    this.setOrigin(0.5, 1); // The map object represents the bottom center of player.
+    this.setY(this.y - this.height / 2); // The map object represents the bottom center of player.
     this.setDamping(true);
     this.setDrag(this.speed.x.air.drag, this.speed.y.air.drag);
     this.initAnims();
@@ -147,8 +148,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   damage(amount: number) {
-    this.scene.cameras.main.shake(100, 0.04);
+    if (amount > 5)
+      this.scene.cameras.main.shake(100, 0.04);
     this.health -= amount;
+    (this.scene as GameScene).healthBar.setLevel(this.health);
   }
 
   cleanUpOnMapEnd() {
