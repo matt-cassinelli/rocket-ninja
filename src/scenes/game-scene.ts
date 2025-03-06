@@ -203,20 +203,6 @@ export class GameScene extends Phaser.Scene {
   addColliders() {
     this.solidLayer.setCollisionByExclusion([-1]); // Without this, only the 1st tile from tileset collides.
 
-    // Fall damage
-    this.physics.add.collider(
-      this.player,
-      this.solidLayer,
-      (player: Player, solid) => {
-        if (!player.body.blocked.down) return; // Only process ground coll, not walls etc.
-        player.damage(200);
-      },
-      (player: Player, solid) => { // Only process coll if was falling fast.
-        return player.body.velocity.y > 587;
-      }
-    );
-
-    // Walking / normal collision.
     this.physics.add.collider(
       this.player,
       this.solidLayer

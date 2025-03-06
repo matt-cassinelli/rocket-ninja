@@ -1,4 +1,4 @@
-import { GetAngleRadians } from '../helpers/math';
+import { getAngleRadians } from '../helpers/math';
 import { GameScene } from '../scenes/game-scene';
 import { Player } from './player';
 
@@ -125,7 +125,7 @@ export class LaserTurret extends Phaser.GameObjects.Container {
       this.timeline.play();
 
     if (this.status == 'TRACKING') {
-      const angle = GetAngleRadians(this.laserRay.origin.x, this.laserRay.origin.y, player.x, player.y);
+      const angle = getAngleRadians(this.laserRay.origin.x, this.laserRay.origin.y, player.x, player.y);
       this.top.setRotation(angle + Phaser.Math.DegToRad(90));
       this.laserRay.setAngle(angle);
       this.laserIntersections = this.laserRay.cast();

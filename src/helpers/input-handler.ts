@@ -1,26 +1,31 @@
 import { getMaxDuration } from './phaser';
+const KeyCodes = Phaser.Input.Keyboard.KeyCodes;
 
+/** Warning: The 'isFreshlyPressed' methods should be called only once per key press.
+    After being called, they will return false until the key is re-pressed. */
 export class InputHandler {
   private leftKeys:  Phaser.Input.Keyboard.Key[];
   private rightKeys: Phaser.Input.Keyboard.Key[];
+  private upKeys:    Phaser.Input.Keyboard.Key[];
+  private downKeys:  Phaser.Input.Keyboard.Key[];
   private jumpKeys:  Phaser.Input.Keyboard.Key[];
+  private dashKeys:  Phaser.Input.Keyboard.Key[];
   private escKey:    Phaser.Input.Keyboard.Key;
 
   constructor(scene: Phaser.Scene) {
-    this.leftKeys = [
-      Phaser.Input.Keyboard.KeyCodes.A,
-      Phaser.Input.Keyboard.KeyCodes.LEFT]
+    this.leftKeys = [KeyCodes.LEFT, KeyCodes.A]
       .map(kc => scene.input.keyboard.addKey(kc));
-    this.rightKeys = [
-      Phaser.Input.Keyboard.KeyCodes.D,
-      Phaser.Input.Keyboard.KeyCodes.RIGHT]
+    this.rightKeys = [KeyCodes.RIGHT, KeyCodes.D]
       .map(kc => scene.input.keyboard.addKey(kc));
-    this.jumpKeys = [
-      Phaser.Input.Keyboard.KeyCodes.SPACE,
-      Phaser.Input.Keyboard.KeyCodes.W,
-      Phaser.Input.Keyboard.KeyCodes.UP]
+    this.upKeys = [KeyCodes.UP, KeyCodes.W]
       .map(kc => scene.input.keyboard.addKey(kc));
-    this.escKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    this.downKeys = [KeyCodes.DOWN, KeyCodes.S]
+      .map(kc => scene.input.keyboard.addKey(kc));
+    this.jumpKeys = [KeyCodes.Z, KeyCodes.SPACE, KeyCodes.P]
+      .map(kc => scene.input.keyboard.addKey(kc));
+    this.dashKeys = [KeyCodes.X, KeyCodes.O, KeyCodes.B]
+      .map(kc => scene.input.keyboard.addKey(kc));
+    this.escKey = scene.input.keyboard.addKey(KeyCodes.ESC);
   }
 
   getXDirection(): XDirection {
@@ -44,31 +49,20 @@ export class InputHandler {
     return XDirection.None;
   }
 
-  jumpIsPressed() {
-    return this.jumpKeys.some(k => k.isDown);
-  }
+  anyDirectionIsPressed = () =>
+    this.getXDirection() !== XDirection.None
+    || this.upIsPressed()
+    || this.downIsPressed();
 
-  /** Warning: Only call this once per key press.
-      After being called, it will subsequently return false until the key is re-pressed. */
-  jumpIsFreshlyPressed() {
-    return this.jumpKeys.some(k => Phaser.Input.Keyboard.JustDown(k));
-  }
-
-  getJumpKeyDuration() {
-    return getMaxDuration(this.jumpKeys);
-  }
-
-  escIsFreshlyPressed() {
-    return Phaser.Input.Keyboard.JustDown(this.escKey);
-  }
-
-  private leftIsPressed() {
-    return this.leftKeys.some(k => k.isDown);
-  }
-
-  private rightIsPressed() {
-    return this.rightKeys.some(k => k.isDown);
-  }
+  upIsPressed = () => this.upKeys.some(k => k.isDown);
+  downIsPressed = () => this.downKeys.some(k => k.isDown);
+  leftIsPressed = () => this.leftKeys.some(k => k.isDown);
+  rightIsPressed = () => this.rightKeys.some(k => k.isDown);
+  dashIsPressed = () => this.dashKeys.some(k => k.isDown);
+  jumpIsPressed = () => this.jumpKeys.some(k => k.isDown);
+  jumpIsFreshlyPressed = () => this.jumpKeys.some(k => Phaser.Input.Keyboard.JustDown(k));
+  getJumpKeyDuration = () => getMaxDuration(this.jumpKeys);
+  escIsFreshlyPressed = () => Phaser.Input.Keyboard.JustDown(this.escKey);
 }
 
 export enum XDirection {

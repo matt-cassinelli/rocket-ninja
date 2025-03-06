@@ -23,8 +23,8 @@ https://rocket-ninja.netlify.app/
   - Increase player size
 - Better player movement
   - Dash instead of double jump
-    - Have another button for this
-    - Crystal refills this
+    - Crystal refills this?
+    - Animation https://phaser.io/examples/v3.85.0/game-objects/particle-emitter/view/add-emit-zone
   - Coyote timer
   - Variable jump
   - Normal jump should be only 3 tiles
@@ -99,3 +99,4 @@ https://rocket-ninja.netlify.app/
 - System to collect feedback
 - Button to temporarily turn off turrets
 - Connect string of lights / electricity to unlock new areas
+- Controller support https://blog.khutchins.com/posts/phaser-3-inputs-2/
