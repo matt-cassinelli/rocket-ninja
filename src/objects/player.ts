@@ -76,7 +76,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const nearWall = this.body.blocked.right ? XDirection.Right : this.body.blocked.left ? XDirection.Left : null;
     const isPressingAgainstWall = xDir == nearWall;
 
-    if (isOnFloor) {
+    if (isOnFloor || !leftOrRightIsPressed) {
       this.setAccelerationX(0);
     }
 
@@ -84,17 +84,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityX(0);
     }
 
+    if (leftOrRightIsPressed) {
+      this.anims.play(xDirLabel, true);
+    }
+
     if (!leftOrRightIsPressed) {
       this.anims.play('turn', true);
-      this.setAccelerationX(0);
     }
 
     if (isOnFloor && leftOrRightIsPressed) {
       this.setVelocityX(this.speed.x.floor * xDir);
-      this.anims.play(xDirLabel, true);
       this.playRunningSound();
     }
-    else {
+
+    if (isInAir || !leftOrRightIsPressed) {
       this.scene.sound.stopByKey('running');
     }
 
@@ -107,7 +110,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (isInAir && leftOrRightIsPressed && this.dashStatus != 'DASHING') {
       this.moveThroughAir(this.speed.x.air.accel * xDir);
-      this.anims.play(xDirLabel, true);
     }
 
     const shouldWallslide = isInAir && leftOrRightIsPressed && isPressingAgainstWall && this.dashStatus != 'DASHING';
@@ -117,7 +119,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.anims.play(`wallslide-${xDirLabel}`, true);
       this.wallSlideSound.fadeInIfNotPlaying(300);
     }
-    else {
+
+    if (!shouldWallslide) {
       this.wallSlideSound.fadeOut(200);
     }
 
