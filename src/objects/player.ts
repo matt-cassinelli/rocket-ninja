@@ -18,24 +18,33 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         accel: 1370,
         drag: 0.1, // 1 = none, 0 = complete stop.
         limit: 290,
-        dash: 480,
+        dash: 485,
         endOfDashBoost: 0.55
       },
-      wallJump: 350
+      wallJump: 360
     },
     y: {
       floorJump: 440,
       air: {
         drag: 0.92,
-        fallThresholdForHardDrag: 500,
-        hardDrag: 0.4,
-        dash: 370,
-        endOfDashBoost: 0.55
+        dash: 375,
+        endOfDashBoost: 0.55,
+        fall: {
+          max: 700,
+          boostBetween: {
+            min: 0,
+            max: 120,
+            force: 2000
+          }
+        }
       },
-      wallJump: 300,
-      wallSlide: 35
+      wallJump: {
+        force: 330,
+        preserveMomentum: 0.43
+      },
+      wallSlide: 37
     },
-    dashDuration: 290,
+    dashDuration: 295,
     dashCooldown: 550
   };
 
@@ -126,9 +135,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     const shouldWalljump = isInAir && nearWall && input.jumpIsPressed() && this.dashStatus != 'DASHING';
     if (shouldWalljump) {
-      const upSpeed = this.body.velocity.y < -this.speed.y.wallJump
-        ? this.body.velocity.y - 50
-        : -this.speed.y.wallJump;
+      const upSpeed = this.body.velocity.y < 0
+        ? this.speed.y.wallJump.force * -1 + (this.body.velocity.y * this.speed.y.wallJump.preserveMomentum)
+        : this.speed.y.wallJump.force * -1;
       const awaySpeed = -this.speed.x.wallJump * nearWall;
       this.setVelocity(awaySpeed, upSpeed);
       this.scene.sound.play('jump', {
@@ -168,17 +177,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocity(this.dashXValue, this.dashYValue);
     }
 
-    if (this.touchedDownSinceLastDash != true && this.dashStatus != 'DASHING'
+    if (!this.touchedDownSinceLastDash && this.dashStatus != 'DASHING'
       && (isOnFloor || shouldWallslide || shouldWalljump)) {
       this.touchedDownSinceLastDash = true;
     }
 
-    const isFallingTooFast = isInAir && this.body.velocity.y > this.speed.y.air.fallThresholdForHardDrag;
-    if (isFallingTooFast)
-      this.setDragY(this.speed.y.air.hardDrag);
+    const isFallingSlow = isInAir && !isPressingAgainstWall
+      && this.body.velocity.y > this.speed.y.air.fall.boostBetween.min
+      && this.body.velocity.y < this.speed.y.air.fall.boostBetween.max;
+    if (isFallingSlow)
+      this.setGravityY(2000);
+    else
+      this.setGravityY(1);
+
+    const isFallingFast = isInAir && this.body.velocity.y > this.speed.y.air.fall.max;
+    if (isFallingFast)
+      this.setDragY(0.33);
     else
       this.setDragY(this.speed.y.air.drag);
-    //console.log(`Fall speed: ${this.body.velocity.y}`);
 
     // TODO: Prevent restitution / seperation
     // if (this.body.touching.left) this.setVelocityX(-1);
