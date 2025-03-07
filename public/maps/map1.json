@@ -271,21 +271,21 @@
                  "y":1280
                 }, 
                 {
-                 "height":88,
+                 "height":64,
                  "id":69,
                  "name":"text",
                  "rotation":0,
                  "text":
                     {
                      "color":"#ffffff",
-                     "text":"Dash with X, O, or B, whilst holding a direction",
+                     "text":"Jump then dash:\nX, O, or B, + any direction",
                      "wrap":true
                     },
                  "type":"",
                  "visible":true,
-                 "width":176,
-                 "x":1960,
-                 "y":992
+                 "width":264,
+                 "x":1936,
+                 "y":1008
                 }, 
                 {
                  "height":56,
