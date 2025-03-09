@@ -50,7 +50,7 @@ export class GameScene extends Phaser.Scene {
 
     this.add.tileSprite(0, 0, this.map.widthInPixels * 2, this.map.heightInPixels * 2, 'background')
       .setTileScale(1)
-      .setBlendMode('MULTIPLY')
+      .setBlendMode(Phaser.BlendModes.MULTIPLY)
       .setAlpha(0.18);
 
     // Load layers from map
@@ -65,10 +65,9 @@ export class GameScene extends Phaser.Scene {
     this.addColliders();
 
     const smoothing = 0.07;
-    const yOffset = 70;
+    const yOffset = 50;
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, false);
     this.cameras.main.startFollow(this.player, true, smoothing, smoothing * 2, 0, yOffset);
-    //this.cameras.main.postFX.addVignette(0.5, 0.5, 0.5, 0.5);
 
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);

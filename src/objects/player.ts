@@ -6,6 +6,7 @@ import { GameScene } from '../scenes/game-scene';
 export class Player extends Phaser.Physics.Arcade.Sprite {
   health = 150;
   touchedDownSinceLastDash: boolean;
+  affectedByJumpPad: boolean;
   private dashStatus: 'DASHING' | 'RECHARGING' | 'AVAILABLE';
   private trail: Phaser.GameObjects.Particles.ParticleEmitter;
   private wallSlideSound: SoundFader;
@@ -26,15 +27,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     y: {
       floorJump: 440,
       air: {
-        drag: 0.92,
+        drag: 0.9,
         dash: 375,
         endOfDashBoost: 0.55,
         fall: {
           max: 700,
           boostBetween: {
             min: 0,
-            max: 120,
-            force: 2000
+            max: 110,
+            force: 2200
           }
         }
       },
@@ -42,7 +43,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         force: 330,
         preserveMomentum: 0.43
       },
-      wallSlide: 37
+      wallSlide: 35
     },
     dashDuration: 295,
     dashCooldown: 550
@@ -85,11 +86,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const nearWall = this.body.blocked.right ? XDirection.Right : this.body.blocked.left ? XDirection.Left : null;
     const isPressingAgainstWall = xDir == nearWall;
 
-    if (isOnFloor || !leftOrRightIsPressed) {
+    if ((isOnFloor || !leftOrRightIsPressed)) {
       this.setAccelerationX(0);
     }
 
-    if (isOnFloor && !leftOrRightIsPressed) {
+    if (isOnFloor && !leftOrRightIsPressed && !this.affectedByJumpPad) {
       this.setVelocityX(0);
     }
 
@@ -101,7 +102,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.anims.play('turn', true);
     }
 
-    if (isOnFloor && leftOrRightIsPressed) {
+    if (isOnFloor && leftOrRightIsPressed && !this.affectedByJumpPad) {
       this.setVelocityX(this.speed.x.floor * xDir);
       this.playRunningSound();
     }
@@ -182,11 +183,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.touchedDownSinceLastDash = true;
     }
 
-    const isFallingSlow = isInAir && !isPressingAgainstWall
+    const shouldBoostFall = isInAir && !isPressingAgainstWall
       && this.body.velocity.y > this.speed.y.air.fall.boostBetween.min
       && this.body.velocity.y < this.speed.y.air.fall.boostBetween.max;
-    if (isFallingSlow)
-      this.setGravityY(2000);
+    if (shouldBoostFall)
+      this.setGravityY(this.speed.y.air.fall.boostBetween.force);
     else
       this.setGravityY(1);
 
@@ -205,6 +206,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.scene.cameras.main.shake(100, 0.04);
     this.health -= amount;
     (this.scene as GameScene).healthBar.setLevel(this.health);
+  }
+
+  hitJumpPad(newVelX: number, newVelY: number) {
+    this.affectedByJumpPad = true;
+    this.touchedDownSinceLastDash = true;
+    this.setVelocity(newVelX, newVelY);
+    //const originalDragX = this.speed.x.air.drag;
+    //this.setDragX(0.95);
+    this.scene.time.delayedCall(1000, () => {
+      this.affectedByJumpPad = false;
+      //this.setDragX(originalDragX);
+    });
   }
 
   cleanUpOnMapEnd() {

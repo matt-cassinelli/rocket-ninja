@@ -22,14 +22,12 @@ https://rocket-ninja.netlify.app/
 - New player design / story
   - Increase player size
 - Better player movement
-  - Dash instead of double jump
-    - Crystal refills this?
-    - Animation https://phaser.io/examples/v3.85.0/game-objects/particle-emitter/view/add-emit-zone
   - Coyote timer
   - Variable jump
   - Normal jump should be only 3 tiles
   - Fall faster when jump is descending
 - Easier maps
+- Should dash be always available, unlocked at a certain point, or refilled by pickup?
 
 
 ## TODO: Future
@@ -82,11 +80,11 @@ https://rocket-ninja.netlify.app/
   - Grappling hook
   - EMP
 - Animations:
+  - Dash https://phaser.io/examples/v3.85.0/game-objects/particle-emitter/view/add-emit-zone
   - Falling
   - Wallslide
   - Waiting
   - Death
-- Wall slide should be faster
 - Wall jump seems hard for beginners
 - Allow falling off map (sky-based maps)
 - Each map should have its own starting health

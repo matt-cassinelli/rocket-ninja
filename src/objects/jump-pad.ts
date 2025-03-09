@@ -5,55 +5,41 @@ export class JumpPad extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
     super(scene, object.x, object.y, 'jump-pad');
-
     scene.add.existing(this);
     scene.physics.add.existing(this, true);
+    this.setOrigin(0, 0);
+    this.setAngle(object.rotation);
+    this.setSize(object.width, object.height);
+    this.setDisplaySize(object.width, object.height);
+    const offset = Phaser.Math.RotateAround(
+      { x: 0, y: 0 },
+      object.width / 2,
+      object.height,
+      this.rotation);
+    this.body.setOffset(-offset.x + object.width * 0.25, -offset.y + object.height * 0.75);
+    this.body.setCircle(object.width / 2);
 
     this.anims.create({
       key: 'trigger',
       frames: scene.anims.generateFrameNumbers('jump-pad', { start: 0, end: 9 }),
       frameRate: 12
     });
-
-    this.setOrigin(0, 0.5);
-    this.setDisplaySize(object.width, object.height * 2);
-    this.setAngle(object.rotation);
-
-    // Disgusting hack to fake rotation of the physics body (they can't be rotated).
-    switch (this.angle) {
-      case 0: {
-        this.setBodySize(object.width, object.height);
-        this.setOffset(object.height / 2, object.height / 2);
-        break;
-      }
-      case 90: {
-        this.setBodySize(object.height, object.width);
-        this.setOffset(-object.height / 2, object.height / 2);
-        break;
-      }
-      case 180:
-      case -180: {
-        this.setBodySize(object.width, object.height);
-        this.setOffset(-24, -object.height / 2);
-        break;
-      }
-      case 270:
-      case -90: {
-        this.setBodySize(object.height, object.width);
-        this.setOffset(object.height / 2, -24);
-        break;
-      }
-    }
   }
 
   public trigger(player: Player) {
     if (this.anims.isPlaying) {
       return;
     }
+    const angle = Math.round(this.angle);
+    const velX = [45, 90, 135].includes(angle) ? this.force
+      : [-45, 315, -90, 270, 225].includes(angle) ? this.force * -1
+      : 0;
+    const velY = [135, 180, 225].includes(angle) ? this.force
+      : [-45, 315, 0, 45].includes(angle) ? this.force * -1
+      : 0;
+
+    player.hitJumpPad(velX, velY);
     this.anims.play('trigger');
-    const rotatedVelocity = this.scene.physics.velocityFromRotation(this.rotation, this.force);
-    player.setVelocity(rotatedVelocity.y, -rotatedVelocity.x);
-    player.touchedDownSinceLastDash = true;
     this.scene.sound.play('jump-pad', { volume: 0.5 });
   }
 }

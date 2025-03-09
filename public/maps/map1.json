@@ -271,19 +271,19 @@
                  "y":1280
                 }, 
                 {
-                 "height":64,
+                 "height":72,
                  "id":69,
                  "name":"text",
                  "rotation":0,
                  "text":
                     {
                      "color":"#ffffff",
-                     "text":"Jump then dash:\nX, O, or B, + any direction",
+                     "text":"When in air, dash with:\nX, O, or B, + any direction",
                      "wrap":true
                     },
                  "type":"",
                  "visible":true,
-                 "width":264,
+                 "width":272,
                  "x":1936,
                  "y":1008
                 }, 
