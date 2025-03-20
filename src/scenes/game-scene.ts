@@ -16,9 +16,6 @@ import { LaserTurret } from '../objects/laser-turret';
 export class GameScene extends Phaser.Scene {
   mapKey: string;
   map: Phaser.Tilemaps.Tilemap;
-  tileset: Phaser.Tilemaps.Tileset;
-  solidLayer: Phaser.Tilemaps.TilemapLayer;
-  objectLayer: Phaser.Tilemaps.ObjectLayer;
   collisionPlugin: PhaserMatterCollisionPlugin;
   inputHandler: InputHandler;
   player: Player;
@@ -46,17 +43,7 @@ export class GameScene extends Phaser.Scene {
   create() {
     this.isPaused = false;
     this.map = this.make.tilemap({ key: this.mapKey }); // Load map
-    this.tileset = this.map.addTilesetImage('tileset', 'tileset'); // Load tileset
 
-    // Load layers from map
-    this.solidLayer  = this.map.createLayer('tile-layer-solids', this.tileset);
-    this.objectLayer = this.map.getObjectLayer('object-layer');
-
-    // Convert the layer. Any colliding tiles are given a Matter body.
-    // If a tile has collision shapes from Tiled, these will be loaded. If not, a default
-    // rectangle body will be used. The body will be accessible via tile.physics.matterBody.
-    this.map.setCollisionByExclusion([-1]); // this.map.setCollisionByProperty({ collides: true });
-    this.matter.world.convertTilemapLayer(this.solidLayer);
     this.matter.world.setBounds(this.map.widthInPixels, this.map.heightInPixels);
 
     this.add.tileSprite(0, 0, this.map.widthInPixels * 2, this.map.heightInPixels * 2, 'background')
@@ -64,15 +51,16 @@ export class GameScene extends Phaser.Scene {
       .setBlendMode(Phaser.BlendModes.MULTIPLY)
       .setAlpha(0.18);
 
-    const exitButton = new ExitButton(this, 10, 10);
-    this.add.existing(exitButton);
-
+    this.createSolids();
     this.createGroups();
     this.createObjects();
     this.addColliders();
 
-    const smoothing = 0.07;
-    const yOffset = 50;
+    const exitButton = new ExitButton(this, 10, 10);
+    this.add.existing(exitButton);
+
+    const smoothing = 0.06;
+    const yOffset = 45;
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(this.player.sprite, true, smoothing, smoothing * 2, 0, yOffset);
 
@@ -142,6 +130,46 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+  createSolids() {
+    const solidLayer = this.map.getObjectLayer('solid-layer');
+    solidLayer.objects.forEach((shape) => {
+      const graphics = this.add.graphics();
+      graphics.fillStyle(0x000000, 1);
+      if (shape.rectangle) {
+        graphics.fillRect(shape.x, shape.y, shape.width, shape.height);
+        this.matter.add.rectangle(
+          shape.x + (shape.width / 2),
+          shape.y + (shape.height / 2),
+          shape.width,
+          shape.height,
+          { isStatic: true }
+        );
+      }
+      if (shape.polygon) {
+        const points = shape.polygon;
+        graphics.beginPath();
+        for (let i = 0; i < points.length; i++) {
+          const x = shape.x + points[i].x;
+          const y = shape.y + points[i].y;
+          if (i == 0)
+            graphics.moveTo(x, y);
+          else
+            graphics.lineTo(x, y);
+        }
+        graphics.closePath();
+        graphics.fillPath();
+
+        const offset = this.matter.vertices.centre(points);
+        this.matter.add.fromVertices(
+          shape.x + offset.x,
+          shape.y + offset.y,
+          points,
+          { isStatic: true }
+        );
+      }
+    });
+  }
+
   createGroups() {
     this.mannaGroup = this.add.group();
     this.jumpPads = this.add.group();
@@ -153,7 +181,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   createObjects() {
-    this.objectLayer.objects.forEach((object) => {
+    const objectLayer = this.map.getObjectLayer('object-layer');
+    objectLayer.objects.forEach((object) => {
       switch (object.name) {
         case 'player': {
           this.player = new Player(this, object);

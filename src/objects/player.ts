@@ -22,7 +22,7 @@ export class Player {
       floor: 5.5,
       air: {
         accel: 0.0017,
-        halt: 0.2,
+        halt: 0.16,
         limit: 5.5,
         dash: 9.7,
         endOfDashBoost: 0.55
@@ -263,7 +263,7 @@ export class Player {
       frictionAir: this.speed.airDrag,
       friction: this.speed.surfaceFriction,
       render: { sprite: { xOffset: 0.5, yOffset: 0.5 } },
-      restitution: 0.02 // Stop sticking against walls
+      restitution: 0.01
       //density: 0.1,
       //slop: 0.04
     });

@@ -45,6 +45,7 @@ export default defineConfig([
       '@stylistic/indent-binary-ops': 'off',
       '@stylistic/arrow-parens': 'warn',
       '@stylistic/no-extra-parens': 'warn',
+      '@stylistic/padded-blocks': 'warn',
       '@stylistic/member-delimiter-style': ['warn', {
         multiline: {
           delimiter: 'semi',
