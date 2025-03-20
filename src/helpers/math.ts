@@ -1,3 +1,5 @@
+import { Vector } from 'matter';
+
 export function randomItem(array: number[]) {
   const index = Math.floor(Math.random() * array.length);
   return array[index];
@@ -56,3 +58,13 @@ export function createRangeMapper(
 export function getAngleRadians(x1: number, y1: number, x2: number, y2: number) {
   return Math.atan2(y2 - y1, x2 - x1);
 };
+
+export function findEndPoint(startPoint: Vector, angle: number, length: number) {
+  const endY = startPoint.y + length * Math.sin(angle);
+  const endX = startPoint.x + length * Math.cos(angle);
+  return { x: endX, y: endY };
+}
+
+export function isNearlyEqual(a: number, b: number, leniency = 0.00001) {
+  return Math.abs(b - a) <= leniency;
+}

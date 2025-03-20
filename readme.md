@@ -19,30 +19,40 @@ https://rocket-ninja.netlify.app/
 
 
 ## TODO
-- New player design / story
-  - Increase player size
+- Fix ghost collisions
+- Sloped surfaces
 - Better player movement
-  - Coyote timer
+  - Tune gravity & friction
+  - Wall jump seems hard for beginners
+  - Player should not be able to infinitely jump up wall
   - Variable jump
-  - Normal jump should be only 3 tiles
-  - Fall faster when jump is descending
-- Easier maps
-- Should dash be always available, unlocked at a certain point, or refilled by pickup?
+  - Should dash be always available, unlocked at a certain point, or refilled by pickup?
+- Mobile support
+  - All items should be responsive
+  - Game control overlay
+- Full screen
+- Side doors
+- Allow falling off map (sky-based maps)
 
 
 ## TODO: Future
+- Easier maps
+- Knockback
+  - Use it to reach new areas?
+- Coyote timer
+- New player design / story
+  - Increase player size
 - Better colours
 - Floor particles when jump & land
 - Gibs on death
-- Each tile should be a quarter of a current tile
-- Fast rocket
-- Block that falls
-- Block that moves
-- Enemy that walks and switches direction when hit wall
-- Enemy that can walk upside down, sideways etc
-- Mobile
-  - All items should be responsive
-  - Game control overlay
+- Each tile should be a quarter of the current size
+- Obstacles / enemies
+  - Fast rocket
+  - Block that falls
+  - Block that moves
+  - Enemy that walks and switches direction when hit wall
+  - Enemy that can walk upside down, sideways etc
+  - Bosses with smart AI
 - Improve menu
   - Buttons should be rounded
   - Swipe or paginate to see more levels
@@ -54,47 +64,40 @@ https://rocket-ninja.netlify.app/
   - Laser
 - Create accounts
   - Save progress to API
+  - Save preferences
 - Settings section
   - Controls
   - After completing level, move to next or return to menu?
   - After death, restart level or return to menu?
   - Music & SFX volume
-- Migrate to Matter Physics
-- Timer instead of health?
 - Persist health/time after changing map?
-- Sloped surfaces
-- Full screen
-- Knockback
-  - Use knockback to reach areas
-- Side doors
 - Door color should match key color
 - Release an executable
 - Responsive music
-- Bosses / AI
 - Allow multiple doors on one map
-- Raycaster seems to sensitive
-- Items:
+- Abilities / actions
   - Rocket
-  - Shield
+  - Shield (reflect?)
+  - Stealth
   - Grenade
   - Grappling hook
   - EMP
+  - Button to temporarily turn off turrets
+  - Connect chain of lights / electricity to unlock new areas
+  - Cannon (get inside it and fire yourself)
+- Objectives
+  - Destroy 3 bosses
 - Animations:
   - Dash https://phaser.io/examples/v3.85.0/game-objects/particle-emitter/view/add-emit-zone
   - Falling
   - Wallslide
   - Waiting
   - Death
-- Wall jump seems hard for beginners
-- Allow falling off map (sky-based maps)
 - Each map should have its own starting health
 - Other fonts to try:
   - https://fonts.google.com/specimen/Gloria+Hallelujah
   - https://fonts.google.com/specimen/Annie+Use+Your+Telescope
   - https://fonts.google.com/specimen/Londrina+Shadow
 - Store user control preferences
-- Player should not be able to infinitely jump up wall
 - System to collect feedback
-- Button to temporarily turn off turrets
-- Connect string of lights / electricity to unlock new areas
 - Controller support https://blog.khutchins.com/posts/phaser-3-inputs-2/

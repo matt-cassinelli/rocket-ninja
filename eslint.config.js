@@ -1,32 +1,30 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-const parser = require('@typescript-eslint/parser');
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const stylistic = require('@stylistic/eslint-plugin');
+import { defineConfig, globalIgnores } from 'eslint/config';
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import parser from '@typescript-eslint/parser';
+import stylistic from '@stylistic/eslint-plugin';
 
-module.exports = [
+export default defineConfig([
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  stylistic.configs['recommended-flat'],
+  tseslint.configs.recommended,
+  stylistic.configs.recommended,
+  globalIgnores(['node_modules/**', 'dist/**', 'private/**']),
   {
     languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parser: parser,
-      globals: { require: true, module: true, browser: true }
-    },
-    plugins: {
-      '@stylistic': stylistic
+      parser: parser
+      //globals: { require: true, module: true, browser: true }
     },
     rules: {
-      'quotes': ['warn', 'single'],
       'semi': ['warn', 'always'],
       'prefer-const': 'warn',
       'no-unused-vars': 'warn',
+      'no-var': 'warn',
 
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
 
+      '@stylistic/no-tabs': 'off',
+      '@stylistic/quotes': ['warn', 'single'],
       '@stylistic/semi': ['warn', 'always'],
       '@stylistic/eol-last': 'warn',
       '@stylistic/no-multiple-empty-lines': 'warn',
@@ -41,6 +39,12 @@ module.exports = [
       '@stylistic/spaced-comment': ['off'],
       '@stylistic/key-spacing': ['warn', { mode: 'minimum' }],
       '@stylistic/multiline-ternary': ['off'],
+      '@stylistic/keyword-spacing': 'warn',
+      '@stylistic/space-before-blocks': 'warn',
+      '@stylistic/no-mixed-operators': 'warn',
+      '@stylistic/indent-binary-ops': 'off',
+      '@stylistic/arrow-parens': 'warn',
+      '@stylistic/no-extra-parens': 'warn',
       '@stylistic/member-delimiter-style': ['warn', {
         multiline: {
           delimiter: 'semi',
@@ -57,9 +61,5 @@ module.exports = [
         asyncArrow: 'always'
       }]
     }
-  },
-  {
-    // https://github.com/eslint/eslint/discussions/18304#discussioncomment-9069706
-    ignores: ['node_modules/**', 'dist/**', 'private/**']
   }
-];
+]);

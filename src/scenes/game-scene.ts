@@ -1,4 +1,4 @@
-import PhaserRaycaster from 'phaser-raycaster';
+import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import { DB } from '../helpers/database';
 import { InputHandler } from '../helpers/input-handler';
 import { Player } from '../objects/player';
@@ -19,28 +19,28 @@ export class GameScene extends Phaser.Scene {
   tileset: Phaser.Tilemaps.Tileset;
   solidLayer: Phaser.Tilemaps.TilemapLayer;
   objectLayer: Phaser.Tilemaps.ObjectLayer;
-  raycasterPlugin: PhaserRaycaster;
+  collisionPlugin: PhaserMatterCollisionPlugin;
   inputHandler: InputHandler;
   player: Player;
   door: Door;
   healthBar: HealthBar | undefined;
   isPaused: boolean;
 
-  mannaGroup:     Phaser.Physics.Arcade.StaticGroup;
+  mannaGroup:     Phaser.GameObjects.Group;
   laserTurrets:   Phaser.GameObjects.Group;
   missileTurrets: Phaser.GameObjects.Group;
   missiles:       Phaser.GameObjects.Group;
   keys:           Phaser.GameObjects.Group;
-  jumpPads:       Phaser.Physics.Arcade.StaticGroup;
-  spikes:         Phaser.Physics.Arcade.StaticGroup;
+  jumpPads:       Phaser.GameObjects.Group;
+  spikes:         Phaser.GameObjects.Group;
 
   constructor() {
     super('GameScene');
   }
 
   // This gets called on scene.restart(). Before preload() and create().
-  init(props: { mapKey?: string }) {
-    this.mapKey = props.mapKey ?? 'map1.json'; // Change this to debug a specific level.
+  init(props: { mapKey: string; }) {
+    this.mapKey = props.mapKey;
   }
 
   create() {
@@ -48,26 +48,33 @@ export class GameScene extends Phaser.Scene {
     this.map = this.make.tilemap({ key: this.mapKey }); // Load map
     this.tileset = this.map.addTilesetImage('tileset', 'tileset'); // Load tileset
 
+    // Load layers from map
+    this.solidLayer  = this.map.createLayer('tile-layer-solids', this.tileset);
+    this.objectLayer = this.map.getObjectLayer('object-layer');
+
+    // Convert the layer. Any colliding tiles are given a Matter body.
+    // If a tile has collision shapes from Tiled, these will be loaded. If not, a default
+    // rectangle body will be used. The body will be accessible via tile.physics.matterBody.
+    this.map.setCollisionByExclusion([-1]); // this.map.setCollisionByProperty({ collides: true });
+    this.matter.world.convertTilemapLayer(this.solidLayer);
+    this.matter.world.setBounds(this.map.widthInPixels, this.map.heightInPixels);
+
     this.add.tileSprite(0, 0, this.map.widthInPixels * 2, this.map.heightInPixels * 2, 'background')
       .setTileScale(1)
       .setBlendMode(Phaser.BlendModes.MULTIPLY)
       .setAlpha(0.18);
 
-    // Load layers from map
-    this.solidLayer  = this.map.createLayer('tile-layer-solids', this.tileset);
-    this.objectLayer = this.map.getObjectLayer('object-layer');
-
     const exitButton = new ExitButton(this, 10, 10);
     this.add.existing(exitButton);
 
     this.createGroups();
-    this.addObjectsToGroups();
+    this.createObjects();
     this.addColliders();
 
     const smoothing = 0.07;
     const yOffset = 50;
-    this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, false);
-    this.cameras.main.startFollow(this.player, true, smoothing, smoothing * 2, 0, yOffset);
+    this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+    this.cameras.main.startFollow(this.player.sprite, true, smoothing, smoothing * 2, 0, yOffset);
 
     this.inputHandler = new InputHandler(this);
     this.healthBar = new HealthBar(this, this.player.health);
@@ -86,7 +93,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   // This runs each frame, so keep it lightweight.
-  update() {
+  override update() {
     if (this.isPaused == true)
       return;
 
@@ -104,18 +111,21 @@ export class GameScene extends Phaser.Scene {
 
     this.player.move(this.inputHandler);
 
+    this.missileTurrets.getChildren().forEach(m =>
+      (m as MissileTurret).update(this, this.player, this.missiles));
+
     this.missiles.getChildren().forEach(m =>
-      (m as Missile).update(this.player.x, this.player.y));
+      (m as Missile).update(this.player.sprite.x, this.player.sprite.y));
 
     this.laserTurrets.getChildren().forEach(lt =>
-      (lt as LaserTurret).update(this.player));
+      (lt as LaserTurret).update(this, this.player));
   }
 
   endMap(newMap: string) {
     this.isPaused = true;
     this.sound.stopAll();
     this.player.cleanUpOnMapEnd();
-    this.physics.pause();
+    this.matter.pause();
     //this.scene.pause();
     DB.unlockLevel(newMap);
 
@@ -133,16 +143,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   createGroups() {
-    this.mannaGroup = this.physics.add.staticGroup({});
-    this.jumpPads = this.physics.add.staticGroup();
+    this.mannaGroup = this.add.group();
+    this.jumpPads = this.add.group();
     this.missileTurrets = this.add.group();
-    this.laserTurrets = this.add.group(); // TODO: Can be static?
-    this.missiles = this.physics.add.group();
-    this.keys = this.physics.add.staticGroup();
-    this.spikes = this.physics.add.staticGroup();
+    this.laserTurrets = this.add.group();
+    this.missiles = this.add.group();
+    this.keys = this.add.group();
+    this.spikes = this.add.group();
   }
 
-  addObjectsToGroups() {
+  createObjects() {
     this.objectLayer.objects.forEach((object) => {
       switch (object.name) {
         case 'player': {
@@ -200,70 +210,54 @@ export class GameScene extends Phaser.Scene {
   }
 
   addColliders() {
-    this.solidLayer.setCollisionByExclusion([-1]); // Without this, only the 1st tile from tileset collides.
+    // TODO: Missile collisions should be moved to here.
 
-    this.physics.add.collider(
-      this.player,
-      this.solidLayer
-    );
-
-    this.physics.add.collider(
-      this.missiles,
-      this.solidLayer,
-      (missile: Missile, solid) => {
-        missile.hitSolid();
+    this.collisionPlugin.addOnCollideStart({
+      objectA: this.player.sprite,
+      objectB: this.mannaGroup.getChildren(),
+      callback: (event) => {
+        const manna = event.gameObjectB as Manna;
+        manna.collect(this.player, this.healthBar);
       }
-    );
+    });
 
-    this.physics.add.collider(
-      this.player,
-      this.missiles,
-      (player: Player, missile: Missile) => {
-        missile.hitPlayer(player);
-      }
-    );
-
-    this.physics.add.overlap(
-      this.player,
-      this.mannaGroup,
-      (player: Player, manna: Manna) => {
-        manna.collect(player, this.healthBar);
-      }
-    );
-
-    this.physics.add.overlap(
-      this.player,
-      this.keys,
-      (player: Player, key: Key) => {
+    this.collisionPlugin.addOnCollideStart({
+      objectA: this.player.sprite,
+      objectB: this.keys.getChildren(),
+      callback: (event) => {
+        const key = event.gameObjectB as Key;
         key.collect(this.door);
       }
-    );
+    });
 
-    this.physics.add.overlap(
-      this.player,
-      this.door,
-      (player: Player, door: Door) => {
-        if (!door.isOpen)
-          return;
-
+    this.collisionPlugin.addOnCollideStart({
+      objectA: this.player.sprite,
+      objectB: this.door,
+      callback: (event) => {
+        const door = event.gameObjectB as Door;
+        if (!door.isOpen) return;
         this.endMap(door.leadsTo);
       }
-    );
+    });
 
-    this.physics.add.overlap(
-      this.player,
-      this.jumpPads,
-      (player: Player, jumpPad: JumpPad) => {
-        jumpPad.trigger(player);
+    this.collisionPlugin.addOnCollideStart({
+      objectA: this.player.sprite, // TODO: Can player inherit from sprite so we can just say this.player?
+      objectB: this.jumpPads.getChildren(),
+      callback: (event) => {
+        const jumpPad = event.gameObjectB as JumpPad;
+        const newVel = jumpPad.trigger();
+        if (!newVel) return;
+        this.player.hitJumpPad(newVel);
       }
-    );
+    });
 
-    this.physics.add.overlap(
-      this.player,
-      this.spikes,
-      (player: Player, spike: Spike) => {
-        player.damage(spike.damage);
+    this.collisionPlugin.addOnCollideStart({
+      objectA: this.player.sprite,
+      objectB: this.spikes.getChildren(),
+      callback: (event) => {
+        const spike = event.gameObjectB as Spike;
+        this.player.damage(spike.damage);
       }
-    );
+    });
   }
 }

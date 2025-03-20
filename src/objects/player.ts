@@ -2,64 +2,70 @@ import { randomInRange } from '../helpers/math';
 import { InputHandler, XDirection } from '../helpers/input-handler';
 import { SoundFader } from '../helpers/sound-fader';
 import { GameScene } from '../scenes/game-scene';
+import { BodyType } from 'matter';
 
-export class Player extends Phaser.Physics.Arcade.Sprite {
+export class Player {
   health = 150;
-  touchedDownSinceLastDash: boolean;
-  affectedByJumpPad: boolean;
+  sprite: Phaser.Physics.Matter.Sprite;
+  private scene: Phaser.Scene;
+  private sensors: { bottom: BodyType; left: BodyType; right: BodyType; };
+  private touching: { left: boolean; right: boolean; bottom: boolean; };
+  private dashXValue: number;
+  private dashYValue: number;
+  private touchedDownSinceLastDash: boolean;
+  private affectedByJumpPad: boolean;
   private dashStatus: 'DASHING' | 'RECHARGING' | 'AVAILABLE';
   private trail: Phaser.GameObjects.Particles.ParticleEmitter;
   private wallSlideSound: SoundFader;
-  private dashXValue: number;
-  private dashYValue: number;
   private speed = {
     x: {
-      floor: 290,
+      floor: 5.5,
       air: {
-        accel: 1370,
-        drag: 0.1, // 1 = none, 0 = complete stop.
-        limit: 290,
-        dash: 485,
+        accel: 0.0017,
+        halt: 0.2,
+        limit: 5.5,
+        dash: 9.7,
         endOfDashBoost: 0.55
       },
-      wallJump: 360
+      wallJump: 7.2
     },
     y: {
-      floorJump: 440,
+      floorJump: 10.8,
       air: {
-        drag: 0.9,
-        dash: 375,
+        dash: 7.5,
         endOfDashBoost: 0.55,
         fall: {
-          max: 700,
-          boostBetween: {
-            min: 0,
-            max: 110,
-            force: 2200
-          }
+          max: 11.7
         }
       },
       wallJump: {
-        force: 330,
+        force: 7,
         preserveMomentum: 0.43
       },
-      wallSlide: 35
+      wallSlide: 0.15
     },
-    dashDuration: 295,
-    dashCooldown: 550
+    dashDurationMs: 295,
+    dashCooldownMs: 550,
+    surfaceFriction: 0.1,
+    airDrag: 0.014
   };
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
-    super(scene, object.x, object.y, 'player');
-    this.scene.add.existing(this);
-    this.scene.physics.add.existing(this);
+    this.scene = scene;
+    this.sprite = scene.matter.add.sprite(0, 0, 'player', 4)
+      .setDepth(2)
+      .setScale(1.1);
+
+    this.createAnimations();
+    this.createPhysicsBody();
+
+    this.sprite // The map object represents the bottom center of player.
+      .setPosition(object.x, object.y - this.sprite.height / 2)
+      .setFixedRotation();
+
     this.dashStatus = 'AVAILABLE';
     this.touchedDownSinceLastDash = true;
     this.wallSlideSound = new SoundFader(scene, 'wall-slide', 0.25);
-    this.setY(this.y - this.height / 2); // The map object represents the bottom center of player.
-    this.setDamping(true);
-    this.setDrag(this.speed.x.air.drag, this.speed.y.air.drag);
-    this.initAnims();
 
     this.trail = this.scene.add.particles(0, 0, 'aura', {
       scale: { start: 0.29, end: 0.15 },
@@ -69,41 +75,35 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       lifespan: { min: 3700, max: 3900 },
       frequency: 4,
       blendMode: Phaser.BlendModes.OVERLAY,
-      follow: this,
+      follow: this.sprite,
       emitting: false
     });
-
     this.trail.setDepth(1);
-    this.setDepth(2);
   }
 
   move(input: InputHandler) {
     const xDir = input.getXDirection();
     const leftOrRightIsPressed = xDir !== XDirection.None;
     const xDirLabel = leftOrRightIsPressed ? XDirection[xDir].toLowerCase() : null;
-    const isOnFloor = this.body.blocked.down;
+    const isOnFloor = this.touching.bottom;
     const isInAir = !isOnFloor;
-    const nearWall = this.body.blocked.right ? XDirection.Right : this.body.blocked.left ? XDirection.Left : null;
+    const nearWall = this.touching.right ? XDirection.Right : this.touching.left ? XDirection.Left : null;
     const isPressingAgainstWall = xDir == nearWall;
 
-    if ((isOnFloor || !leftOrRightIsPressed)) {
-      this.setAccelerationX(0);
-    }
-
-    if (isOnFloor && !leftOrRightIsPressed && !this.affectedByJumpPad) {
-      this.setVelocityX(0);
-    }
-
     if (leftOrRightIsPressed) {
-      this.anims.play(xDirLabel, true);
+      this.sprite.anims.play(xDirLabel, true);
     }
 
     if (!leftOrRightIsPressed) {
-      this.anims.play('turn', true);
+      this.sprite.anims.play('turn', true);
+    }
+
+    if (isOnFloor && !leftOrRightIsPressed && !this.affectedByJumpPad) {
+      this.sprite.setVelocityX(0);
     }
 
     if (isOnFloor && leftOrRightIsPressed && !this.affectedByJumpPad) {
-      this.setVelocityX(this.speed.x.floor * xDir);
+      this.sprite.setVelocityX(this.speed.x.floor * xDir);
       this.playRunningSound();
     }
 
@@ -112,21 +112,32 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (isOnFloor && input.jumpIsPressed() && this.dashStatus != 'DASHING') {
-      this.setVelocityY(-this.speed.y.floorJump);
+      this.sprite.setVelocityY(-this.speed.y.floorJump);
       this.scene.sound.play('jump', {
         volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
       });
     }
 
     if (isInAir && leftOrRightIsPressed && this.dashStatus != 'DASHING') {
-      this.moveThroughAir(this.speed.x.air.accel * xDir);
+      if (xDir == 1 && this.sprite.body.velocity.x < this.speed.x.air.limit)
+        this.sprite.applyForce(new Phaser.Math.Vector2(this.speed.x.air.accel * xDir, 0));
+
+      if (xDir == -1 && this.sprite.body.velocity.x * -1 < this.speed.x.air.limit)
+        this.sprite.applyForce(new Phaser.Math.Vector2(this.speed.x.air.accel * xDir, 0));
     }
 
-    const shouldWallslide = isInAir && leftOrRightIsPressed && isPressingAgainstWall && this.dashStatus != 'DASHING';
+    const velX = this.sprite.body.velocity.x;
+    const shouldReduceMomentum = isInAir && !leftOrRightIsPressed
+      && this.dashStatus != 'DASHING' && !this.affectedByJumpPad && Math.abs(velX) > 0.2;
+    if (shouldReduceMomentum) {
+      this.sprite.setVelocityX(velX - Math.sign(velX) * this.speed.x.air.halt);
+    }
+
+    const shouldWallslide = isInAir && isPressingAgainstWall && this.dashStatus != 'DASHING';
     if (shouldWallslide) {
-      if (this.body.velocity.y >= this.speed.y.wallSlide)
-        this.setVelocityY(this.speed.y.wallSlide);
-      this.anims.play(`wallslide-${xDirLabel}`, true);
+      if (this.sprite.body.velocity.y >= this.speed.y.wallSlide || this.sprite.body.velocity.y < this.speed.y.wallSlide)
+        this.sprite.setVelocityY(this.speed.y.wallSlide);
+      this.sprite.anims.play(`wallslide-${xDirLabel}`, true);
       this.wallSlideSound.fadeInIfNotPlaying(300);
     }
 
@@ -134,13 +145,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.wallSlideSound.fadeOut(200);
     }
 
+    // Prevent wallslide bug
+    if (isInAir && nearWall)
+      this.sprite.setFriction(0);
+    else
+      this.sprite.setFriction(this.speed.surfaceFriction);
+
     const shouldWalljump = isInAir && nearWall && input.jumpIsPressed() && this.dashStatus != 'DASHING';
     if (shouldWalljump) {
-      const upSpeed = this.body.velocity.y < 0
-        ? this.speed.y.wallJump.force * -1 + (this.body.velocity.y * this.speed.y.wallJump.preserveMomentum)
+      const upSpeed = this.sprite.body.velocity.y < 0
+        ? this.speed.y.wallJump.force * -1 + (this.sprite.body.velocity.y * this.speed.y.wallJump.preserveMomentum)
         : this.speed.y.wallJump.force * -1;
       const awaySpeed = -this.speed.x.wallJump * nearWall;
-      this.setVelocity(awaySpeed, upSpeed);
+      this.sprite.setVelocity(awaySpeed, upSpeed);
       this.scene.sound.play('jump', {
         volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
       });
@@ -155,27 +172,27 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.dashYValue = input.upIsPressed() ? this.speed.y.air.dash * -1 : input.downIsPressed() ? this.speed.y.air.dash : 0;
       this.scene.cameras.main.shake(80, 0.007);
       this.trail.emitting = true;
-      (this.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+      this.sprite.setIgnoreGravity(true);
       this.scene.sound.play('jump', {
         volume: randomInRange(7, 9) / 10, detune: randomInRange(210, 380)
       });
 
-      this.scene.time.delayedCall(this.speed.dashDuration, () => {
+      this.scene.time.delayedCall(this.speed.dashDurationMs, () => {
         this.dashStatus = 'RECHARGING';
         this.dashXValue = this.dashYValue = 0;
         this.trail.emitting = false;
-        (this.body as Phaser.Physics.Arcade.Body).setAllowGravity(true);
-        this.setVelocityX(this.body.velocity.x * this.speed.x.air.endOfDashBoost);
-        this.setVelocityY(this.body.velocity.y * this.speed.y.air.endOfDashBoost);
+        this.sprite.setIgnoreGravity(false);
+        this.sprite.setVelocityX(this.sprite.body.velocity.x * this.speed.x.air.endOfDashBoost);
+        this.sprite.setVelocityY(this.sprite.body.velocity.y * this.speed.y.air.endOfDashBoost);
       });
 
-      this.scene.time.delayedCall(this.speed.dashDuration + this.speed.dashCooldown, () => {
+      this.scene.time.delayedCall(this.speed.dashDurationMs + this.speed.dashCooldownMs, () => {
         this.dashStatus = 'AVAILABLE';
       });
     }
 
     if (this.dashStatus == 'DASHING') {
-      this.setVelocity(this.dashXValue, this.dashYValue);
+      this.sprite.setVelocity(this.dashXValue, this.dashYValue);
     }
 
     if (!this.touchedDownSinceLastDash && this.dashStatus != 'DASHING'
@@ -183,22 +200,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.touchedDownSinceLastDash = true;
     }
 
-    const shouldBoostFall = isInAir && !isPressingAgainstWall
-      && this.body.velocity.y > this.speed.y.air.fall.boostBetween.min
-      && this.body.velocity.y < this.speed.y.air.fall.boostBetween.max;
-    if (shouldBoostFall)
-      this.setGravityY(this.speed.y.air.fall.boostBetween.force);
-    else
-      this.setGravityY(1);
-
-    const isFallingFast = isInAir && this.body.velocity.y > this.speed.y.air.fall.max;
+    const isFallingFast = isInAir && this.sprite.body.velocity.y > this.speed.y.air.fall.max;
     if (isFallingFast)
-      this.setDragY(0.33);
-    else
-      this.setDragY(this.speed.y.air.drag);
+      this.sprite.setVelocityY(this.speed.y.air.fall.max);
 
-    // TODO: Prevent restitution / seperation
-    // if (this.body.touching.left) this.setVelocityX(-1);
+    // TODO: Boost fall speed immediately after pinnacle of jump?
+
+    // console.log(`velX: ${this.sprite.body.velocity.x.toFixed(2).replace('-0.00', '0.00')}`
+    //   + ` | velY ${this.sprite.body.velocity.y.toFixed(2).replace('-0.00', '0.00')}`
+    //   + ` | onFloor: ${isOnFloor}`);
   }
 
   damage(amount: number) {
@@ -208,30 +218,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     (this.scene as GameScene).healthBar.setLevel(this.health);
   }
 
-  hitJumpPad(newVelX: number, newVelY: number) {
+  hitJumpPad(newVel: { x: number; y: number; }) {
     this.affectedByJumpPad = true;
     this.touchedDownSinceLastDash = true;
-    this.setVelocity(newVelX, newVelY);
+    this.sprite.setVelocity(newVel.x, newVel.y);
     //const originalDragX = this.speed.x.air.drag;
     //this.setDragX(0.95);
     this.scene.time.delayedCall(1000, () => {
       this.affectedByJumpPad = false;
       //this.setDragX(originalDragX);
     });
-  }
-
-  cleanUpOnMapEnd() {
-    this.anims.pause();
-    this.trail.emitting = false;
-    this.scene.sound.stopByKey('running');
-    // this.disableBody(true, true)
-  }
-
-  private moveThroughAir(airAccel: number) {
-    if (Math.abs(this.body.velocity.x) < this.speed.x.air.limit)
-      this.setAccelerationX(airAccel);
-    else
-      this.setAccelerationX(0); // TODO: Could this be removed?
   }
 
   private playRunningSound() {
@@ -243,30 +239,88 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.sound.play('running', { volume: 0.6, loop: true, seek: randomStartTimeSeconds });
   }
 
-  private initAnims() {
-    this.anims.create({
+  private createPhysicsBody() {
+    const BodyModule = this.scene.matter.body;
+    const BodiesModule = this.scene.matter.bodies;
+
+    const { width: w, height: h } = this.sprite;
+    const middleBodyWidth = w * 0.9;
+    const middleBody = BodiesModule.rectangle(0, 0, middleBodyWidth, h, {
+      chamfer: { radius: 16 },
+      label: 'player'
+    });
+    const bottomSensorHeight = 4;
+    const sideSensorWidth = 2;
+    this.sensors = {
+      bottom: BodiesModule.rectangle(0, h * 0.5 + (bottomSensorHeight / 2), w * 0.35, bottomSensorHeight, { isSensor: true }),
+      left: BodiesModule.rectangle(-middleBodyWidth * 0.5 - (sideSensorWidth / 2), 0, sideSensorWidth, h * 0.5, { isSensor: true }),
+      right: BodiesModule.rectangle(middleBodyWidth * 0.5 + (sideSensorWidth / 2), 0, sideSensorWidth, h * 0.5, { isSensor: true })
+    };
+
+    const compoundBody = BodyModule.create({
+      parts: [middleBody, this.sensors.bottom, this.sensors.left, this.sensors.right],
+      frictionStatic: 0.2,
+      frictionAir: this.speed.airDrag,
+      friction: this.speed.surfaceFriction,
+      render: { sprite: { xOffset: 0.5, yOffset: 0.5 } },
+      restitution: 0.02 // Stop sticking against walls
+      //density: 0.1,
+      //slop: 0.04
+    });
+
+    this.sprite.setExistingBody(compoundBody);
+
+    this.touching = { left: false, right: false, bottom: false };
+    this.scene.matter.world.on('beforeupdate', (event) => {
+      this.touching = { left: false, right: false, bottom: false };
+    });
+    this.scene.matter.world.on('collisionactive', (event) => {
+      for (let i = 0; i < event.pairs.length; i++) {
+        const bodyA = event.pairs[i].bodyA;
+        const bodyB = event.pairs[i].bodyB;
+        if (bodyA === middleBody || bodyB === middleBody)
+          continue;
+        else if ((bodyA === this.sensors.bottom && !bodyB.isSensor) || (bodyB === this.sensors.bottom && !bodyA.isSensor))
+          this.touching.bottom = true;
+        // L/R should not be blocked by pushable objects, only static objects.
+        else if ((bodyA === this.sensors.left && bodyB.isStatic && !bodyB.isSensor) || (bodyB === this.sensors.left && bodyA.isStatic && !bodyA.isSensor))
+          this.touching.left = true;
+        else if ((bodyA === this.sensors.right && bodyB.isStatic && !bodyB.isSensor) || (bodyB === this.sensors.right && bodyA.isStatic && !bodyA.isSensor))
+          this.touching.right = true;
+      }
+    });
+  }
+
+  private createAnimations() {
+    this.scene.anims.createUnique({
       key: 'left',
-      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
       frameRate: 8,
       repeat: -1
     });
-    this.anims.create({
+    this.scene.anims.createUnique({
       key: 'right',
-      frames: this.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
       frameRate: 8,
       repeat: -1
     });
-    this.anims.create({
+    this.scene.anims.createUnique({
       key: 'turn',
       frames: [{ key: 'player', frame: 4 }]
     });
-    this.anims.create({
+    this.scene.anims.createUnique({
       key: 'wallslide-left',
       frames: [{ key: 'player', frame: 10 }]
     });
-    this.anims.create({
+    this.scene.anims.createUnique({
       key: 'wallslide-right',
       frames: [{ key: 'player', frame: 9 }]
     });
+  }
+
+  cleanUpOnMapEnd() {
+    this.sprite.anims.pause();
+    this.scene.sound.stopByKey('running');
+    //this.trail.emitting = false;
   }
 }

@@ -113,7 +113,7 @@
                  "y":512
                 }, 
                 {
-                 "height":16,
+                 "height":32,
                  "id":36,
                  "name":"jump-pad",
                  "rotation":0,
@@ -121,7 +121,7 @@
                  "visible":true,
                  "width":32,
                  "x":800,
-                 "y":848
+                 "y":832
                 }],
          "opacity":1,
          "type":"objectgroup",

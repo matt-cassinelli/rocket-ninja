@@ -1,16 +1,18 @@
 import { getCustomProperty } from '../helpers/phaser';
 
-export class Door extends Phaser.Physics.Arcade.Sprite {
+export class Door extends Phaser.Physics.Matter.Sprite {
   public isOpen: boolean;
   public leadsTo: string;
   public id: number;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
-    super(scene, object.x, object.y, 'door');
-    //console.log('Creating a Door with these properties:');
-    //console.log(object.properties);
+    super(scene.matter.world, object.x, object.y, 'door');
 
-    this.setOrigin(0.5, 1); // Point is at bottom center of door.
+    this.setY(this.y - this.height / 2); // Point is at bottom center of door.
+    this.setStatic(true);
+    this.setSensor(true);
+    this.setDepth(0);
+
     this.leadsTo = getCustomProperty(object, 'LeadsTo');
     this.id = getCustomProperty(object, 'DoorId');
 
@@ -23,10 +25,7 @@ export class Door extends Phaser.Physics.Arcade.Sprite {
     if (getCustomProperty<boolean>(object, 'IsOpen') === true)
       this.open();
 
-    scene.physics.add.existing(this, true);
     scene.add.existing(this);
-
-    this.setDepth(0);
   }
 
   public open() {

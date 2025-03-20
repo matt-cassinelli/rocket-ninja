@@ -2,11 +2,16 @@ import { randomInRange, randomItem } from '../helpers/math';
 import { HealthBar } from './health-bar';
 import { Player } from './player';
 
-export class Manna extends Phaser.Physics.Arcade.Sprite {
+export class Manna extends Phaser.Physics.Matter.Sprite {
   worth = 8;
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
-    super(scene, object.x, object.y, 'manna');
+    super(scene.matter.world, object.x, object.y, 'manna');
+
+    this.setSensor(true);
+    this.setStatic(true);
+    this.setIgnoreGravity(true);
+    this.setScale(1.5);
 
     this.anims.create({
       key: 'rotate',
@@ -14,9 +19,10 @@ export class Manna extends Phaser.Physics.Arcade.Sprite {
       frameRate: 5,
       repeat: -1
     });
+    this.anims.play('rotate');
 
     const hoverIntensity = 4;
-    scene.tweens.add({
+    const hoverTween = scene.tweens.add({
       targets: this,
       y: this.y - hoverIntensity,
       duration: randomInRange(950, 1300),
@@ -25,9 +31,10 @@ export class Manna extends Phaser.Physics.Arcade.Sprite {
       yoyo: true,
       loop: -1
     });
+    this.on('destroy', () => {
+      hoverTween.destroy();
+    });
 
-    this.anims.play('rotate', true);
-    this.setScale(1.5);
     scene.add.existing(this);
   }
 

@@ -39,13 +39,13 @@ export class DB {
 }
 
 interface Profile {
-  completed: LevelCompletion[]
-  unlocked: string[]
+  completed: LevelCompletion[];
+  unlocked: string[];
 }
 
 interface LevelCompletion {
-  key: string
-  completed: boolean
-  date: Date
-  timeMs: number
+  key: string;
+  completed: boolean;
+  date: Date;
+  timeMs: number;
 }

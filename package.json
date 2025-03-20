@@ -1,25 +1,26 @@
 {
   "name": "rocket-ninja",
   "private": true,
+  "type": "module",
   "dependencies": {
     "phaser": "3.88.2",
-    "phaser-raycaster": "0.10.11"
+    "phaser-matter-collision-plugin": "1.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.7.3",
-    "vite": "6.1.0",
+    "typescript": "5.8.2",
+    "vite": "6.2.1",
 
-    "eslint": "^9.20.0",
-    "@eslint/js": "^9.20.0",
-    "@stylistic/eslint-plugin": "3.1.0",
-    "typescript-eslint": "^8.24.0",
-    "@typescript-eslint/parser": "8.24.0"
+    "eslint": "9.22.0",
+    "@eslint/js": "9.22.0",
+    "@stylistic/eslint-plugin": "4.2.0",
+    "typescript-eslint": "8.26.1",
+    "@typescript-eslint/parser": "8.26.1"
   },
   "scripts": {
-    "clean-unix": "rm -rf dist",
-    "clean-win": "if exist dist ( rmdir /s /q dist )",
     "dev": "vite --config vite/config.dev.mjs",
     "build": "npm run clean-win && vite build --config vite/config.prod.mjs",
+    "clean-win": "if exist dist ( rmdir /s /q dist )",
+    "clean-unix": "rm -rf dist",
     "lint": "eslint"
   }
 }
