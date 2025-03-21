@@ -19,8 +19,6 @@ https://rocket-ninja.netlify.app/
 
 
 ## TODO
-- Fix ghost collisions
-- Sloped surfaces
 - Better player movement
   - Tune gravity & friction
   - Wall jump seems hard for beginners
