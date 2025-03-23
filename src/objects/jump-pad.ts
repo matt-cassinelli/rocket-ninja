@@ -16,7 +16,7 @@ export class JumpPad extends Phaser.Physics.Matter.Sprite {
 
     this.anims.create({
       key: 'trigger',
-      frames: scene.anims.generateFrameNumbers('jump-pad', { start: 0, end: 9 }),
+      frames: scene.anims.generateFrameNumbers('jump-pad', { start: 0, end: 13 }),
       frameRate: 12
     });
   }

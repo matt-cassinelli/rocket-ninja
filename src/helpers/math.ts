@@ -68,3 +68,7 @@ export function findEndPoint(startPoint: Vector, angle: number, length: number) 
 export function isNearlyEqual(a: number, b: number, leniency = 0.00001) {
   return Math.abs(b - a) <= leniency;
 }
+
+export function isInRange(number: number, min: number, max: number): boolean {
+  return number >= min && number <= max;
+};

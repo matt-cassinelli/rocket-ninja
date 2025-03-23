@@ -15,39 +15,47 @@ export class Player {
   private touchedDownSinceLastDash: boolean;
   private affectedByJumpPad: boolean;
   private dashStatus: 'DASHING' | 'RECHARGING' | 'AVAILABLE';
+  private recentlyWallJumped: boolean;
   private trail: Phaser.GameObjects.Particles.ParticleEmitter;
   private wallSlideSound: SoundFader;
+  private squashTween: Phaser.Tweens.Tween;
+  //private hasReducedGravity: boolean;
   private speed = {
-    x: {
-      floor: 5.5,
-      air: {
-        accel: 0.0017,
-        halt: 0.16,
-        limit: 5.5,
-        dash: 9.7,
-        endOfDashBoost: 0.55
-      },
-      wallJump: 7.2
+    floor: {
+      run: 5.5,
+      jump: 10.6
     },
-    y: {
-      floorJump: 10.8,
-      air: {
-        dash: 7.5,
-        endOfDashBoost: 0.55,
-        fall: {
-          max: 11.7
+    air: {
+      x: {
+        accel: 0.0017,
+        limit: 5.5,
+        halt: 0.16
+      },
+      fall: {
+        max: 11.7,
+        boostBetween: {
+          min: 0.05,
+          max: 3,
+          force: 0 // 0.0015
         }
       },
-      wallJump: {
-        force: 7,
-        preserveMomentum: 0.43
-      },
-      wallSlide: 0.15
+      resistance: 0.014
     },
-    dashDurationMs: 295,
-    dashCooldownMs: 550,
-    surfaceFriction: 0.1,
-    airDrag: 0.014
+    dash: {
+      x: 11.5,
+      y: 8.7,
+      endBoost: 0.55,
+      durationMs: 250,
+      cooldownMs: 550
+    },
+    wallJump: {
+      x: 7.3,
+      y: 7,
+      preserveUpMomentum: 0.5,
+      reducedAirControlMs: 300
+    },
+    wallSlide: 0.15,
+    surfaceFriction: 0.1
   };
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
@@ -79,9 +87,18 @@ export class Player {
       emitting: false
     });
     this.trail.setDepth(1);
+
+    this.squashTween = scene.tweens.add({
+      targets: this.sprite,
+      scaleX: 0.95,
+      yoyo: true,
+      duration: 225,
+      paused: true,
+      persist: true
+    });
   }
 
-  move(input: InputHandler) {
+  move(input: InputHandler) { // TODO: Add delta
     const xDir = input.getXDirection();
     const leftOrRightIsPressed = xDir !== XDirection.None;
     const xDirLabel = leftOrRightIsPressed ? XDirection[xDir].toLowerCase() : null;
@@ -90,60 +107,56 @@ export class Player {
     const nearWall = this.touching.right ? XDirection.Right : this.touching.left ? XDirection.Left : null;
     const isPressingAgainstWall = xDir == nearWall;
 
-    if (leftOrRightIsPressed) {
+    if (leftOrRightIsPressed)
       this.sprite.anims.play(xDirLabel, true);
-    }
 
-    if (!leftOrRightIsPressed) {
+    if (!leftOrRightIsPressed)
       this.sprite.anims.play('turn', true);
-    }
 
-    if (isOnFloor && !leftOrRightIsPressed && !this.affectedByJumpPad) {
+    if (isOnFloor && !leftOrRightIsPressed && !this.affectedByJumpPad)
       this.sprite.setVelocityX(0);
-    }
 
     if (isOnFloor && leftOrRightIsPressed && !this.affectedByJumpPad) {
-      this.sprite.setVelocityX(this.speed.x.floor * xDir);
+      this.sprite.setVelocityX(this.speed.floor.run * xDir);
       this.playRunningSound();
     }
 
-    if (isInAir || !leftOrRightIsPressed) {
+    if (isInAir || !leftOrRightIsPressed)
       this.scene.sound.stopByKey('running');
-    }
 
     if (isOnFloor && input.jumpIsPressed() && this.dashStatus != 'DASHING') {
-      this.sprite.setVelocityY(-this.speed.y.floorJump);
+      this.sprite.setVelocityY(-this.speed.floor.jump);
       this.scene.sound.play('jump', {
         volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
       });
     }
 
-    if (isInAir && leftOrRightIsPressed && this.dashStatus != 'DASHING') {
-      if (xDir == 1 && this.sprite.body.velocity.x < this.speed.x.air.limit)
-        this.sprite.applyForce(new Phaser.Math.Vector2(this.speed.x.air.accel * xDir, 0));
+    if (isOnFloor && input.jumpIsFreshlyPressed() && this.dashStatus != 'DASHING')
+      this.squashTween.play();
 
-      if (xDir == -1 && this.sprite.body.velocity.x * -1 < this.speed.x.air.limit)
-        this.sprite.applyForce(new Phaser.Math.Vector2(this.speed.x.air.accel * xDir, 0));
+    const shouldAllowAirXControl = isInAir && leftOrRightIsPressed && this.dashStatus != 'DASHING'
+      && this.sprite.body.velocity.x * xDir < this.speed.air.x.limit;
+    if (shouldAllowAirXControl) {
+      const multiplier = this.recentlyWallJumped ? 0.65 : 1;
+      this.sprite.applyForce(new Phaser.Math.Vector2(this.speed.air.x.accel * multiplier * xDir, 0));
     }
 
     const velX = this.sprite.body.velocity.x;
-    const shouldReduceMomentum = isInAir && !leftOrRightIsPressed
-      && this.dashStatus != 'DASHING' && !this.affectedByJumpPad && Math.abs(velX) > 0.2;
-    if (shouldReduceMomentum) {
-      this.sprite.setVelocityX(velX - Math.sign(velX) * this.speed.x.air.halt);
-    }
+    const shouldIncreaseAirXDrag = isInAir && !leftOrRightIsPressed && Math.abs(velX) > 0.2
+      && this.dashStatus != 'DASHING' && !this.affectedByJumpPad && !this.recentlyWallJumped;
+    if (shouldIncreaseAirXDrag)
+      this.sprite.setVelocityX(velX - this.speed.air.x.halt * Math.sign(velX));
 
     const shouldWallslide = isInAir && isPressingAgainstWall && this.dashStatus != 'DASHING';
     if (shouldWallslide) {
-      if (this.sprite.body.velocity.y >= this.speed.y.wallSlide || this.sprite.body.velocity.y < this.speed.y.wallSlide)
-        this.sprite.setVelocityY(this.speed.y.wallSlide);
+      if (this.sprite.body.velocity.y >= this.speed.wallSlide)
+        this.sprite.setVelocityY(this.speed.wallSlide);
       this.sprite.anims.play(`wallslide-${xDirLabel}`, true);
       this.wallSlideSound.fadeInIfNotPlaying(300);
     }
 
-    if (!shouldWallslide) {
+    if (!shouldWallslide)
       this.wallSlideSound.fadeOut(200);
-    }
 
     // Prevent wallslide bug
     if (isInAir && nearWall)
@@ -154,10 +167,13 @@ export class Player {
     const shouldWalljump = isInAir && nearWall && input.jumpIsPressed() && this.dashStatus != 'DASHING';
     if (shouldWalljump) {
       const upSpeed = this.sprite.body.velocity.y < 0
-        ? this.speed.y.wallJump.force * -1 + (this.sprite.body.velocity.y * this.speed.y.wallJump.preserveMomentum)
-        : this.speed.y.wallJump.force * -1;
-      const awaySpeed = -this.speed.x.wallJump * nearWall;
+        ? this.speed.wallJump.y * -1 + (this.sprite.body.velocity.y * this.speed.wallJump.preserveUpMomentum)
+        : this.speed.wallJump.y * -1;
+      const awaySpeed = -this.speed.wallJump.x * nearWall;
       this.sprite.setVelocity(awaySpeed, upSpeed);
+      this.recentlyWallJumped = true;
+      this.scene.time.delayedCall(this.speed.wallJump.reducedAirControlMs,
+        () => this.recentlyWallJumped = false);
       this.scene.sound.play('jump', {
         volume: randomInRange(8, 10) / 10, detune: randomInRange(-120, 170)
       });
@@ -168,8 +184,8 @@ export class Player {
     if (shouldStartDash) {
       this.dashStatus = 'DASHING';
       this.touchedDownSinceLastDash = false;
-      this.dashXValue = xDir !== XDirection.None ? this.speed.x.air.dash * xDir : 0;
-      this.dashYValue = input.upIsPressed() ? this.speed.y.air.dash * -1 : input.downIsPressed() ? this.speed.y.air.dash : 0;
+      this.dashXValue = xDir !== XDirection.None ? this.speed.dash.x * xDir : 0;
+      this.dashYValue = input.upIsPressed() ? this.speed.dash.y * -1 : input.downIsPressed() ? this.speed.dash.y : 0;
       this.scene.cameras.main.shake(80, 0.007);
       this.trail.emitting = true;
       this.sprite.setIgnoreGravity(true);
@@ -177,38 +193,52 @@ export class Player {
         volume: randomInRange(7, 9) / 10, detune: randomInRange(210, 380)
       });
 
-      this.scene.time.delayedCall(this.speed.dashDurationMs, () => {
+      this.scene.time.delayedCall(this.speed.dash.durationMs, () => {
         this.dashStatus = 'RECHARGING';
         this.dashXValue = this.dashYValue = 0;
         this.trail.emitting = false;
         this.sprite.setIgnoreGravity(false);
-        this.sprite.setVelocityX(this.sprite.body.velocity.x * this.speed.x.air.endOfDashBoost);
-        this.sprite.setVelocityY(this.sprite.body.velocity.y * this.speed.y.air.endOfDashBoost);
+        this.sprite.setVelocityX(this.sprite.body.velocity.x * this.speed.dash.endBoost);
+        this.sprite.setVelocityY(this.sprite.body.velocity.y * this.speed.dash.endBoost);
       });
 
-      this.scene.time.delayedCall(this.speed.dashDurationMs + this.speed.dashCooldownMs, () => {
-        this.dashStatus = 'AVAILABLE';
-      });
+      this.scene.time.delayedCall(this.speed.dash.durationMs + this.speed.dash.cooldownMs,
+        () => this.dashStatus = 'AVAILABLE');
     }
 
-    if (this.dashStatus == 'DASHING') {
+    if (this.dashStatus == 'DASHING')
       this.sprite.setVelocity(this.dashXValue, this.dashYValue);
-    }
 
-    if (!this.touchedDownSinceLastDash && this.dashStatus != 'DASHING'
-      && (isOnFloor || shouldWallslide || shouldWalljump)) {
+    const shouldResetDashAbility = !this.touchedDownSinceLastDash && this.dashStatus != 'DASHING'
+      && (isOnFloor || shouldWallslide || shouldWalljump);
+    if (shouldResetDashAbility)
       this.touchedDownSinceLastDash = true;
-    }
 
-    const isFallingFast = isInAir && this.sprite.body.velocity.y > this.speed.y.air.fall.max;
-    if (isFallingFast)
-      this.sprite.setVelocityY(this.speed.y.air.fall.max);
+    const shouldLimitFall = isInAir && this.sprite.body.velocity.y > this.speed.air.fall.max;
+    if (shouldLimitFall)
+      this.sprite.setVelocityY(this.speed.air.fall.max);
 
-    // TODO: Boost fall speed immediately after pinnacle of jump?
+    // const shouldBoostFall = !input.jumpIsPressed() && !isPressingAgainstWall
+    //   && this.sprite.body.velocity.y.inRange(this.speed.y.air.fall.boostBetween.min, this.speed.y.air.fall.boostBetween.max);
+    // if (shouldBoostFall)
+    //   this.sprite.applyForce(new Phaser.Math.Vector2(0, this.speed.y.air.fall.boostBetween.force));
 
-    // console.log(`velX: ${this.sprite.body.velocity.x.toFixed(2).replace('-0.00', '0.00')}`
-    //   + ` | velY ${this.sprite.body.velocity.y.toFixed(2).replace('-0.00', '0.00')}`
-    //   + ` | onFloor: ${isOnFloor}`);
+    // const shouldEndJumpEarly = this.sprite.body.velocity.y < -0.05 && this.sprite.body.velocity.y > -7
+    //   && this.isJumping && !input.jumpIsPressed();
+    // if (shouldEndJump) {
+    // }
+
+    // const isAtPeakOfJump = isInAir && isInRange(this.sprite.body.velocity.y, -1, 1); //&& input.jumpIsPressed();
+    // if (isAtPeakOfJump && !this.hasReducedGravity) {
+    //   this.hasReducedGravity = true;
+    //   this.scene.time.delayedCall(350, () => this.hasReducedGravity = false);
+    // }
+    // if (this.hasReducedGravity)
+    //   this.sprite.applyForce(new Phaser.Math.Vector2(0, -0.0003));
+
+    console.log(`velX: ${this.sprite.body.velocity.x.toFixed(2).replace('-0.00', '0.00')}`
+      + ` | velY ${this.sprite.body.velocity.y.toFixed(2).replace('-0.00', '0.00')}`
+      + ` | onFloor: ${isOnFloor}`);
   }
 
   damage(amount: number) {
@@ -222,12 +252,7 @@ export class Player {
     this.affectedByJumpPad = true;
     this.touchedDownSinceLastDash = true;
     this.sprite.setVelocity(newVel.x, newVel.y);
-    //const originalDragX = this.speed.x.air.drag;
-    //this.setDragX(0.95);
-    this.scene.time.delayedCall(1000, () => {
-      this.affectedByJumpPad = false;
-      //this.setDragX(originalDragX);
-    });
+    this.scene.time.delayedCall(1000, () => this.affectedByJumpPad = false);
   }
 
   private playRunningSound() {
@@ -260,11 +285,13 @@ export class Player {
     const compoundBody = BodyModule.create({
       parts: [middleBody, this.sensors.bottom, this.sensors.left, this.sensors.right],
       frictionStatic: 0.2,
-      frictionAir: this.speed.airDrag,
+      frictionAir: this.speed.air.resistance,
       friction: this.speed.surfaceFriction,
       render: { sprite: { xOffset: 0.5, yOffset: 0.5 } },
       restitution: 0.01
       //density: 0.1,
+      //mass: 0.844
+      //gravityScale: { x: 0.01, y: 0.01 }
       //slop: 0.04
     });
 

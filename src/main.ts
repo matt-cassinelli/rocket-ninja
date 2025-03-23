@@ -10,6 +10,7 @@ const config: Types.Core.GameConfig = {
   height: 32 * 22, //
   parent: 'game-container',
   backgroundColor: '#6e787a',
+  antialias: false,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
