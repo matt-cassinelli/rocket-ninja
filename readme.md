@@ -19,12 +19,8 @@ https://rocket-ninja.netlify.app/
 
 
 ## TODO
-- Better player movement
-  - Tune gravity & friction
-  - Wall jump seems hard for beginners
-  - Player should not be able to infinitely jump up wall
-  - Variable jump
-  - Should dash be always available, unlocked at a certain point, or refilled by pickup?
+- Should dash be always available, unlocked at a certain point, or refilled by pickup?
+- Player should not be able to infinitely jump up wall
 - Mobile support
   - All items should be responsive
   - Game control overlay
