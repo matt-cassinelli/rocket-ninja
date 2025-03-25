@@ -270,15 +270,25 @@ export class Player {
     const { width: w, height: h } = this.sprite;
     const middleBodyWidth = w * 0.9;
     const middleBody = BodiesModule.rectangle(0, 0, middleBodyWidth, h, {
-      chamfer: { radius: 9 },
+      chamfer: { radius: 8 },
       label: 'player'
     });
-    const bottomSensorHeight = 4;
-    const sideSensorWidth = 2;
+
+    const sensor = {
+      bottom: {
+        w: w * 0.5,
+        h: 4
+      },
+      side: {
+        w: 2,
+        h: h * 0.3
+      }
+    };
+
     this.sensors = {
-      bottom: BodiesModule.rectangle(0, h * 0.5 + (bottomSensorHeight / 2), w * 0.35, bottomSensorHeight, { isSensor: true }),
-      left: BodiesModule.rectangle(-middleBodyWidth * 0.5 - (sideSensorWidth / 2), 0, sideSensorWidth, h * 0.5, { isSensor: true }),
-      right: BodiesModule.rectangle(middleBodyWidth * 0.5 + (sideSensorWidth / 2), 0, sideSensorWidth, h * 0.5, { isSensor: true })
+      bottom: BodiesModule.rectangle(0, h / 2 + (sensor.bottom.h / 2), sensor.bottom.w, sensor.bottom.h, { isSensor: true }),
+      left: BodiesModule.rectangle(-middleBodyWidth / 2 - (sensor.side.w / 2), 0, sensor.side.w, sensor.side.h, { isSensor: true }),
+      right: BodiesModule.rectangle(middleBodyWidth / 2 + (sensor.side.w / 2), 0, sensor.side.w, sensor.side.h, { isSensor: true })
     };
 
     const compoundBody = BodyModule.create({
