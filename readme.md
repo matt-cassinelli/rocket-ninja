@@ -33,11 +33,10 @@ https://rocket-ninja.netlify.app/
 - Easier maps
 - Knockback
   - Use it to reach new areas?
-- Coyote timer
 - New player design / story
   - Increase player size
 - Better colours
-- Floor particles when jump & land
+- Impact particles when jump & land
 - Gibs on death
 - Each tile should be a quarter of the current size
 - Obstacles / enemies
@@ -84,7 +83,6 @@ https://rocket-ninja.netlify.app/
 - Animations:
   - Dash https://phaser.io/examples/v3.85.0/game-objects/particle-emitter/view/add-emit-zone
   - Falling
-  - Wallslide
   - Waiting
   - Death
 - Each map should have its own starting health

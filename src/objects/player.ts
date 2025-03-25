@@ -10,21 +10,22 @@ export class Player {
   private scene: Phaser.Scene;
   private sensors: { bottom: BodyType; left: BodyType; right: BodyType; };
   private touching: { left: boolean; right: boolean; bottom: boolean; };
+  private dashStatus: 'DASHING' | 'RECHARGING' | 'AVAILABLE';
+  private touchedDownSinceLastDash: boolean;
   private dashXValue: number;
   private dashYValue: number;
-  private touchedDownSinceLastDash: boolean;
-  private affectedByJumpPad: boolean;
-  private dashStatus: 'DASHING' | 'RECHARGING' | 'AVAILABLE';
-  private recentlyWallJumped: boolean;
   private isJumping: boolean;
+  private timeInAir: number;
+  private affectedByJumpPad: boolean;
+  private recentlyWallJumped: boolean;
   private trail: Phaser.GameObjects.Particles.ParticleEmitter;
-  private wallSlideSound: SoundFader;
   private squashTween: Phaser.Tweens.Tween;
-  //private hasReducedGravity: boolean;
+  private wallSlideSound: SoundFader;
   private speed = {
     floor: {
       run: 5.5,
       jump: 10.6,
+      coyote: 175,
       friction: 0.3
     },
     air: {
@@ -34,12 +35,7 @@ export class Player {
         halt: 0.16
       },
       fall: {
-        max: 11.7,
-        boostBetween: {
-          min: 0.05,
-          max: 3,
-          force: 0 // 0.0015
-        }
+        max: 11.7
       },
       resistance: 0.014
     },
@@ -99,7 +95,7 @@ export class Player {
     });
   }
 
-  move(input: InputHandler) { // TODO: Add delta
+  move(input: InputHandler, time: number, delta: number) {
     const xDir = input.getXDirection();
     const leftOrRightIsPressed = xDir !== XDirection.None;
     const xDirLabel = leftOrRightIsPressed ? XDirection[xDir].toLowerCase() : null;
@@ -125,7 +121,10 @@ export class Player {
     if (isInAir || !leftOrRightIsPressed)
       this.scene.sound.stopByKey('running');
 
-    if (isOnFloor && input.jumpIsPressed() && this.dashStatus != 'DASHING') {
+    this.timeInAir = isOnFloor ? 0 : this.timeInAir + delta;
+    const shouldJump = this.timeInAir < this.speed.floor.coyote
+      && input.jumpIsPressed() && this.dashStatus != 'DASHING' && !this.isJumping;
+    if (shouldJump) {
       this.isJumping = true;
       this.sprite.setVelocityY(-this.speed.floor.jump);
       this.squashTween.play();
@@ -158,10 +157,9 @@ export class Player {
     if (!shouldWallslide)
       this.wallSlideSound.fadeOut(200);
 
-    if (isOnFloor)
-      this.sprite.setFriction(this.speed.floor.friction);
-    else // Prevent wallslide bug
-      this.sprite.setFriction(0);
+    // Prevent wallslide bug
+    const friction = isOnFloor ? this.speed.floor.friction : 0;
+    this.sprite.setFriction(friction);
 
     const shouldWalljump = isInAir && nearWall && input.jumpIsPressed() && this.dashStatus != 'DASHING';
     if (shouldWalljump) {
@@ -217,27 +215,15 @@ export class Player {
     if (shouldLimitFall)
       this.sprite.setVelocityY(this.speed.air.fall.max);
 
-    // const shouldBoostFall = !input.jumpIsPressed() && !isPressingAgainstWall
-    //   && this.sprite.body.velocity.y.inRange(this.speed.y.air.fall.boostBetween.min, this.speed.y.air.fall.boostBetween.max);
-    // if (shouldBoostFall)
-    //   this.sprite.applyForce(new Phaser.Math.Vector2(0, this.speed.y.air.fall.boostBetween.force));
-
     const shouldEndJumpEarly = this.isJumping && !input.jumpIsPressed()
       && this.sprite.body.velocity.y < -0.01 && this.dashStatus != 'DASHING';
     if (shouldEndJumpEarly)
       this.sprite.setVelocityY(this.sprite.body.velocity.y * 0.9);
 
-    // const isAtPeakOfJump = isInAir && isInRange(this.sprite.body.velocity.y, -1, 1); //&& input.jumpIsPressed();
-    // if (isAtPeakOfJump && !this.hasReducedGravity) {
-    //   this.hasReducedGravity = true;
-    //   this.scene.time.delayedCall(350, () => this.hasReducedGravity = false);
-    // }
-    // if (this.hasReducedGravity)
-    //   this.sprite.applyForce(new Phaser.Math.Vector2(0, -0.0003));
-
-    console.log(`velX: ${this.sprite.body.velocity.x.toFixed(2).replace('-0.00', '0.00')}`
-      + ` | velY ${this.sprite.body.velocity.y.toFixed(2).replace('-0.00', '0.00')}`
-      + ` | onFloor: ${isOnFloor}`);
+    // console.log(`velX: ${this.sprite.body.velocity.x.toFixed(2).replace('-0.00', '0.00')}`
+    //   + ` | velY ${this.sprite.body.velocity.y.toFixed(2).replace('-0.00', '0.00')}`
+    //   + ` | onFloor: ${isOnFloor}`
+    //   + ` | airTime: ${this.timeInAir.toFixed(0)}`);
   }
 
   damage(amount: number) {
@@ -274,7 +260,7 @@ export class Player {
       label: 'player'
     });
 
-    const sensor = {
+    const sensors = {
       bottom: {
         w: w * 0.5,
         h: 4
@@ -286,9 +272,9 @@ export class Player {
     };
 
     this.sensors = {
-      bottom: BodiesModule.rectangle(0, h / 2 + (sensor.bottom.h / 2), sensor.bottom.w, sensor.bottom.h, { isSensor: true }),
-      left: BodiesModule.rectangle(-middleBodyWidth / 2 - (sensor.side.w / 2), 0, sensor.side.w, sensor.side.h, { isSensor: true }),
-      right: BodiesModule.rectangle(middleBodyWidth / 2 + (sensor.side.w / 2), 0, sensor.side.w, sensor.side.h, { isSensor: true })
+      bottom: BodiesModule.rectangle(0, h / 2 + (sensors.bottom.h / 2), sensors.bottom.w, sensors.bottom.h, { isSensor: true }),
+      left: BodiesModule.rectangle(-middleBodyWidth / 2 - (sensors.side.w / 2), 0, sensors.side.w, sensors.side.h, { isSensor: true }),
+      right: BodiesModule.rectangle(middleBodyWidth / 2 + (sensors.side.w / 2), 0, sensors.side.w, sensors.side.h, { isSensor: true })
     };
 
     const compoundBody = BodyModule.create({
@@ -318,7 +304,6 @@ export class Player {
           continue;
         else if ((bodyA === this.sensors.bottom && !bodyB.isSensor) || (bodyB === this.sensors.bottom && !bodyA.isSensor))
           this.touching.bottom = true;
-        // L/R should not be blocked by pushable objects, only static objects.
         else if ((bodyA === this.sensors.left && bodyB.isStatic && !bodyB.isSensor) || (bodyB === this.sensors.left && bodyA.isStatic && !bodyA.isSensor))
           this.touching.left = true;
         else if ((bodyA === this.sensors.right && bodyB.isStatic && !bodyB.isSensor) || (bodyB === this.sensors.right && bodyA.isStatic && !bodyA.isSensor))
@@ -357,6 +342,5 @@ export class Player {
   cleanUpOnMapEnd() {
     this.sprite.anims.pause();
     this.scene.sound.stopByKey('running');
-    //this.trail.emitting = false;
   }
 }

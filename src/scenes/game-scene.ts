@@ -81,7 +81,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   // This runs each frame, so keep it lightweight.
-  override update() {
+  override update(time: number, delta: number) {
     if (this.isPaused == true)
       return;
 
@@ -97,7 +97,7 @@ export class GameScene extends Phaser.Scene {
     if (this.inputHandler.escIsFreshlyPressed())
       this.scene.start('MenuScene');
 
-    this.player.move(this.inputHandler);
+    this.player.move(this.inputHandler, time, delta);
 
     this.missileTurrets.getChildren().forEach(m =>
       (m as MissileTurret).update(this, this.player, this.missiles));
@@ -133,8 +133,7 @@ export class GameScene extends Phaser.Scene {
   createSolids() {
     const solidLayer = this.map.getObjectLayer('solid-layer');
     solidLayer.objects.forEach((shape) => {
-      const graphics = this.add.graphics();
-      graphics.fillStyle(0x000000, 1);
+      const graphics = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 1 } });
       if (shape.rectangle) {
         graphics.fillRect(shape.x, shape.y, shape.width, shape.height);
         this.matter.add.rectangle(
