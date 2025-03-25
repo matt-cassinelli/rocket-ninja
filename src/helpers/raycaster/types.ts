@@ -25,6 +25,6 @@ export interface RaycastAtAngleRequest {
 
 export interface RaycastResult {
   madeContact: boolean;
-  point: Vector;
-  object: any;
+  point: Vector | null;
+  object: any | null;
 }

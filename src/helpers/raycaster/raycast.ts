@@ -30,13 +30,14 @@ export function raycast(req: RaycastRequest): RaycastResult {
     return distanceFromRayStart;
   });
 
+  const firstCollision = collisions[0] ?? null;
   const madeContact = req.labelToTest
-    ? collisions[0].body.label == req.labelToTest
-    : collisions.length != 0;
+    ? firstCollision != null && firstCollision.body.label == req.labelToTest
+    : firstCollision != null;
 
   return {
     madeContact: madeContact,
-    point: collisions[0].point,
-    object: collisions[0].body
+    point: firstCollision?.point,
+    object: firstCollision?.body
   };
 }
