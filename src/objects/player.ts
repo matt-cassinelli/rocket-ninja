@@ -24,7 +24,8 @@ export class Player {
   private speed = {
     floor: {
       run: 5.5,
-      jump: 10.6
+      jump: 10.6,
+      friction: 0.3
     },
     air: {
       x: {
@@ -55,8 +56,7 @@ export class Player {
       preserveUpMomentum: 0.5,
       reducedAirControlMs: 300
     },
-    wallSlide: 0.15,
-    surfaceFriction: 0.35
+    wallSlide: 0.15
   };
 
   constructor(scene: Phaser.Scene, object: Phaser.Types.Tilemaps.TiledObject) {
@@ -114,7 +114,7 @@ export class Player {
     if (!leftOrRightIsPressed)
       this.sprite.anims.play('turn', true);
 
-    if (isOnFloor)
+    if (isOnFloor || isPressingAgainstWall || this.dashStatus == 'DASHING' || this.affectedByJumpPad)
       this.isJumping = false;
 
     if (isOnFloor && leftOrRightIsPressed && !this.affectedByJumpPad) {
@@ -158,11 +158,10 @@ export class Player {
     if (!shouldWallslide)
       this.wallSlideSound.fadeOut(200);
 
-    // Prevent wallslide bug
-    if (isInAir && nearWall)
+    if (isOnFloor)
+      this.sprite.setFriction(this.speed.floor.friction);
+    else // Prevent wallslide bug
       this.sprite.setFriction(0);
-    else
-      this.sprite.setFriction(this.speed.surfaceFriction);
 
     const shouldWalljump = isInAir && nearWall && input.jumpIsPressed() && this.dashStatus != 'DASHING';
     if (shouldWalljump) {
@@ -271,7 +270,7 @@ export class Player {
     const { width: w, height: h } = this.sprite;
     const middleBodyWidth = w * 0.9;
     const middleBody = BodiesModule.rectangle(0, 0, middleBodyWidth, h, {
-      chamfer: { radius: 16 },
+      chamfer: { radius: 9 },
       label: 'player'
     });
     const bottomSensorHeight = 4;
@@ -286,10 +285,10 @@ export class Player {
       parts: [middleBody, this.sensors.bottom, this.sensors.left, this.sensors.right],
       frictionStatic: 0.2,
       frictionAir: this.speed.air.resistance,
-      friction: this.speed.surfaceFriction,
+      friction: this.speed.floor.friction,
       render: { sprite: { xOffset: 0.5, yOffset: 0.5 } },
-      restitution: 0.01
-      //density: 0.1,
+      restitution: 0.06
+      //density: 0.1
       //mass: 0.844
       //gravityScale: { x: 0.01, y: 0.01 }
       //slop: 0.04
