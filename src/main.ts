@@ -9,7 +9,7 @@ const config: Types.Core.GameConfig = {
   width:  32 * 38, // Pixels * tiles. All maps must be at least this big.
   height: 32 * 22, //
   parent: 'game-container',
-  backgroundColor: '#6e787a',
+  backgroundColor: '#7a746a',
   antialias: false,
   scale: {
     mode: Phaser.Scale.FIT,

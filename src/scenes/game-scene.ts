@@ -48,8 +48,9 @@ export class GameScene extends Phaser.Scene {
 
     this.add.tileSprite(0, 0, this.map.widthInPixels * 2, this.map.heightInPixels * 2, 'background')
       .setTileScale(1)
+      .setDepth(-2)
       .setBlendMode(Phaser.BlendModes.MULTIPLY)
-      .setAlpha(0.18);
+      .setAlpha(0.15);
 
     this.createSolids();
     this.createGroups();
@@ -133,7 +134,7 @@ export class GameScene extends Phaser.Scene {
   createSolids() {
     const solidLayer = this.map.getObjectLayer('solid-layer');
     solidLayer.objects.forEach((shape) => {
-      const graphics = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 1 } });
+      const graphics = this.add.graphics({ fillStyle: { color: 0x002838, alpha: 1 } });
       if (shape.rectangle) {
         graphics.fillRect(shape.x, shape.y, shape.width, shape.height);
         this.matter.add.rectangle(
