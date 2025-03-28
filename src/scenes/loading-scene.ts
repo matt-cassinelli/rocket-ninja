@@ -39,7 +39,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image('lock',              'images/lock.svg');
     this.load.image('background',        'images/chromatic-camouflage-5.png'); // Note: Backgrounds should have POT dimensions.
     this.load.image('explosion',         'particles/explosion.png');
-    this.load.image('aura',              'particles/aura-black.png');
+    this.load.image('cloud-white',       'particles/cloud-white.png');
     this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');
   }
 
@@ -56,8 +56,8 @@ export class LoadingScene extends Phaser.Scene {
   loadSpritesheets() {
     this.load.spritesheet(
       'player',
-      'spritesheets/player-black-29x37.png',
-      { frameWidth: 29, frameHeight: 37 }
+      'spritesheets/player-70x70.png',
+      { frameWidth: 70, frameHeight: 70 }
     );
     this.load.spritesheet(
       'door',

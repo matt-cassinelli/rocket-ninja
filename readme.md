@@ -31,6 +31,7 @@ https://rocket-ninja.netlify.app/
 
 ## TODO: Future
 - Easier maps
+- Coyote timer for walljump
 - Knockback
   - Use it to reach new areas?
 - New player design / story
@@ -81,9 +82,6 @@ https://rocket-ninja.netlify.app/
 - Objectives
   - Destroy 3 bosses
 - Animations:
-  - Dash https://phaser.io/examples/v3.85.0/game-objects/particle-emitter/view/add-emit-zone
-  - Falling
-  - Waiting
   - Death
 - Each map should have its own starting health
 - Other fonts to try:
