@@ -166,18 +166,6 @@
                 }, 
                 {
                  "height":0,
-                 "id":9,
-                 "name":"manna",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":744,
-                 "y":256
-                }, 
-                {
-                 "height":0,
                  "id":13,
                  "name":"player",
                  "point":true,
@@ -266,7 +254,7 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":224,
+                 "x":176,
                  "y":672
                 }, 
                 {

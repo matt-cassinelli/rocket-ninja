@@ -114,13 +114,13 @@
                  "text":
                     {
                      "color":"#ffffff",
-                     "text":"Congratulations.\nMore maps coming soon.",
+                     "text":"Congratulations \ud83c\udf89\nMore levels coming soon.",
                      "wrap":true
                     },
                  "type":"",
                  "visible":true,
-                 "width":200,
-                 "x":512,
+                 "width":272,
+                 "x":504,
                  "y":464
                 }],
          "opacity":1,
