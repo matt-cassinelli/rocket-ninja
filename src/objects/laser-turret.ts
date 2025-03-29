@@ -89,7 +89,8 @@ export class LaserTurret extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  override update(scene: Phaser.Scene, player: Player) {
+  override update(scene: Phaser.Scene, player: Player | undefined) {
+    if (player.health <= 0 || !player.sprite.body)  return;
     const playerRaycast = raycast({
       scene: scene,
       start: { x: this.x, y: this.y },

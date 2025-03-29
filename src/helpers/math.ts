@@ -5,10 +5,14 @@ export function randomItem(array: number[]) {
   return array[index];
 }
 
-/** Min and max included. */
-export function randomInRange(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
+export function randomInRange(min: number, max: number, precision = 0, includeMax = true) {
+  const scale = Math.pow(10, Math.max(precision, 0));
+  const scaledMax = max * scale;
+  const scaledMin = min * scale;
+  const offset = includeMax ? 1 : 0;
+  const num = Math.floor(Math.random() * (scaledMax - scaledMin + offset)) + scaledMin;
+  return num / scale;
+};
 
 export function clamp(value: number, min: number, max: number) {
   return value <= min ? min : value >= max ? max : value;

@@ -46,6 +46,7 @@ export default defineConfig([
       '@stylistic/arrow-parens': 'warn',
       '@stylistic/no-extra-parens': 'warn',
       '@stylistic/padded-blocks': 'warn',
+      '@stylistic/space-in-parens': 'warn',
       '@stylistic/member-delimiter-style': ['warn', {
         multiline: {
           delimiter: 'semi',

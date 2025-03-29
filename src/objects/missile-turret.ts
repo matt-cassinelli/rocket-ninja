@@ -20,6 +20,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
 
   override update(scene: GameScene, player: Player, missileGroup: Phaser.GameObjects.Group) {
     if (this.missile?.active == true) return;
+    if (player.health <= 0 || !player.sprite.body) return;
     const playerRaycast = raycast({
       scene: scene,
       start: this.getCenter(),

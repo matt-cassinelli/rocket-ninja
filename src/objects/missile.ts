@@ -73,9 +73,11 @@ export class Missile extends Phaser.Physics.Matter.Image {
     player.damage(this.damage);
   }
 
-  override update(targetX: number, targetY: number) {
-    const targetRotation = this.getTargetRotation(targetX, targetY);
-    this.rotateWithLimit(targetRotation, this.turnDegreesPerFrameLimit);
+  override update(player: Player) {
+    if (player.health > 0 && player.sprite.body) {
+      const targetRotation = this.getTargetRotation(player.sprite.x, player.sprite.y);
+      this.rotateWithLimit(targetRotation, this.turnDegreesPerFrameLimit);
+    }
     this.trail.setX(this.x);
     this.trail.setY(this.y);
     this.trail.setAngle(Phaser.Math.RadToDeg(this.rotation));

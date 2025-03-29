@@ -38,6 +38,10 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image('exit-icon',         'images/box-arrow-left.svg');
     this.load.image('lock',              'images/lock.svg');
     this.load.image('background',        'images/chromatic-camouflage-5.png'); // Note: Backgrounds should have POT dimensions.
+    this.load.image('gib-arm',           'images/gibs/arm.png');
+    this.load.image('gib-leg',           'images/gibs/leg.png');
+    this.load.image('gib-head',          'images/gibs/head.png');
+    this.load.image('gib-torso',         'images/gibs/torso.png');
     this.load.image('explosion',         'particles/explosion.png');
     this.load.image('cloud-white',       'particles/cloud-white.png');
     this.load.atlas('flares', 'particles/flares.png', 'particles/flares.json');

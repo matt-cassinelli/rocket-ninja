@@ -12,6 +12,7 @@ import { JumpPad } from '../objects/jump-pad';
 import { Spike } from '../objects/spike';
 import { ExitButton } from '../objects/navigation/exit-button';
 import { LaserTurret } from '../objects/laser-turret';
+import { explodeGibs } from '../objects/gibs';
 
 export class GameScene extends Phaser.Scene {
   mapKey: string;
@@ -21,7 +22,7 @@ export class GameScene extends Phaser.Scene {
   player: Player;
   door: Door;
   healthBar: HealthBar | undefined;
-  isPaused: boolean;
+  levelStatus: 'PLAYING' | 'COMPLETED' | 'DEAD';
 
   mannaGroup:     Phaser.GameObjects.Group;
   laserTurrets:   Phaser.GameObjects.Group;
@@ -41,7 +42,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.isPaused = false;
+    this.levelStatus = 'PLAYING';
     this.map = this.make.tilemap({ key: this.mapKey }); // Load map
 
     this.matter.world.setBounds(this.map.widthInPixels, this.map.heightInPixels);
@@ -52,11 +53,14 @@ export class GameScene extends Phaser.Scene {
       .setBlendMode(Phaser.BlendModes.MULTIPLY)
       .setAlpha(0.15);
 
+    this.inputHandler = new InputHandler(this);
+
     this.createSolids();
     this.createGroups();
     this.createObjects();
     this.addColliders();
 
+    this.healthBar = new HealthBar(this, this.player.health);
     const exitButton = new ExitButton(this, 10, 10);
     this.add.existing(exitButton);
 
@@ -64,9 +68,6 @@ export class GameScene extends Phaser.Scene {
     const yOffset = 45;
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(this.player.sprite, true, smoothing, smoothing * 2, 0, yOffset);
-
-    this.inputHandler = new InputHandler(this);
-    this.healthBar = new HealthBar(this, this.player.health);
 
     const healthLossRateInMs = 500;
     this.time.addEvent({
@@ -83,48 +84,47 @@ export class GameScene extends Phaser.Scene {
 
   // This runs each frame, so keep it lightweight.
   override update(time: number, delta: number) {
-    if (this.isPaused == true)
-      return;
-
-    if (this.player?.health <= 0) {
-      // TODO: Why is * 2 needed?
-      this.add.rectangle(0, 0, this.cameras.main.width * 2, this.cameras.main.height * 2, 0xbb0000, 0.2)
-        .setBlendMode(Phaser.BlendModes.OVERLAY)
-        .setScrollFactor(0);
-      this.endMap(this.mapKey);
-      return;
-    }
-
     if (this.inputHandler.escIsFreshlyPressed())
       this.scene.start('MenuScene');
 
-    this.player.move(this.inputHandler, time, delta);
+    if (this.levelStatus == 'COMPLETED')
+      return;
+
+    if (this.player?.health <= 0 && this.levelStatus != 'DEAD') {
+      this.levelStatus = 'DEAD';
+      this.collisionPlugin.removeAllCollideListeners();
+      this.cameras.main.stopFollow();
+      this.player.cleanUp();
+      explodeGibs(this, this.player);
+      this.time.delayedCall(1500, () => this.cameras.main.fadeOut(700));
+      this.cameras.main.once(
+        Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+        () => this.scene.restart({ mapKey: this.mapKey })
+      );
+      return;
+    }
+
+    if (this.levelStatus == 'PLAYING')
+      this.player.move(time, delta);
 
     this.missileTurrets.getChildren().forEach(m =>
       (m as MissileTurret).update(this, this.player, this.missiles));
 
     this.missiles.getChildren().forEach(m =>
-      (m as Missile).update(this.player.sprite.x, this.player.sprite.y));
+      (m as Missile).update(this.player));
 
     this.laserTurrets.getChildren().forEach(lt =>
       (lt as LaserTurret).update(this, this.player));
   }
 
-  endMap(newMap: string) {
-    this.isPaused = true;
+  completeLevel(newMap: string) {
+    this.levelStatus = 'COMPLETED';
     this.sound.stopAll();
-    this.player.cleanUpOnMapEnd();
+    this.player.cleanUp();
     this.matter.pause();
     //this.scene.pause();
     DB.unlockLevel(newMap);
-
-    const delay = this.player?.health <= 0 ? 1200 : 0;
-    const duration = this.player?.health <= 0 ? 2500 : 1000;
-    this.time.delayedCall(
-      delay,
-      () => this.cameras.main.fadeOut(duration)
-    );
-
+    this.cameras.main.fadeOut(1200);
     this.cameras.main.once(
       Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
       () => this.scene.restart({ mapKey: newMap })
@@ -185,7 +185,7 @@ export class GameScene extends Phaser.Scene {
     objectLayer.objects.forEach((object) => {
       switch (object.name) {
         case 'player': {
-          this.player = new Player(this, object);
+          this.player = new Player(this, object, this.inputHandler);
           break;
         }
         case 'manna': {
@@ -265,7 +265,7 @@ export class GameScene extends Phaser.Scene {
       callback: (event) => {
         const door = event.gameObjectB as Door;
         if (!door.isOpen) return;
-        this.endMap(door.leadsTo);
+        this.completeLevel(door.leadsTo);
       }
     });
 
