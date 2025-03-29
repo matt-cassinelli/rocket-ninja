@@ -94,7 +94,7 @@ export class LaserTurret extends Phaser.GameObjects.Container {
       scene: scene,
       start: { x: this.x, y: this.y },
       end: player.sprite.getCenter(),
-      labelToTest: 'player'
+      labelToTest: 'player-body'
     });
     if (!playerRaycast.madeContact) {
       if ((this.status != 'CHARGING' && this.status != 'FIRING') && this.timeline.isPlaying()) {
@@ -115,14 +115,20 @@ export class LaserTurret extends Phaser.GameObjects.Container {
         scene: scene,
         start: { x: this.x, y: this.y },
         angle: angle,
-        labelToIgnore: 'player'
+        labelToIgnore: 'player-body'
       });
       this.laserEnd = wallRaycast.point;
       this.laser.setTo(this.x, this.y, this.laserEnd.x, this.laserEnd.y);
     }
 
     if (this.status == 'FIRING') {
-      if (Phaser.Geom.Intersects.LineToRectangle(this.laser.geom, player.sprite.getBounds()))
+      const playerRaycast = raycast({
+        scene: scene,
+        start: { x: this.x, y: this.y },
+        end: { x: this.laserEnd.x, y: this.laserEnd.y },
+        labelToTest: 'player-body'
+      });
+      if (playerRaycast.madeContact)
         player.damage(10);
     }
   }

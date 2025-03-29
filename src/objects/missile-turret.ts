@@ -24,7 +24,7 @@ export class MissileTurret extends Phaser.GameObjects.Image {
       scene: scene,
       start: this.getCenter(),
       end: player.sprite.getCenter(),
-      labelToTest: 'player'
+      labelToTest: 'player-body'
     });
     if (!playerRaycast.madeContact) return;
     this.missile = new Missile(scene, this.x, this.y, player);

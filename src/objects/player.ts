@@ -41,7 +41,7 @@ export class Player {
     },
     dash: {
       x: 11.5,
-      y: 8.7,
+      y: 8,
       endBoost: 0.55,
       durationMs: 250,
       cooldownMs: 550
@@ -264,7 +264,7 @@ export class Player {
     const bodyH = spriteH * 0.55;
     const body = BodiesModule.rectangle(0, 0, bodyW, bodyH, {
       chamfer: { radius: 6 },
-      label: 'player'
+      label: 'player-body'
     });
 
     const sensors = {
@@ -297,7 +297,6 @@ export class Player {
     });
 
     this.sprite
-      //.setDisplayOrigin(spriteW / 2, (spriteH / 2) + bodyH / 2 + 5)
       .setExistingBody(compoundBody)
       .setFixedRotation()
       .setScale(1.35)

@@ -23,7 +23,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":1312,
+                 "width":1408,
                  "x":0,
                  "y":0
                 }, 
@@ -35,7 +35,7 @@
                  "type":"",
                  "visible":true,
                  "width":224,
-                 "x":1088,
+                 "x":1184,
                  "y":64
                 }, 
                 {
@@ -45,7 +45,7 @@
                  "polygon":[
                         {
                          "x":0,
-                         "y":0
+                         "y":-32
                         }, 
                         {
                          "x":-64,
@@ -59,7 +59,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1088,
+                 "x":1184,
                  "y":224
                 }, 
                 {
@@ -73,7 +73,7 @@
                         }, 
                         {
                          "x":-32,
-                         "y":96
+                         "y":64
                         }, 
                         {
                          "x":-32,
@@ -83,72 +83,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1120,
+                 "x":1216,
                  "y":128
-                }, 
-                {
-                 "height":0,
-                 "id":86,
-                 "name":"",
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":320,
-                         "y":0
-                        }, 
-                        {
-                         "x":320,
-                         "y":192
-                        }, 
-                        {
-                         "x":288,
-                         "y":384
-                        }, 
-                        {
-                         "x":0,
-                         "y":384
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":0,
-                 "y":64
-                }, 
-                {
-                 "height":0,
-                 "id":87,
-                 "name":"",
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":-32,
-                         "y":96
-                        }, 
-                        {
-                         "x":-32,
-                         "y":160
-                        }, 
-                        {
-                         "x":192,
-                         "y":160
-                        }, 
-                        {
-                         "x":192,
-                         "y":0
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":1120,
-                 "y":544
                 }, 
                 {
                  "height":64,
@@ -157,7 +93,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":1088,
+                 "width":1248,
                  "x":0,
                  "y":640
                 }, 
@@ -168,7 +104,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":576,
+                 "width":608,
                  "x":0,
                  "y":544
                 }, 
@@ -179,19 +115,19 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":64,
+                 "width":32,
                  "x":0,
                  "y":448
                 }, 
                 {
-                 "height":416,
+                 "height":576,
                  "id":92,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1280,
+                 "x":1376,
                  "y":128
                 }, 
                 {
@@ -201,9 +137,42 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":64,
-                 "x":992,
+                 "width":32,
+                 "x":1056,
                  "y":448
+                }, 
+                {
+                 "height":32,
+                 "id":97,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":832,
+                 "y":224
+                }, 
+                {
+                 "height":160,
+                 "id":99,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":128,
+                 "x":1248,
+                 "y":544
+                }, 
+                {
+                 "height":384,
+                 "id":104,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":224,
+                 "x":0,
+                 "y":64
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -218,18 +187,6 @@
          "objects":[
                 {
                  "height":0,
-                 "id":41,
-                 "name":"manna",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":832,
-                 "y":616
-                }, 
-                {
-                 "height":0,
                  "id":76,
                  "name":"manna",
                  "point":true,
@@ -237,7 +194,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1264,
+                 "x":1360,
                  "y":336
                 }, 
                 {
@@ -249,7 +206,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1264,
+                 "x":1360,
                  "y":304
                 }, 
                 {
@@ -261,7 +218,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1264,
+                 "x":1360,
                  "y":368
                 }, 
                 {
@@ -273,7 +230,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":144,
+                 "x":96,
                  "y":544
                 }, 
                 {
@@ -291,8 +248,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1024,
-                 "y":432
+                 "x":848,
+                 "y":192
                 }, 
                 {
                  "height":0,
@@ -319,23 +276,12 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":464,
-                 "y":544
+                 "x":928,
+                 "y":640
                 }, 
                 {
                  "height":16,
                  "id":62,
-                 "name":"spike",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":640,
-                 "y":624
-                }, 
-                {
-                 "height":16,
-                 "id":71,
                  "name":"spike",
                  "rotation":0,
                  "type":"",
@@ -346,13 +292,13 @@
                 }, 
                 {
                  "height":16,
-                 "id":75,
+                 "id":71,
                  "name":"spike",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":992,
+                 "x":704,
                  "y":624
                 }, 
                 {
@@ -363,7 +309,7 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1056,
+                 "x":1216,
                  "y":624
                 }, 
                 {
@@ -374,7 +320,7 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1024,
+                 "x":1184,
                  "y":624
                 }, 
                 {
@@ -386,7 +332,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":368,
+                 "x":272,
                  "y":120
                 }, 
                 {
@@ -398,7 +344,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1152,
+                 "x":1248,
                  "y":160
                 }, 
                 {
@@ -409,7 +355,7 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":608,
+                 "x":640,
                  "y":624
                 }, 
                 {
@@ -420,18 +366,53 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":576,
+                 "x":608,
                  "y":624
                 }, 
                 {
+                 "height":0,
+                 "id":100,
+                 "name":"manna",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1344,
+                 "y":352
+                }, 
+                {
+                 "height":0,
+                 "id":101,
+                 "name":"manna",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1344,
+                 "y":320
+                }, 
+                {
                  "height":16,
-                 "id":96,
+                 "id":102,
                  "name":"spike",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":960,
+                 "x":1152,
+                 "y":624
+                }, 
+                {
+                 "height":16,
+                 "id":103,
+                 "name":"spike",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":1120,
                  "y":624
                 }],
          "opacity":1,
@@ -441,7 +422,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":97,
+ "nextobjectid":105,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
@@ -490,5 +471,5 @@
  "tilewidth":32,
  "type":"map",
  "version":"1.10",
- "width":41
+ "width":44
 }
