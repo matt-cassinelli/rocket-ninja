@@ -31,14 +31,12 @@ https://rocket-ninja.netlify.app/
 
 ## TODO: Future
 - Easier maps
-- Coyote timer for walljump
 - Knockback
   - Use it to reach new areas?
 - New player design / story
   - Increase player size
 - Better colours
 - Impact particles when jump & land
-- Gibs on death
 - Each tile should be a quarter of the current size
 - Obstacles / enemies
   - Fast rocket

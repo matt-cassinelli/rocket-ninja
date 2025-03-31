@@ -16,11 +16,13 @@ export class Player {
   private dashXValue: number;
   private dashYValue: number;
   private isJumping: boolean;
-  private timeInAir: number;
-  private affectedByJumpPad: boolean;
+  private timeSinceGrounded: number;
+  private timeSinceWallslide: number;
+  private lastWallslideSide: XDirection;
   private recentlyWallJumped: boolean;
-  private dashTrail: Phaser.GameObjects.Particles.ParticleEmitter;
+  private affectedByJumpPad: boolean;
   private dashTimeline: Phaser.Time.Timeline;
+  private dashTrail: Phaser.GameObjects.Particles.ParticleEmitter;
   private squashTween: Phaser.Tweens.Tween;
   private wallSlideSound: SoundFader;
   private speed = {
@@ -34,7 +36,7 @@ export class Player {
       x: {
         accel: 0.0017,
         limit: 5.5,
-        halt: 0.16
+        halt: 0.19
       },
       fall: {
         max: 11.7
@@ -52,7 +54,8 @@ export class Player {
       x: 7.3,
       y: 7,
       preserveUpMomentum: 0.53,
-      reducedAirControlMs: 290
+      reducedAirControlMs: 290,
+      coyote: 250
     },
     wallSlide: 0.15
   };
@@ -134,7 +137,7 @@ export class Player {
     const isOnFloor = this.touching.bottom;
     const isInAir = !isOnFloor;
     const nearWall = this.touching.right ? XDirection.Right : this.touching.left ? XDirection.Left : null;
-    const isPressingAgainstWall = xDir == nearWall;
+    const isPressingAgainstWall = leftOrRightIsPressed && xDir === nearWall;
     const shouldWallslide = isInAir && isPressingAgainstWall && this.dashStatus != 'DASHING';
 
     if (xDir == XDirection.Left)
@@ -153,7 +156,12 @@ export class Player {
       this.isJumping = false;
 
     if (isOnFloor && leftOrRightIsPressed && !this.affectedByJumpPad) {
-      this.sprite.setVelocityX(this.speed.floor.run * xDir);
+      const targetVel = this.speed.floor.run * xDir; // e.g. -3
+      // const currentVel = this.sprite.body.velocity.x; // e.g. 3
+      // const difference = targetVel - currentVel; // e.g. -6
+      // const newVel = currentVel + (difference * 0.7);
+      // https://www.youtube.com/watch?v=KbtcEVCM7bw
+      this.sprite.setVelocityX(targetVel);
       this.playRunningSound();
     }
 
@@ -166,8 +174,8 @@ export class Player {
     if (isInAir || !leftOrRightIsPressed)
       this.scene.sound.stopByKey('running');
 
-    this.timeInAir = isOnFloor ? 0 : this.timeInAir + delta;
-    const shouldJump = this.timeInAir < this.speed.floor.coyote
+    this.timeSinceGrounded = isOnFloor ? 0 : this.timeSinceGrounded + delta;
+    const shouldJump = this.timeSinceGrounded < this.speed.floor.coyote
       && this.input.jumpIsPressed() && this.dashStatus != 'DASHING' && !this.isJumping;
     if (shouldJump) {
       this.isJumping = true;
@@ -194,6 +202,7 @@ export class Player {
     if (shouldWallslide) {
       if (this.sprite.body.velocity.y >= this.speed.wallSlide)
         this.sprite.setVelocityY(this.speed.wallSlide);
+      this.lastWallslideSide = nearWall;
       this.sprite.anims.play('wallslide', true);
       this.wallSlideSound.fadeInIfNotPlaying(300);
     }
@@ -205,13 +214,16 @@ export class Player {
     const friction = isOnFloor ? this.speed.floor.friction : 0;
     this.sprite.setFriction(friction);
 
-    const shouldWalljump = isInAir && nearWall && this.input.jumpIsPressed() && this.dashStatus != 'DASHING';
+    this.timeSinceWallslide = shouldWallslide ? 0 : this.timeSinceWallslide + delta;
+    const shouldWalljump = isInAir && this.input.jumpIsPressed() && this.dashStatus != 'DASHING'
+      && (nearWall || this.timeSinceWallslide < this.speed.wallJump.coyote);
     if (shouldWalljump) {
       const upSpeed = this.sprite.body.velocity.y < 0
         ? this.speed.wallJump.y * -1 + (this.sprite.body.velocity.y * this.speed.wallJump.preserveUpMomentum)
         : this.speed.wallJump.y * -1;
-      const awaySpeed = -this.speed.wallJump.x * nearWall;
+      const awaySpeed = nearWall ? -this.speed.wallJump.x * nearWall : -this.speed.wallJump.x * this.lastWallslideSide;
       this.sprite.setVelocity(awaySpeed, upSpeed);
+      this.timeSinceWallslide += this.speed.wallJump.coyote; // Increase outside of coyote range
       this.recentlyWallJumped = true;
       this.scene.time.delayedCall(this.speed.wallJump.reducedAirControlMs,
         () => this.recentlyWallJumped = false);
@@ -246,8 +258,8 @@ export class Player {
 
     // console.log(`velX: ${this.sprite.body.velocity.x.toFixed(2).replace('-0.00', '0.00')}`
     //   + ` | velY ${this.sprite.body.velocity.y.toFixed(2).replace('-0.00', '0.00')}`
-    //   + ` | onFloor: ${isOnFloor}`
-    //   + ` | airTime: ${this.timeInAir.toFixed(0)}`);
+    //   + ` | nearWall: ${nearWall}`
+    //   + ` | sinceGround: ${this.timeSinceGrounded.toFixed(0)}`);
   }
 
   damage(amount: number) {
