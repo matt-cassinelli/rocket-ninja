@@ -31,11 +31,11 @@ export class JumpPad extends Phaser.Physics.Matter.Sprite {
     const pointingUpish = [-45, 315, 0, 45].includes(angle);
     const pointingRightish = [45, 90, 135].includes(angle);
     const pointingLeftish = [-45, 315, -90, 270, 225].includes(angle);
-    const newVelX = pointingRightish ? this.force * 0.8
-                  : pointingLeftish  ? this.force * 0.8 * -1
+    const newVelX = pointingRightish ? this.force * 0.85
+                  : pointingLeftish  ? this.force * 0.85 * -1
                   : 0;
     const newVelY = pointingDownish ? this.force * 0.5
-                  : pointingUpish   ? this.force * 1.1 * -1
+                  : pointingUpish   ? this.force * 1.11 * -1
                   : 0;
 
     return { x: newVelX, y: newVelY };
